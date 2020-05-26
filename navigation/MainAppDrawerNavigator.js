@@ -1,10 +1,19 @@
 import { createDrawerNavigator } from 'react-navigation-drawer';
-import AllRecipesScreen from '../screens/AllRecipes';
-import MainAppStackNavigator from './MainAppStackNavigator';
+import AllRecipesStackNavigator from './AllRecipesStackNavigator';
+import MyRecipesStackNavigator from './MyRecipesStackNavigator';
 
 const MainAppDrawerNavigator = createDrawerNavigator({
-  MainAppStack: {
-    screen: MainAppStackNavigator
+  AllRecipes: {
+    screen: AllRecipesStackNavigator,
+    navigationOptions: {
+      title: "All Recipes"
+    }
+  },
+  MyRecipes: {
+    screen: MyRecipesStackNavigator,
+    navigationOptions: {
+      title: "My Recipes"
+    }
   }
 })
 

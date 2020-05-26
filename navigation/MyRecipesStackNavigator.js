@@ -1,25 +1,17 @@
 import { createStackNavigator } from "react-navigation-stack";
-import AllRecipesScreen from "../screens/AllRecipes";
-import Colors from "../constants/Colors";
-import { Platform } from "react-native";
+import MyRecipesScreen from "../screens/recipes/MyRecipes";
+import StackDefaultOptions from './StackDefaultOptions';
 import CustomHeaderButton from "../components/CustomHeaderButton/CustomHeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import React from 'react';
 
-const MainAppDefaultNavOptions = {
-  headerStyle: {
-    backgroundColor: Platform.OS === "android" ? Colors.primary : "white",
-  },
-  headerTintColor: Platform.OS === "android" ? "white" : Colors.primary,
-};
-
-const MainAppStackNavigator = createStackNavigator(
+const MyRecipesStackNavigator = createStackNavigator(
   {
-    AllRecipes: {
-      screen: AllRecipesScreen,
+    MyRecipes: {
+      screen: MyRecipesScreen,
       navigationOptions: ({ navigation }) => {
         return {
-          headerTitle: "All Recipes",
+          headerTitle: "My Recipes",
           headerLeft: () => {
             return (
               <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
@@ -35,8 +27,8 @@ const MainAppStackNavigator = createStackNavigator(
     },
   },
   {
-    defaultNavigationOptions: MainAppDefaultNavOptions,
+    defaultNavigationOptions: StackDefaultOptions,
   }
 );
 
-export default MainAppStackNavigator;
+export default MyRecipesStackNavigator;
