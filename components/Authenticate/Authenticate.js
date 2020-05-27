@@ -2,7 +2,6 @@ import React from "react";
 import {
   StyleSheet,
   View,
-  TextInput,
   Platform,
   Text,
   Button,
@@ -12,12 +11,13 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
 import Spinner from "../Spinner/Spinner";
 import Card from "../Card/Card";
+import CustomTextInput from "../CustomTextInput/CustomTextInput";
 
 const Authenticate = (props) => {
   return (
     <View style={styles.authScreen}>
       <Card style={styles.authContainer}>
-        <ScrollView>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.formController}>
             <View style={styles.labelContainer}>
               <Text style={styles.label}>Username</Text>
@@ -27,7 +27,7 @@ const Authenticate = (props) => {
                 size={20}
                 name={Platform.OS === "android" ? "md-person" : "ios-person"}
               />
-              <TextInput
+              <CustomTextInput
                 style={styles.textInput}
                 value={props.username}
                 onChangeText={props.onUsernameChange}
@@ -43,7 +43,7 @@ const Authenticate = (props) => {
                 size={20}
                 name={Platform.OS === "android" ? "md-key" : "ios-key"}
               />
-              <TextInput
+              <CustomTextInput
                 style={styles.textInput}
                 value={props.password}
                 onChangeText={props.onPasswordChange}
@@ -61,7 +61,7 @@ const Authenticate = (props) => {
                   size={20}
                   name={Platform.OS === "android" ? "md-key" : "ios-key"}
                 />
-                <TextInput
+                <CustomTextInput
                   style={styles.textInput}
                   value={props.confirmPassword}
                   onChangeText={props.onConfirmPasswordChange}
@@ -105,6 +105,10 @@ const styles = StyleSheet.create({
   authContainer: {
     height: 350,
     width: "80%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scrollViewContainer: {
     alignItems: "center",
     justifyContent: "center",
   },
