@@ -8,7 +8,8 @@ import {
   Button,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Colors from '../../constants/Colors';
+import Colors from "../../constants/Colors";
+import Spinner from '../Spinner/Spinner';
 
 const Authenticate = (props) => {
   return (
@@ -66,23 +67,25 @@ const Authenticate = (props) => {
             </View>
           </View>
         ) : null}
-        <View style={styles.buttonContainer}>
-          <View style={styles.button}>
-            <Button
-              title={props.loginMode ? "Login" : "Register"}
-              onPress={props.onSubmit}
-              color={Colors.success}
-            />
+        {!props.loading ? (
+          <View style={styles.buttonContainer}>
+            <View style={styles.button}>
+              <Button
+                title={props.loginMode ? "Login" : "Register"}
+                onPress={props.onSubmit}
+                color={Colors.success}
+              />
+            </View>
+            <View style={styles.button}>
+              <Button
+                title={`Switch to ${props.loginMode ? "Register" : "Login"}`}
+                onPress={props.changeMode}
+                color={Colors.primary}
+              />
+            </View>
           </View>
-          <View style={styles.button}>
-            <Button
-              title={`Switch to ${props.loginMode ? "Register" : "Login"}`}
-              onPress={props.changeMode}
-              color={Colors.primary}
-            />
-          </View>
-        </View>
-        {props.error.error ? <Text>{props.error.message}</Text> : null}
+        ) : <Spinner />}
+        {props.error ? <Text>{props.error}</Text> : null}
       </View>
     </View>
   );
@@ -125,11 +128,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: '70%'
+    width: "70%",
   },
   button: {
-    width: '40%',
-    minWidth: 100
+    width: "40%",
+    minWidth: 100,
   },
 });
 
