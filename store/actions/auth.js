@@ -1,6 +1,6 @@
 import ENVS from "../../env";
 import { LOGIN, LOADING, ERROR } from "../types/auth";
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage } from "react-native";
 
 export const login = (username, password) => {
   return async (dispatch) => {
@@ -14,16 +14,16 @@ export const login = (username, password) => {
       });
       const attemptedLogin = await result.json();
       if (!attemptedLogin.success) {
-        console.log(attemptedLogin)
         dispatch({
           type: ERROR,
           message: attemptedLogin.error,
         });
         return;
       }
+      console.log(attemptedLogin);
       await AsyncStorage.setItem("token", attemptedLogin.token);
-      await AsyncStorage.setItem("userId", attemptedLogin.userId);
       await AsyncStorage.setItem("username", attemptedLogin.username);
+      await AsyncStorage.setItem("userId", attemptedLogin.userId.toString())
       dispatch({
         type: LOGIN,
         userData: {

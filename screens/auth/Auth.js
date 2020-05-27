@@ -21,6 +21,13 @@ const Auth = (props) => {
     }
   }, [token]);
 
+  useEffect(() => {
+    props.navigation.setParams({changeMode: changeModeHandler})
+    props.navigation.setParams({mode: mode})
+  }, [changeModeHandler, mode])
+
+  
+
   const changeModeHandler = () => {
     setMode((prevState) => !prevState);
   };
@@ -97,7 +104,6 @@ const Auth = (props) => {
       confirmPassword={confirmPassword}
       error={error}
       loginMode={mode}
-      changeMode={changeModeHandler}
       loading={load}
     />
   );

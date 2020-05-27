@@ -76,13 +76,6 @@ const Authenticate = (props) => {
                 color={Colors.success}
               />
             </View>
-            <View style={styles.button}>
-              <Button
-                title={`Switch to ${props.loginMode ? "Register" : "Login"}`}
-                onPress={props.changeMode}
-                color={Colors.primary}
-              />
-            </View>
           </View>
         ) : <Spinner />}
         {props.error ? <Text>{props.error}</Text> : null}
@@ -126,12 +119,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     width: "70%",
   },
   button: {
-    width: "40%",
+    width: "60%",
     minWidth: 100,
   },
 });
