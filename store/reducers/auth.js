@@ -1,4 +1,4 @@
-import { LOGIN, LOADING, ERROR } from "../types/auth";
+import { LOGIN, LOADING, ERROR, LOGOUT } from "../types/auth";
 
 const initialState = {
   userId: null,
@@ -22,6 +22,10 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         loading: action.loading,
+      };
+    case LOGOUT:
+      return {
+        ...initialState,
       };
     case ERROR:
       return {

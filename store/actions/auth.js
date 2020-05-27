@@ -1,6 +1,24 @@
 import ENVS from "../../env";
-import { LOGIN, LOADING, ERROR } from "../types/auth";
+import { LOGIN, LOADING, ERROR, LOGOUT } from "../types/auth";
 import { AsyncStorage } from "react-native";
+
+export const logout = () => {
+  return async dispatch => {
+    try {
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("userId");
+      await AsyncStorage.removeItem("username");
+      dispatch({
+        type: LOGOUT
+      })
+    } catch (err) {
+      dispatch({
+        type: ERROR,
+        message: err
+      })
+    }
+  }
+}
 
 export const login = (username, password) => {
   return async (dispatch) => {

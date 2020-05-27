@@ -7,6 +7,8 @@ import MyRecipesStackNavigator from "./MyRecipesStackNavigator";
 import React from "react";
 import { View, SafeAreaView, Button } from "react-native";
 import Colors from "../constants/Colors";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/actions/auth";
 
 const MainAppDrawerNavigator = createDrawerNavigator(
   {
@@ -25,6 +27,7 @@ const MainAppDrawerNavigator = createDrawerNavigator(
   },
   {
     contentComponent: (props) => {
+      const dispatch = useDispatch();
       return (
         <View style={{ flex: 1, padding: 20 }}>
           <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
@@ -32,9 +35,13 @@ const MainAppDrawerNavigator = createDrawerNavigator(
             <Button
               title="Logout"
               color={Colors.primary}
-              onPress={() => {
-                dispatch(logout());
-                props.navigation.navigate("Auth");
+              onPress={async () => {
+                try {
+                  await dispatch(logout());
+                  props.navigation.navigate("Auth");
+                } catch (err) {
+                  console.log(err);
+                }
               }}
             />
           </SafeAreaView>
