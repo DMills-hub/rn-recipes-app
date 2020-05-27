@@ -20,7 +20,6 @@ export const login = (username, password) => {
         });
         return;
       }
-      console.log(attemptedLogin);
       await AsyncStorage.setItem("token", attemptedLogin.token);
       await AsyncStorage.setItem("username", attemptedLogin.username);
       await AsyncStorage.setItem("userId", attemptedLogin.userId.toString())
@@ -49,8 +48,9 @@ export const loading = (load) => {
 };
 
 export const err = (err) => {
+  console.log(err);
   return {
     type: ERROR,
-    error: err,
+    message: err,
   };
 };

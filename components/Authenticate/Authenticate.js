@@ -12,6 +12,7 @@ import Colors from "../../constants/Colors";
 import Spinner from '../Spinner/Spinner';
 
 const Authenticate = (props) => {
+console.log(props)
   return (
     <View style={styles.authScreen}>
       <View style={styles.authContainer}>
