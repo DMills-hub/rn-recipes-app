@@ -6,53 +6,37 @@ import {
   Platform,
   Text,
   Button,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
-import Spinner from '../Spinner/Spinner';
+import Spinner from "../Spinner/Spinner";
+import Card from "../Card/Card";
 
 const Authenticate = (props) => {
-console.log(props)
   return (
     <View style={styles.authScreen}>
-      <View style={styles.authContainer}>
-        <View style={styles.formController}>
-          <View style={styles.labelConatiner}>
-            <Text style={styles.label}>Username</Text>
-          </View>
-          <View style={styles.formControls}>
-            <Ionicons
-              size={20}
-              name={Platform.OS === "android" ? "md-person" : "ios-person"}
-            />
-            <TextInput
-              style={styles.textInput}
-              value={props.username}
-              onChangeText={props.onUsernameChange}
-            />
-          </View>
-        </View>
-        <View style={styles.formController}>
-          <View style={styles.labelConatiner}>
-            <Text style={styles.label}>Password</Text>
-          </View>
-          <View style={styles.formControls}>
-            <Ionicons
-              size={20}
-              name={Platform.OS === "android" ? "md-key" : "ios-key"}
-            />
-            <TextInput
-              style={styles.textInput}
-              value={props.password}
-              onChangeText={props.onPasswordChange}
-              secureTextEntry={true}
-            />
-          </View>
-        </View>
-        {!props.loginMode ? (
+      <Card style={styles.authContainer}>
+        <ScrollView>
           <View style={styles.formController}>
-            <View style={styles.labelConatiner}>
-              <Text style={styles.label}>Confirm Password</Text>
+            <View style={styles.labelContainer}>
+              <Text style={styles.label}>Username</Text>
+            </View>
+            <View style={styles.formControls}>
+              <Ionicons
+                size={20}
+                name={Platform.OS === "android" ? "md-person" : "ios-person"}
+              />
+              <TextInput
+                style={styles.textInput}
+                value={props.username}
+                onChangeText={props.onUsernameChange}
+              />
+            </View>
+          </View>
+          <View style={styles.formController}>
+            <View style={styles.labelContainer}>
+              <Text style={styles.label}>Password</Text>
             </View>
             <View style={styles.formControls}>
               <Ionicons
@@ -61,26 +45,53 @@ console.log(props)
               />
               <TextInput
                 style={styles.textInput}
-                value={props.confirmPassword}
-                onChangeText={props.onConfirmPasswordChange}
+                value={props.password}
+                onChangeText={props.onPasswordChange}
                 secureTextEntry={true}
               />
             </View>
           </View>
-        ) : null}
-        {!props.loading ? (
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button
-                title={props.loginMode ? "Login" : "Register"}
-                onPress={props.onSubmit}
-                color={Colors.success}
-              />
+          {!props.loginMode ? (
+            <View style={styles.formController}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Confirm Password</Text>
+              </View>
+              <View style={styles.formControls}>
+                <Ionicons
+                  size={20}
+                  name={Platform.OS === "android" ? "md-key" : "ios-key"}
+                />
+                <TextInput
+                  style={styles.textInput}
+                  value={props.confirmPassword}
+                  onChangeText={props.onConfirmPasswordChange}
+                  secureTextEntry={true}
+                />
+              </View>
             </View>
-          </View>
-        ) : <Spinner />}
-        {props.error ? <Text>{props.error}</Text> : null}
-      </View>
+          ) : null}
+          {!props.loading ? (
+            <View style={styles.btnCon}>
+              <View style={styles.buttonContainer}>
+                <View style={styles.button}>
+                  <Button
+                    title={props.loginMode ? "Login" : "Register"}
+                    onPress={props.onSubmit}
+                    color={Colors.success}
+                  />
+                </View>
+              </View>
+            </View>
+          ) : (
+            <Spinner />
+          )}
+          {props.error ? (
+            <View style={styles.errorContainer}>
+              <Text>{props.error}</Text>
+            </View>
+          ) : null}
+        </ScrollView>
+      </Card>
     </View>
   );
 };
@@ -92,7 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   authContainer: {
-    height: 300,
+    height: 350,
     width: "80%",
     alignItems: "center",
     justifyContent: "center",
@@ -110,7 +121,7 @@ const styles = StyleSheet.create({
   formControls: {
     flexDirection: "row",
   },
-  labelConatiner: {
+  labelContainer: {
     alignItems: "center",
     marginBottom: 10,
   },
@@ -119,14 +130,20 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   buttonContainer: {
-    flexDirection: "row",
+    width: "40%",
+  },
+  btnCon: {
     justifyContent: "center",
     alignItems: "center",
-    width: "70%",
   },
   button: {
-    width: "60%",
+    width: "100%",
     minWidth: 100,
+  },
+  errorContainer: {
+    paddingTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

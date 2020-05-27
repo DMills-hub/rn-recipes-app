@@ -22,11 +22,9 @@ const Auth = (props) => {
   }, [token]);
 
   useEffect(() => {
-    props.navigation.setParams({changeMode: changeModeHandler})
-    props.navigation.setParams({mode: mode})
-  }, [changeModeHandler, mode])
-
-  
+    props.navigation.setParams({ changeMode: changeModeHandler });
+    props.navigation.setParams({ mode: mode });
+  }, [changeModeHandler, mode]);
 
   const changeModeHandler = () => {
     setMode((prevState) => !prevState);
