@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import Colors from '../../constants/Colors';
 // import ENVS from "../../env";
 // import { useSelector } from "react-redux";
 
@@ -26,10 +27,16 @@ const AllRecipes = (props) => {
   // }, []);
 
   return (
-    <View>
+    <View style={styles.screen}>
       <Text>All Recipes Screen</Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  }
+})
 
 export default AllRecipes;

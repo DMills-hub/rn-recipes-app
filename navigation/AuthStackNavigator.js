@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   buttonText: {
-    color: Platform.OS === "android" ? "white" : Colors.primary,
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
   },
