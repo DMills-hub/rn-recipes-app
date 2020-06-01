@@ -1,34 +1,33 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import Colors from '../../constants/Colors';
-// import ENVS from "../../env";
-// import { useSelector } from "react-redux";
+import { View, FlatList, StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllRecipes } from "../../store/actions/recipe";
+import Recipe from "../../components/Recipe/Recipe";
 
 const AllRecipes = (props) => {
-  // Authorization test
-  // const token = useSelector((state) => state.auth.token);
+  const recipes = useSelector((state) => state.recipes.recipes);
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const test = async () => {
-  //     try {
-  //       const result = await fetch(`${ENVS.url}/`, {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "Authorization": token,
-  //         },
-  //       });
-  //       const testRes = await result.json();
-  //       console.log(testRes);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   test();
-  // }, []);
+  useEffect(() => {
+    const getRecipes = async () => {
+      try {
+        await dispatch(getAllRecipes());
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getRecipes();
+  }, [dispatch]);
 
   return (
     <View style={styles.screen}>
-      <Text>All Recipes Screen</Text>
+      <FlatList
+        keyExtractor={(item) => item.id.toString()}
+        data={recipes}
+        renderItem={({ item }) => (
+          <Recipe title={item.title} imageUri={item.image} />
+        )}
+      />
     </View>
   );
 };
@@ -36,7 +35,7 @@ const AllRecipes = (props) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-  }
-})
+  },
+});
 
 export default AllRecipes;

@@ -10,11 +10,33 @@ import {
   SAVE_RECIPE,
   ERR_RECIPE,
   CLEAR_RECIPE,
+  GET_ALL_RECIPES,
 } from "../types/recipe";
 import * as Random from "expo-random";
 import * as FileSystem from "expo-file-system";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+export const getAllRecipes = () => {
+  return async (dispatch) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const result = await fetch(`${ENVS.url}/recipes/allRecipes`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token,
+        },
+      });
+      const recipes = await result.json();
+      dispatch({
+        type: GET_ALL_RECIPES,
+        recipes: recipes.recipes,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
 
 export const clearRecipe = () => {
   return {
@@ -26,11 +48,6 @@ export const saveRecipe = (title, ingredients, imageUri, instructions) => {
   return async (dispatch) => {
     try {
       const imageName = imageUri.split("/").pop();
-      const newImagePath = FileSystem.documentDirectory + imageName;
-      await FileSystem.moveAsync({
-        from: imageUri,
-        to: newImagePath,
-      });
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
       const formatIngredients = Object.keys(ingredients).map((ing) => {
@@ -42,13 +59,13 @@ export const saveRecipe = (title, ingredients, imageUri, instructions) => {
       const saveRecipe = await fetch(`${ENVS.url}/recipes/save`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          "Authorization": token,
         },
         method: "POST",
         body: JSON.stringify({
           title: title,
           ingredients: formatIngredients,
-          imageUri: newImagePath,
+          imageUri: imageName,
           instructions: formatInstructions,
           userId: userId,
         }),

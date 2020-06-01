@@ -10,6 +10,7 @@ import {
   SAVE_RECIPE,
   ERR_RECIPE,
   CLEAR_RECIPE,
+  GET_ALL_RECIPES,
 } from "../types/recipe";
 
 const initialState = {
@@ -18,6 +19,7 @@ const initialState = {
   imageUri: null,
   instructions: [],
   error: null,
+  recipes: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -44,9 +46,18 @@ const reducer = (state = initialState, action) => {
       return errorRecipe(state, action.error);
     case CLEAR_RECIPE:
       return initialState;
+    case GET_ALL_RECIPES:
+      return getAllRecipes(state, action.recipes);
     default:
       return state;
   }
+};
+
+const getAllRecipes = (state, recipes) => {
+  return {
+    ...state,
+    recipes: recipes,
+  };
 };
 
 const errorRecipe = (state, error) => {
