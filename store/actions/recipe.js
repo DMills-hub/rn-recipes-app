@@ -31,6 +31,12 @@ export const saveRecipe = (
       });
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
+      const formatIngredients = Object.keys(ingredients).map(ing => {
+        return [ingredients[ing].ing];
+      })
+      const formatInstructions = Object.keys(instructions).map(ins => {
+        return [instructions[ins].instruction]
+      })
       const saveRecipe = await fetch(`${ENVS.url}/recipes/save`, {
         headers: {
           "Content-Type": "application/json",
@@ -39,9 +45,9 @@ export const saveRecipe = (
         method: "POST",
         body: JSON.stringify({
           title: title,
-          ingredients: ingredients,
+          ingredients: formatIngredients,
           imageUri: newImagePath,
-          instructions: instructions,
+          instructions: formatInstructions,
           userId: userId,
         }),
       });
