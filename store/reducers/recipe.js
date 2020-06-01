@@ -9,6 +9,7 @@ import {
   ADD_IMAGE,
   SAVE_RECIPE,
   ERR_RECIPE,
+  CLEAR_RECIPE,
 } from "../types/recipe";
 
 const initialState = {
@@ -16,7 +17,7 @@ const initialState = {
   ingredients: [],
   imageUri: null,
   instructions: [],
-  error: null
+  error: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -41,6 +42,8 @@ const reducer = (state = initialState, action) => {
       return initialState;
     case ERR_RECIPE:
       return errorRecipe(state, action.error);
+    case CLEAR_RECIPE:
+      return initialState;
     default:
       return state;
   }

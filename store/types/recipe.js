@@ -8,3 +8,4 @@ export const UPDATE_INSTRUCTION = "UPDATE_INSTRUCTON";
 export const ADD_IMAGE = "ADD_IMAGE";
 export const SAVE_RECIPE = "SAVE_RECIPE";
 export const ERR_RECIPE = "ERR_RECIPE";
+export const CLEAR_RECIPE = "CLEAR_RECIPE";

@@ -8,19 +8,21 @@ import {
   UPDATE_INSTRUCTION,
   ADD_IMAGE,
   SAVE_RECIPE,
-  ERR_RECIPE
+  ERR_RECIPE,
+  CLEAR_RECIPE,
 } from "../types/recipe";
 import * as Random from "expo-random";
 import * as FileSystem from "expo-file-system";
 import ENVS from "../../env";
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage } from "react-native";
 
-export const saveRecipe = (
-  title,
-  ingredients,
-  imageUri,
-  instructions
-) => {
+export const clearRecipe = () => {
+  return {
+    type: CLEAR_RECIPE,
+  };
+};
+
+export const saveRecipe = (title, ingredients, imageUri, instructions) => {
   return async (dispatch) => {
     try {
       const imageName = imageUri.split("/").pop();
@@ -31,16 +33,16 @@ export const saveRecipe = (
       });
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
-      const formatIngredients = Object.keys(ingredients).map(ing => {
+      const formatIngredients = Object.keys(ingredients).map((ing) => {
         return [ingredients[ing].ing];
-      })
-      const formatInstructions = Object.keys(instructions).map(ins => {
-        return [instructions[ins].instruction]
-      })
+      });
+      const formatInstructions = Object.keys(instructions).map((ins) => {
+        return [instructions[ins].instruction];
+      });
       const saveRecipe = await fetch(`${ENVS.url}/recipes/save`, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token,
+          Authorization: token,
         },
         method: "POST",
         body: JSON.stringify({

@@ -23,6 +23,7 @@ import {
   updateInstruction,
   addImage,
   saveRecipe,
+  clearRecipe,
 } from "../../store/actions/recipe";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
@@ -150,7 +151,9 @@ const AddRecipe = (props) => {
     }
   };
 
-  const onDeleteHandler = () => {};
+  const onClearHandler = () => {
+    dispatch(clearRecipe());
+  };
 
   return (
     <View style={styles.screen}>
@@ -252,8 +255,8 @@ const AddRecipe = (props) => {
         </View>
         <View style={styles.submitBtnHolder}>
           <CustomButton
-            onPress={onDeleteHandler}
-            text="Delete"
+            onPress={onClearHandler}
+            text="Clear"
             touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
             textStyle={styles.btnText}
           />
