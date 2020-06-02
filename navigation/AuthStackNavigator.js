@@ -1,41 +1,39 @@
-import { createStackNavigator } from "react-navigation-stack";
-import StackDefaultOptions from "./StackDefaultOptions";
+import { createStackNavigator } from "@react-navigation/stack";
 import AuthScreen from "../screens/auth/Auth";
+import { StyleSheet, TouchableOpacity, Text } from "react-native";
 import React from "react";
-import {
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  Platform,
-  ImagePropTypes,
-} from "react-native";
-import Colors from "../constants/Colors";
+import StackDefaultOptions from "./StackDefaultOptions";
 
-const AuthStackNavigator = createStackNavigator(
-  {
-    Auth: {
-      screen: AuthScreen,
-      navigationOptions: ({ navigation }) => {
-        const changeMode = navigation.getParam("changeMode");
-        const mode = navigation.getParam("mode");
-        return {
-          headerRight: () => {
-            return (
-              <TouchableOpacity onPress={() => changeMode()} style={styles.authButton}>
-                <Text style={styles.buttonText}>
-                  {mode ? "Sign Up" : "Login"}
-                </Text>
-              </TouchableOpacity>
-            );
-          },
-        };
-      },
-    },
-  },
-  {
-    defaultNavigationOptions: StackDefaultOptions,
-  }
-);
+const AuthStack = createStackNavigator();
+
+const MyStack = () => {
+  return (
+    <AuthStack.Navigator screenOptions={StackDefaultOptions}>
+      <AuthStack.Screen
+        name="Auth"
+        component={AuthScreen}
+        options={({ route }) => {
+          const { changeMode } = route.params || "";
+          const { mode } = route.params || true;
+          return {
+            headerRight: () => {
+              return (
+                <TouchableOpacity
+                  onPress={() => changeMode()}
+                  style={styles.authButton}
+                >
+                  <Text style={styles.buttonText}>
+                    {mode ? "Sign Up" : "Login"}
+                  </Text>
+                </TouchableOpacity>
+              );
+            },
+          };
+        }}
+      />
+    </AuthStack.Navigator>
+  );
+};
 
 const styles = StyleSheet.create({
   authButton: {
@@ -51,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AuthStackNavigator;
+export default MyStack;

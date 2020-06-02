@@ -1,18 +1,22 @@
-import { createAppContainer, createSwitchNavigator } from "react-navigation";
-import MainAppDrawerNavigator from "./MainAppDrawerNavigator";
-import AuthStackNavigator from "./AuthStackNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import React from "react";
+import MainAppDrawer from "./MainAppDrawerNavigator";
+import AuthStack from "./AuthStackNavigator";
+import { useSelector } from "react-redux";
 import StartUpScreen from '../screens/startup/StartUp';
 
-const SwitchNavigator = createSwitchNavigator({
-  StartUp: {
-    screen: StartUpScreen
-  },
-  Auth: {
-    screen: AuthStackNavigator,
-  },
-  Recipes: {
-    screen: MainAppDrawerNavigator,
-  },
-});
 
-export default createAppContainer(SwitchNavigator);
+const MyNavigator = () => {
+  const token = useSelector((state) => state.auth.token);
+  const didTryLogin = useSelector(state =>  state.auth.didTryLogin);
+
+  return (
+    <NavigationContainer>
+      {!token && !didTryLogin ? <StartUpScreen /> : null}
+      {token ? <MainAppDrawer /> : null}
+      {!token && didTryLogin ? <AuthStack /> : null}
+    </NavigationContainer>
+  );
+};
+
+export default MyNavigator;

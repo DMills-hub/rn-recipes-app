@@ -1,9 +1,10 @@
-import { LOGIN, LOADING, ERROR, LOGOUT } from "../types/auth";
+import { LOGIN, LOADING, ERROR, LOGOUT, AUTO_LOGIN } from "../types/auth";
 
 const initialState = {
   userId: null,
   token: null,
   username: null,
+  didTryLogin: false,
   loading: false,
   error: false,
 };
@@ -17,6 +18,7 @@ const reducer = (state = initialState, action) => {
         token: action.userData.token,
         username: action.userData.username,
         error: false,
+        didTryLogin: true,
       };
     case LOADING:
       return {
@@ -32,6 +34,25 @@ const reducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: action.message,
+      };
+    case AUTO_LOGIN:
+      if (!action.success)
+        return {
+          ...state,
+          loading: false,
+          token: null,
+          userId: null,
+          username: null,
+          didTryLogin: true
+        };
+      return {
+        ...state,
+        loading: false,
+        token: action.userData.token,
+        userId: action.userData.userId,
+        username: action.userData.username,
+        error: false,
+        didTryLogin: true,
       };
     default:
       return state;

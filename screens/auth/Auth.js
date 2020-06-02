@@ -9,17 +9,10 @@ const Auth = (props) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [mode, setMode] = useState(true);
-  const token = useSelector((state) => state.auth.token);
   const load = useSelector((state) => state.auth.loading);
   const error = useSelector((state) => state.auth.error);
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (token !== null) {
-      props.navigation.navigate("Recipes");
-    }
-  }, [token]);
 
   useEffect(() => {
     props.navigation.setParams({ changeMode: changeModeHandler });

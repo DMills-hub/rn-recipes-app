@@ -1,12 +1,13 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import ENVS from '../../env';
 
 const Recipe = (props) => {
   return (
     <TouchableOpacity activeOpacity={0.6} style={styles.recipeHolder}>
       <View style={styles.imageHolder}>
-        <Image style={styles.image} source={{ uri: props.imageUri }} />
+        <Image style={styles.image} source={{ uri: `${ENVS.url}/${props.image}` }} />
       </View>
       <Text style={styles.title}>{props.title}</Text>
     </TouchableOpacity>

@@ -11,10 +11,48 @@ import {
   ERR_RECIPE,
   CLEAR_RECIPE,
   GET_ALL_RECIPES,
+  GET_MY_RECIPES,
+  LOADING,
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+export const loading = (loading) => {
+  return {
+    type: LOADING,
+    loading: loading,
+  };
+};
+
+export const getMyRecipes = () => {
+  return async (dispatch) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userId = await AsyncStorage.getItem("userId");
+      const result = await fetch(
+        `${ENVS.url}/recipes/myRecipes?userId=${userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Autorization: token,
+          },
+        }
+      );
+      const myRecipes = await result.json();
+      console.log(myRecipes);
+      dispatch({
+        type: GET_MY_RECIPES,
+        myRecipes: myRecipes,
+      });
+    } catch (err) {
+      dispatch({
+        type: ERR_RECIPE,
+        error: err,
+      });
+    }
+  };
+};
 
 export const getAllRecipes = () => {
   return async (dispatch) => {
@@ -23,7 +61,7 @@ export const getAllRecipes = () => {
       const result = await fetch(`${ENVS.url}/recipes/allRecipes`, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token,
+          Authorization: token,
         },
       });
       const recipes = await result.json();
@@ -57,7 +95,7 @@ export const saveRecipe = (title, ingredients, base64, instructions) => {
       const saveRecipe = await fetch(`${ENVS.url}/recipes/save`, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token,
+          Authorization: token,
         },
         method: "POST",
         body: JSON.stringify({

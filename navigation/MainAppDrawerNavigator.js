@@ -1,54 +1,49 @@
 import {
   createDrawerNavigator,
-  DrawerNavigatorItems,
-} from "react-navigation-drawer";
-import AllRecipesStackNavigator from "./AllRecipesStackNavigator";
-import MyRecipesStackNavigator from "./MyRecipesStackNavigator";
-import React from "react";
-import { View, SafeAreaView, Button } from "react-native";
-import Colors from "../constants/Colors";
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerItemList,
+} from "@react-navigation/drawer";
+import AllRecipesStack from "./AllRecipesStackNavigator";
+import MyRecipesStack from "./MyRecipesStackNavigator";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/actions/auth";
+import Colors from '../constants/Colors';
+import React from 'react';
 
-const MainAppDrawerNavigator = createDrawerNavigator(
-  {
-    AllRecipes: {
-      screen: AllRecipesStackNavigator,
-      navigationOptions: {
-        title: "All Recipes",
-      },
-    },
-    MyRecipes: {
-      screen: MyRecipesStackNavigator,
-      navigationOptions: {
-        title: "My Recipes",
-      },
-    },
-  },
-  {
-    contentComponent: (props) => {
-      const dispatch = useDispatch();
-      return (
-        <View style={{ flex: 1, padding: 20 }}>
-          <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
-            <DrawerNavigatorItems {...props} />
-            <Button
-              title="Logout"
-              color={Colors.primary}
-              onPress={async () => {
-                try {
-                  await dispatch(logout());
-                  props.navigation.navigate("Auth");
-                } catch (err) {
-                  console.log(err);
-                }
+const MainAppDrawer = createDrawerNavigator();
+
+const MyStack = () => {
+  const dispatch = useDispatch();
+  return (
+    <MainAppDrawer.Navigator
+      drawerContent={(props) => {
+        return (
+          <DrawerContentScrollView {...props}>
+            <DrawerItemList {...props} />
+            <DrawerItem
+              style={{
+                flex: 1,
+                backgroundColor: Colors.primary,
+                alignItems: "center",
+                justifyContent: "center",
               }}
+              label="Logout"
+              labelStyle={{
+                fontWeight: "bold",
+                color: "white",
+                padding: 20,
+              }}
+              onPress={() => dispatch(logout())}
             />
-          </SafeAreaView>
-        </View>
-      );
-    },
-  }
-);
+          </DrawerContentScrollView>
+        );
+      }}
+    >
+      <MainAppDrawer.Screen component={AllRecipesStack} name="All Recipes" />
+      <MainAppDrawer.Screen component={MyRecipesStack} name="My Recipes" />
+    </MainAppDrawer.Navigator>
+  );
+};
 
-export default MainAppDrawerNavigator;
+export default MyStack;

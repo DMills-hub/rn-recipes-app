@@ -10,3 +10,5 @@ export const SAVE_RECIPE = "SAVE_RECIPE";
 export const ERR_RECIPE = "ERR_RECIPE";
 export const CLEAR_RECIPE = "CLEAR_RECIPE";
 export const GET_ALL_RECIPES = "GET_ALL_RECIPES";
+export const GET_MY_RECIPES = "GET_MY_RECIPES";
+export const LOADING = "LOADING";

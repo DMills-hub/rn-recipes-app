@@ -11,6 +11,7 @@ import {
   ERR_RECIPE,
   CLEAR_RECIPE,
   GET_ALL_RECIPES,
+  LOADING,
 } from "../types/recipe";
 
 const initialState = {
@@ -23,6 +24,8 @@ const initialState = {
   instructions: [],
   error: null,
   recipes: [],
+  myRecipes: [],
+  loading: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -44,13 +47,15 @@ const reducer = (state = initialState, action) => {
     case ADD_IMAGE:
       return addImage(state, action.imageUri, action.base64);
     case SAVE_RECIPE:
-      return initialState;
+      return {...initialState, recipes: state.recipes, myRecipes: state.myRecipes};
     case ERR_RECIPE:
       return errorRecipe(state, action.error);
     case CLEAR_RECIPE:
-      return initialState;
+      return {...initialState, recipes: state.recipes, myRecipes: state.myRecipes};
     case GET_ALL_RECIPES:
       return getAllRecipes(state, action.recipes);
+    case LOADING:
+      return { ...state, loading: action.loading }
     default:
       return state;
   }

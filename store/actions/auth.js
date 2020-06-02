@@ -1,24 +1,49 @@
 import ENVS from "../../env";
-import { LOGIN, LOADING, ERROR, LOGOUT } from "../types/auth";
+import { LOGIN, LOADING, ERROR, LOGOUT, AUTO_LOGIN } from "../types/auth";
 import { AsyncStorage } from "react-native";
 
+export const autoLogin = () => {
+  return async (dispatch) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userId = await AsyncStorage.getItem("userId");
+      const username = await AsyncStorage.getItem("username");
+      if (!token || !userId || !username)
+        return dispatch({
+          type: AUTO_LOGIN,
+          success: false,
+        });
+
+      dispatch({
+        type: AUTO_LOGIN,
+        success: true,
+        userData: {
+          token: token,
+          userId: userId,
+          username: username,
+        },
+      });
+    } catch (err) {}
+  };
+};
+
 export const logout = () => {
-  return async dispatch => {
+  return async (dispatch) => {
     try {
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
       await AsyncStorage.removeItem("username");
       dispatch({
-        type: LOGOUT
-      })
+        type: LOGOUT,
+      });
     } catch (err) {
       dispatch({
         type: ERROR,
-        message: err
-      })
+        message: err,
+      });
     }
-  }
-}
+  };
+};
 
 export const login = (username, password) => {
   return async (dispatch) => {
@@ -40,7 +65,7 @@ export const login = (username, password) => {
       }
       await AsyncStorage.setItem("token", attemptedLogin.token);
       await AsyncStorage.setItem("username", attemptedLogin.username);
-      await AsyncStorage.setItem("userId", attemptedLogin.userId.toString())
+      await AsyncStorage.setItem("userId", attemptedLogin.userId.toString());
       dispatch({
         type: LOGIN,
         userData: {

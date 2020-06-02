@@ -1,22 +1,17 @@
 import React, { useEffect } from "react";
 import Spinner from "../../components/Spinner/Spinner";
 import { View, StyleSheet, AsyncStorage } from "react-native";
+import { useDispatch } from "react-redux";
+import { autoLogin, err } from "../../store/actions/auth";
 
 const StartUp = (props) => {
+  const dispatch = useDispatch();
   useEffect(() => {
     const getUser = async () => {
       try {
-        const token = await AsyncStorage.getItem("token");
-        const id = await AsyncStorage.getItem("userId");
-        const username = await AsyncStorage.getItem("username");
-        if (!token || !id || !username) return props.navigation.navigate("Auth");
-        props.navigation.navigate("Recipes", {
-          userId: id,
-          token: token,
-          username: username,
-        });
+        await dispatch(autoLogin());
       } catch (err) {
-        props.navigation.navigate("Auth");
+        dispatch(err(err));
       }
     };
     getUser();
