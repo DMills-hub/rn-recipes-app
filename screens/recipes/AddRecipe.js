@@ -6,7 +6,7 @@ import {
   Platform,
   Alert,
   Image,
-  AsyncStorage
+  AsyncStorage,
 } from "react-native";
 import CustomTextInput from "../../components/CustomTextInput/CustomTextInput";
 import CustomButton from "../../components/CustomButton/CustomButton";
@@ -33,9 +33,8 @@ const AddRecipe = (props) => {
   const ingredients = useSelector((state) => state.recipes.ingredients);
   const instructions = useSelector((state) => state.recipes.instructions);
   const title = useSelector((state) => state.recipes.title);
-  const imageUri = useSelector((state) => state.recipes.imageUri);
-  const userId = useSelector((state) => state.auth.userId);
-  const token = useSelector((state) => state.auth.token);
+  const imageUri = useSelector((state) => state.recipes.image.uri);
+  const base64 = useSelector((state) => state.recipes.image.base64);
   const ingScroll = useRef();
   const insScroll = useRef();
 
@@ -116,9 +115,10 @@ const AddRecipe = (props) => {
         allowsEditing: true,
         aspect: [16, 9],
         quality: 0.5,
+        base64: true
       });
       if (image.cancelled) return;
-      dispatch(addImage(image.uri));
+      dispatch(addImage(image.uri, image.base64));
     } catch (err) {
       console.log(err);
     }
@@ -132,9 +132,10 @@ const AddRecipe = (props) => {
         allowsEditing: true,
         aspect: [16, 9],
         quality: 0.5,
+        base64: true
       });
       if (image.cancelled) return;
-      dispatch(addImage(image.uri));
+      dispatch(addImage(image.uri, image.base64));
     } catch (err) {
       console.log(err);
     }
@@ -143,7 +144,12 @@ const AddRecipe = (props) => {
   const onSaveHandler = async () => {
     try {
       await dispatch(
-        saveRecipe(title, ingredients, imageUri, instructions)
+        saveRecipe(
+          title,
+          ingredients,
+          base64,
+          instructions
+        )
       );
       props.navigation.navigate("MyRecipes");
     } catch (err) {

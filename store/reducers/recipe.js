@@ -16,7 +16,10 @@ import {
 const initialState = {
   title: "",
   ingredients: [],
-  imageUri: null,
+  image: {
+    uri: null,
+    base64: null,
+  },
   instructions: [],
   error: null,
   recipes: [],
@@ -39,7 +42,7 @@ const reducer = (state = initialState, action) => {
     case UPDATE_INSTRUCTION:
       return updateInstruction(state, action.insData);
     case ADD_IMAGE:
-      return addImage(state, action.imageUri);
+      return addImage(state, action.imageUri, action.base64);
     case SAVE_RECIPE:
       return initialState;
     case ERR_RECIPE:
@@ -67,10 +70,13 @@ const errorRecipe = (state, error) => {
   };
 };
 
-const addImage = (state, imageUri) => {
+const addImage = (state, imageUri, base64) => {
   return {
     ...state,
-    imageUri: imageUri,
+    image: {
+      uri: imageUri,
+      base64: base64,
+    },
   };
 };
 

@@ -13,7 +13,6 @@ import {
   GET_ALL_RECIPES,
 } from "../types/recipe";
 import * as Random from "expo-random";
-import * as FileSystem from "expo-file-system";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
 
@@ -44,10 +43,9 @@ export const clearRecipe = () => {
   };
 };
 
-export const saveRecipe = (title, ingredients, imageUri, instructions) => {
+export const saveRecipe = (title, ingredients, base64, instructions) => {
   return async (dispatch) => {
     try {
-      const imageName = imageUri.split("/").pop();
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
       const formatIngredients = Object.keys(ingredients).map((ing) => {
@@ -65,7 +63,7 @@ export const saveRecipe = (title, ingredients, imageUri, instructions) => {
         body: JSON.stringify({
           title: title,
           ingredients: formatIngredients,
-          imageUri: imageName,
+          base64: base64,
           instructions: formatInstructions,
           userId: userId,
         }),
@@ -84,10 +82,11 @@ export const saveRecipe = (title, ingredients, imageUri, instructions) => {
   };
 };
 
-export const addImage = (imageUri) => {
+export const addImage = (imageUri, base64) => {
   return {
     type: ADD_IMAGE,
     imageUri: imageUri,
+    base64: base64,
   };
 };
 
