@@ -8,8 +8,9 @@ import AllRecipesStack from "./AllRecipesStackNavigator";
 import MyRecipesStack from "./MyRecipesStackNavigator";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/actions/auth";
-import Colors from '../constants/Colors';
-import React from 'react';
+import { reset } from "../store/actions/recipe";
+import Colors from "../constants/Colors";
+import React from "react";
 
 const MainAppDrawer = createDrawerNavigator();
 
@@ -34,7 +35,10 @@ const MyStack = () => {
                 color: "white",
                 padding: 20,
               }}
-              onPress={() => dispatch(logout())}
+              onPress={() => {
+                dispatch(logout());
+                dispatch(reset());
+              }}
             />
           </DrawerContentScrollView>
         );

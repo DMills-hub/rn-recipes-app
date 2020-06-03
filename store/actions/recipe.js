@@ -13,10 +13,17 @@ import {
   GET_ALL_RECIPES,
   GET_MY_RECIPES,
   LOADING,
+  RESET,
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+export const reset = () => {
+  return {
+    type: RESET,
+  };
+};
 
 export const loading = (loading) => {
   return {
@@ -30,20 +37,19 @@ export const getMyRecipes = () => {
     try {
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
-      const result = await fetch(
-        `${ENVS.url}/recipes/myRecipes?userId=${userId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Autorization: token,
-          },
-        }
-      );
+      console.log("got here");
+      const result = await fetch(`${ENVS.url}/recipes/myRecipes/${userId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
       const myRecipes = await result.json();
-      console.log(myRecipes);
+      if (myRecipes.error)
+        return dispatch({ type: ERR_RECIPE, error: myRecipes.error });
       dispatch({
         type: GET_MY_RECIPES,
-        myRecipes: myRecipes,
+        myRecipes: myRecipes.myRecipes,
       });
     } catch (err) {
       dispatch({

@@ -12,3 +12,4 @@ export const CLEAR_RECIPE = "CLEAR_RECIPE";
 export const GET_ALL_RECIPES = "GET_ALL_RECIPES";
 export const GET_MY_RECIPES = "GET_MY_RECIPES";
 export const LOADING = "LOADING";
+export const RESET = "RESET";

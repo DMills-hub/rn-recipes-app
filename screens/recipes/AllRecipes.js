@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRecipes, loading } from "../../store/actions/recipe";
 import Recipe from "../../components/Recipe/Recipe";
@@ -28,6 +28,11 @@ const AllRecipes = (props) => {
 
   return (
     <View style={styles.screen}>
+      {!isLoading && recipes.length === 0 ? (
+        <Text style={{ textAlign: "center", padding: 10, fontWeight: 'bold', color: 'grey'}}>
+          Sorry no recipes found...
+        </Text>
+      ) : null}
       {isLoading ? (
         <Spinner />
       ) : (

@@ -115,7 +115,7 @@ const AddRecipe = (props) => {
         allowsEditing: true,
         aspect: [16, 9],
         quality: 0.5,
-        base64: true
+        base64: true,
       });
       if (image.cancelled) return;
       dispatch(addImage(image.uri, image.base64));
@@ -132,7 +132,7 @@ const AddRecipe = (props) => {
         allowsEditing: true,
         aspect: [16, 9],
         quality: 0.5,
-        base64: true
+        base64: true,
       });
       if (image.cancelled) return;
       dispatch(addImage(image.uri, image.base64));
@@ -143,15 +143,8 @@ const AddRecipe = (props) => {
 
   const onSaveHandler = async () => {
     try {
-      await dispatch(
-        saveRecipe(
-          title,
-          ingredients,
-          base64,
-          instructions
-        )
-      );
-      props.navigation.navigate("MyRecipes");
+      await dispatch(saveRecipe(title, ingredients, base64, instructions));
+      props.navigation.navigate("My Recipes");
     } catch (err) {
       console.log(err);
     }

@@ -11,7 +11,9 @@ import {
   ERR_RECIPE,
   CLEAR_RECIPE,
   GET_ALL_RECIPES,
+  GET_MY_RECIPES,
   LOADING,
+  RESET,
 } from "../types/recipe";
 
 const initialState = {
@@ -25,7 +27,7 @@ const initialState = {
   error: null,
   recipes: [],
   myRecipes: [],
-  loading: false
+  loading: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -47,18 +49,37 @@ const reducer = (state = initialState, action) => {
     case ADD_IMAGE:
       return addImage(state, action.imageUri, action.base64);
     case SAVE_RECIPE:
-      return {...initialState, recipes: state.recipes, myRecipes: state.myRecipes};
+      return {
+        ...initialState,
+        recipes: state.recipes,
+        myRecipes: state.myRecipes,
+      };
     case ERR_RECIPE:
       return errorRecipe(state, action.error);
     case CLEAR_RECIPE:
-      return {...initialState, recipes: state.recipes, myRecipes: state.myRecipes};
+      return {
+        ...initialState,
+        recipes: state.recipes,
+        myRecipes: state.myRecipes,
+      };
     case GET_ALL_RECIPES:
       return getAllRecipes(state, action.recipes);
+    case GET_MY_RECIPES:
+      return getMyRecipes(state, action.myRecipes);
     case LOADING:
-      return { ...state, loading: action.loading }
+      return { ...state, loading: action.loading };
+    case RESET:
+      return { ...initialState };
     default:
       return state;
   }
+};
+
+const getMyRecipes = (state, myRecipes) => {
+  return {
+    ...state,
+    myRecipes: myRecipes,
+  };
 };
 
 const getAllRecipes = (state, recipes) => {
