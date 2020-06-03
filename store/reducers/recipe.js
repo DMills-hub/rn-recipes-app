@@ -16,6 +16,7 @@ import {
   RESET,
   UPDATE_COOK_TIME,
   UPDATE_PREP_TIME,
+  UPDATE_CATEGORY
 } from "../types/recipe";
 
 const initialState = {
@@ -31,6 +32,7 @@ const initialState = {
   error: null,
   recipes: [],
   myRecipes: [],
+  category: "starter",
   loading: false,
 };
 
@@ -78,6 +80,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, cookTime: action.cookTime };
     case UPDATE_PREP_TIME:
       return { ...state, prepTime: action.prepTime };
+    case UPDATE_CATEGORY:
+      return {...state, category: action.category};
     default:
       return state;
   }

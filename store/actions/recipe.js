@@ -16,10 +16,18 @@ import {
   RESET,
   UPDATE_COOK_TIME,
   UPDATE_PREP_TIME,
+  UPDATE_CATEGORY
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+export const updateCategory = (category) => {
+  return {
+    type: UPDATE_CATEGORY,
+    category: category
+  }
+}
 
 export const updatePrepTime = (time) => {
   return {
@@ -53,7 +61,6 @@ export const getMyRecipes = () => {
     try {
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
-      console.log("got here");
       const result = await fetch(`${ENVS.url}/recipes/myRecipes/${userId}`, {
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +110,7 @@ export const clearRecipe = () => {
   };
 };
 
-export const saveRecipe = (title, ingredients, base64, instructions, cookTime, prepTime) => {
+export const saveRecipe = (title, ingredients, base64, instructions, cookTime, prepTime, category) => {
   return async (dispatch) => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -114,8 +121,6 @@ export const saveRecipe = (title, ingredients, base64, instructions, cookTime, p
       const formatInstructions = Object.keys(instructions).map((ins) => {
         return [instructions[ins].instruction];
       });
-      console.log(cookTime);
-      console.log(prepTime);
       const saveRecipe = await fetch(`${ENVS.url}/recipes/save`, {
         headers: {
           "Content-Type": "application/json",
@@ -129,7 +134,8 @@ export const saveRecipe = (title, ingredients, base64, instructions, cookTime, p
           instructions: formatInstructions,
           userId: userId,
           cookTime: cookTime,
-          prepTime: prepTime
+          prepTime: prepTime,
+          category: category
         }),
       });
       if (saveRecipe.error)

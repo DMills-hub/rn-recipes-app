@@ -15,3 +15,4 @@ export const LOADING = "LOADING";
 export const RESET = "RESET";
 export const UPDATE_COOK_TIME = "UPDATE_COOK_TIME";
 export const UPDATE_PREP_TIME = "UPDATE_PREP_TIME";
+export const UPDATE_CATEGORY = "UPDATE_CATEGORY";

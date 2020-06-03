@@ -7,6 +7,7 @@ import {
   Alert,
   Image,
   Text,
+  Picker,
 } from "react-native";
 import CustomTextInput from "../../components/CustomTextInput/CustomTextInput";
 import CustomButton from "../../components/CustomButton/CustomButton";
@@ -26,6 +27,7 @@ import {
   clearRecipe,
   updateCookTime,
   updatePrepTime,
+  updateCategory,
 } from "../../store/actions/recipe";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
@@ -40,6 +42,7 @@ const AddRecipe = (props) => {
   const base64 = useSelector((state) => state.recipes.image.base64);
   const cookTime = useSelector((state) => state.recipes.cookTime);
   const prepTime = useSelector((state) => state.recipes.prepTime);
+  const category = useSelector(state => state.recipes.category);
   const ingScroll = useRef();
   const insScroll = useRef();
 
@@ -148,7 +151,9 @@ const AddRecipe = (props) => {
 
   const onSaveHandler = async () => {
     try {
-      await dispatch(saveRecipe(title, ingredients, base64, instructions, cookTime, prepTime));
+      await dispatch(
+        saveRecipe(title, ingredients, base64, instructions, cookTime, prepTime, category)
+      );
       props.navigation.navigate("My Recipes");
     } catch (err) {
       console.log(err);
@@ -166,6 +171,10 @@ const AddRecipe = (props) => {
   const onPrepTimeChangeHandler = (text) => {
     dispatch(updatePrepTime(text));
   };
+
+  const onChangeCategoryHandler = (itemValue) => {
+    dispatch(updateCategory(itemValue));
+  }
 
   return (
     <View style={styles.screen}>
@@ -307,6 +316,16 @@ const AddRecipe = (props) => {
             placeholder="10mins..."
           />
         </View>
+      </View>
+      <View style={{alignItems: 'center', marginTop: 20}}>
+        <Text style={{fontSize: 18, fontWeight: 'bold'}}>Category</Text>
+        <Picker onValueChange={onChangeCategoryHandler} selectedValue={category} style={{ width: 100 }}>
+          <Picker.Item label="Starter" value="starter" />
+          <Picker.Item label="Main" value="main" />
+          <Picker.Item label="Desert" value="desert" />
+          <Picker.Item label="Baking" value="baking" />
+          <Picker.Item label="Other" value="other" />
+        </Picker>
       </View>
       <View style={styles.submitBtns}>
         <View style={styles.submitBtnHolder}>
