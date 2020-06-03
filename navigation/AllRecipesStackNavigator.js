@@ -5,6 +5,7 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import ViewRecipesScreen from "../screens/recipes/ViewRecipe";
+import LoadCategoryScreen from "../screens/recipes/LoadCategory";
 
 const AllRecipesStackNavigator = createStackNavigator();
 
@@ -31,6 +32,10 @@ const MyStack = () => {
             },
           };
         }}
+      />
+      <AllRecipesStackNavigator.Screen
+        name="Category"
+        component={LoadCategoryScreen}
       />
       <AllRecipesStackNavigator.Screen
         name="View Recipe"

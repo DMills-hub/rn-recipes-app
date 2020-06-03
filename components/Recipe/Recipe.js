@@ -57,6 +57,8 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     marginHorizontal: 10,
+    flex: 1,
+    alignItems: 'flex-end',
   },
   timeContainerFlex: {
     flexDirection: 'row',

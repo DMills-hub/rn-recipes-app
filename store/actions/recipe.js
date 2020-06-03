@@ -83,11 +83,11 @@ export const getMyRecipes = () => {
   };
 };
 
-export const getAllRecipes = () => {
+export const getAllRecipes = (category) => {
   return async (dispatch) => {
     try {
       const token = await AsyncStorage.getItem("token");
-      const result = await fetch(`${ENVS.url}/recipes/allRecipes`, {
+      const result = await fetch(`${ENVS.url}/recipes/allRecipes/${category}`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": token,
