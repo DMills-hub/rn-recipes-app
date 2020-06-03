@@ -6,6 +6,7 @@ import React from "react";
 import { Platform } from "react-native";
 import AddRecipesScreen from "../screens/recipes/AddRecipe";
 import { createStackNavigator } from "@react-navigation/stack";
+import ViewRecipesScreen from "../screens/recipes/ViewRecipe";
 
 const MyRecipesStack = createStackNavigator();
 
@@ -44,6 +45,10 @@ const MyStack = () => {
         }}
       />
       <MyRecipesStack.Screen name="Add Recipe" component={AddRecipesScreen} />
+      <MyRecipesStack.Screen
+        name="View Recipe"
+        component={ViewRecipesScreen}
+      />
     </MyRecipesStack.Navigator>
   );
 };

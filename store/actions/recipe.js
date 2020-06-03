@@ -14,10 +14,26 @@ import {
   GET_MY_RECIPES,
   LOADING,
   RESET,
+  UPDATE_COOK_TIME,
+  UPDATE_PREP_TIME,
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+export const updatePrepTime = (time) => {
+  return {
+    type: UPDATE_PREP_TIME,
+    prepTime: time
+  }
+}
+
+export const updateCookTime = (time) => {
+  return {
+    type: UPDATE_COOK_TIME,
+    cookTime: time
+  }
+}
 
 export const reset = () => {
   return {
@@ -41,7 +57,7 @@ export const getMyRecipes = () => {
       const result = await fetch(`${ENVS.url}/recipes/myRecipes/${userId}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          "Authorization": token,
         },
       });
       const myRecipes = await result.json();
@@ -67,7 +83,7 @@ export const getAllRecipes = () => {
       const result = await fetch(`${ENVS.url}/recipes/allRecipes`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          "Authorization": token,
         },
       });
       const recipes = await result.json();
@@ -101,7 +117,7 @@ export const saveRecipe = (title, ingredients, base64, instructions) => {
       const saveRecipe = await fetch(`${ENVS.url}/recipes/save`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          "Authorization": token,
         },
         method: "POST",
         body: JSON.stringify({

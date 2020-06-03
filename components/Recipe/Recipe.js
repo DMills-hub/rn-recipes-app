@@ -5,7 +5,7 @@ import ENVS from '../../env';
 
 const Recipe = (props) => {
   return (
-    <TouchableOpacity activeOpacity={0.6} style={styles.recipeHolder}>
+    <TouchableOpacity onPress={props.onClick} activeOpacity={0.6} style={styles.recipeHolder}>
       <View style={styles.imageHolder}>
         <Image style={styles.image} source={{ uri: `${ENVS.url}/${props.image}` }} />
       </View>

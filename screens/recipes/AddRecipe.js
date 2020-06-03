@@ -6,7 +6,7 @@ import {
   Platform,
   Alert,
   Image,
-  AsyncStorage,
+  Text,
 } from "react-native";
 import CustomTextInput from "../../components/CustomTextInput/CustomTextInput";
 import CustomButton from "../../components/CustomButton/CustomButton";
@@ -27,6 +27,7 @@ import {
 } from "../../store/actions/recipe";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+import Card from "../../components/Card/Card";
 
 const AddRecipe = (props) => {
   const dispatch = useDispatch();
@@ -207,15 +208,25 @@ const AddRecipe = (props) => {
               ingScroll.current.scrollToEnd({ animated: true })
             }
           >
-            {ingredients.map((ing, index) => (
-              <Holder
-                key={ing.id}
-                onChangeText={onChangeIngredientTextHandler.bind(this, index)}
-                delete={onDeleteIngredientHandler.bind(this, ing.id)}
-                customPlaceholder="Ingredient..."
-                value={ing.ing}
-              />
-            ))}
+            <Card
+              style={{
+                shadowColor: "white",
+                shadowOpacity: 0,
+                shadowOffset: { width: 0, height: 0 },
+                shadowRadius: 0,
+                elevation: 0,
+              }}
+            >
+              {ingredients.map((ing, index) => (
+                <Holder
+                  key={ing.id}
+                  onChangeText={onChangeIngredientTextHandler.bind(this, index)}
+                  delete={onDeleteIngredientHandler.bind(this, ing.id)}
+                  customPlaceholder="Ingredient..."
+                  value={ing.ing}
+                />
+              ))}
+            </Card>
           </ScrollView>
         </View>
         <View style={styles.ingredientAddContainer}>
@@ -231,16 +242,50 @@ const AddRecipe = (props) => {
               insScroll.current.scrollToEnd({ animated: true })
             }
           >
-            {instructions.map((ins, index) => (
-              <Holder
-                key={ins.id}
-                value={ins.instruction}
-                delete={onDeleteInstructionHandler.bind(this, ins.id)}
-                onChangeText={onChangeInstructionHandler.bind(this, index)}
-                customPlaceholder="Instruction..."
-              />
-            ))}
+            <Card
+              style={{
+                shadowColor: "white",
+                shadowOpacity: 0,
+                shadowOffset: { width: 0, height: 0 },
+                shadowRadius: 0,
+                elevation: 0,
+              }}
+            >
+              {instructions.map((ins, index) => (
+                <Holder
+                  key={ins.id}
+                  value={ins.instruction}
+                  delete={onDeleteInstructionHandler.bind(this, ins.id)}
+                  onChangeText={onChangeInstructionHandler.bind(this, index)}
+                  customPlaceholder="Instruction..."
+                />
+              ))}
+            </Card>
           </ScrollView>
+        </View>
+      </View>
+      <View style={styles.time}>
+        <View
+          style={{
+            ...styles.time,
+            width: "40%",
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
+        >
+          <Text>Cook Time: </Text>
+          <CustomTextInput placeholder="10mins..." />
+        </View>
+        <View
+          style={{
+            ...styles.time,
+            width: "40%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text>Prep Time: </Text>
+          <CustomTextInput placeholder="10mins..." />
         </View>
       </View>
       <View style={styles.submitBtns}>
@@ -307,6 +352,7 @@ const styles = StyleSheet.create({
   controlsContainer: {
     flexDirection: "row",
     height: "35%",
+    marginVertical: 10,
   },
   btn: {
     fontSize: 5,
@@ -342,6 +388,11 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     width: 100,
+  },
+  time: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
   },
 });
 

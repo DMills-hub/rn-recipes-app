@@ -13,3 +13,5 @@ export const GET_ALL_RECIPES = "GET_ALL_RECIPES";
 export const GET_MY_RECIPES = "GET_MY_RECIPES";
 export const LOADING = "LOADING";
 export const RESET = "RESET";
+export const UPDATE_COOK_TIME = "UPDATE_COOK_TIME";
+export const UPDATE_PREP_TIME = "UPDATE_PREP_TIME";

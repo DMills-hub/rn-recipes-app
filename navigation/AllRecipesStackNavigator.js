@@ -4,6 +4,7 @@ import CustomHeaderButton from "../components/CustomHeaderButton/CustomHeaderBut
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import ViewRecipesScreen from "../screens/recipes/ViewRecipe";
 
 const AllRecipesStackNavigator = createStackNavigator();
 
@@ -30,6 +31,10 @@ const MyStack = () => {
             },
           };
         }}
+      />
+      <AllRecipesStackNavigator.Screen
+        name="View Recipe"
+        component={ViewRecipesScreen}
       />
     </AllRecipesStackNavigator.Navigator>
   );

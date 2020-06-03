@@ -14,6 +14,8 @@ import {
   GET_MY_RECIPES,
   LOADING,
   RESET,
+  UPDATE_COOK_TIME,
+  UPDATE_PREP_TIME,
 } from "../types/recipe";
 
 const initialState = {
@@ -24,6 +26,8 @@ const initialState = {
     base64: null,
   },
   instructions: [],
+  cookTime: "",
+  prepTime: "",
   error: null,
   recipes: [],
   myRecipes: [],
@@ -70,6 +74,10 @@ const reducer = (state = initialState, action) => {
       return { ...state, loading: action.loading };
     case RESET:
       return { ...initialState };
+    case UPDATE_COOK_TIME:
+      return { ...state, cookTime: action.cookTime };
+    case UPDATE_PREP_TIME:
+      return { ...state, prepTime: action.prepTime };
     default:
       return state;
   }
