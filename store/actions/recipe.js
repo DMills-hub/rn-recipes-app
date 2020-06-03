@@ -103,7 +103,7 @@ export const clearRecipe = () => {
   };
 };
 
-export const saveRecipe = (title, ingredients, base64, instructions) => {
+export const saveRecipe = (title, ingredients, base64, instructions, cookTime, prepTime) => {
   return async (dispatch) => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -114,6 +114,8 @@ export const saveRecipe = (title, ingredients, base64, instructions) => {
       const formatInstructions = Object.keys(instructions).map((ins) => {
         return [instructions[ins].instruction];
       });
+      console.log(cookTime);
+      console.log(prepTime);
       const saveRecipe = await fetch(`${ENVS.url}/recipes/save`, {
         headers: {
           "Content-Type": "application/json",
@@ -126,6 +128,8 @@ export const saveRecipe = (title, ingredients, base64, instructions) => {
           base64: base64,
           instructions: formatInstructions,
           userId: userId,
+          cookTime: cookTime,
+          prepTime: prepTime
         }),
       });
       if (saveRecipe.error)

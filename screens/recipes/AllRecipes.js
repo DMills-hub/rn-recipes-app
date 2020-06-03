@@ -28,7 +28,7 @@ const AllRecipes = (props) => {
     }, [dispatch])
   );
 
-  const onClickRecipeHandler = async (recipeId, title, image) => {
+  const onClickRecipeHandler = async (recipeId, title, image, cookTime, prepTime) => {
     try {
       const result = await fetch(
         `${ENVS.url}/recipes/singleRecipe/${recipeId}`,
@@ -45,11 +45,14 @@ const AllRecipes = (props) => {
         image: `${ENVS.url}/${image}`,
         ingredients: contents.ingredients,
         instructions: contents.instructions,
+        cookTime: cookTime,
+        prepTime: prepTime
       });
     } catch (err) {
       console.log(err);
     }
   };
+
 
   return (
     <View style={styles.screen}>
@@ -77,10 +80,14 @@ const AllRecipes = (props) => {
                 this,
                 item.id.toString(),
                 item.title,
-                item.image
+                item.image,
+                item.cooktime,
+                item.preptime
               )}
               title={item.title}
               image={item.image}
+              cookTime={item.cooktime}
+              prepTime={item.preptime}
             />
           )}
         />

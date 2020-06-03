@@ -8,6 +8,8 @@ const ViewRecipe = (props) => {
   const image = props.route.params.image;
   const instructions = props.route.params.instructions;
   const ingredients = props.route.params.ingredients;
+  const cookTime = props.route.params.cookTime;
+  const prepTime = props.route.params.prepTime;
   return (
     <View style={styles.screen}>
       <View style={styles.holder}>
@@ -18,25 +20,35 @@ const ViewRecipe = (props) => {
         />
       </View>
       <Card style={{ ...styles.holder, alignItems: "flex-start" }}>
-        <FlatList
-          data={ingredients}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.contentsHolder}>
-              <Text style={styles.holderText}>- {item.ingredient}</Text>
-            </View>
-          )}
-        />
-        <FlatList
-          data={instructions}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.contentsHolder}>
-              <Text style={styles.holderText}>- {item.instruction}</Text>
-            </View>
-          )}
-        />
+        <View>
+          <Text>Ingredients</Text>
+          <FlatList
+            data={ingredients}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.contentsHolder}>
+                <Text style={styles.holderText}>- {item.ingredient}</Text>
+              </View>
+            )}
+          />
+        </View>
+        <View>
+          <Text>Instructions</Text>
+          <FlatList
+            data={instructions}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.contentsHolder}>
+                <Text style={styles.holderText}>- {item.instruction}</Text>
+              </View>
+            )}
+          />
+        </View>
       </Card>
+      <View style={styles.timeContainer}>
+        <Text>Cook Time - {cookTime}</Text>
+        <Text>Prep Time - {prepTime}</Text>
+      </View>
     </View>
   );
 };
@@ -68,6 +80,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
+  },
+  timeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
+    paddingHorizontal: 5,
+    marginVertical: 20,
   },
 });
 

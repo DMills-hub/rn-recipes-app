@@ -24,6 +24,8 @@ import {
   addImage,
   saveRecipe,
   clearRecipe,
+  updateCookTime,
+  updatePrepTime,
 } from "../../store/actions/recipe";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
@@ -36,6 +38,8 @@ const AddRecipe = (props) => {
   const title = useSelector((state) => state.recipes.title);
   const imageUri = useSelector((state) => state.recipes.image.uri);
   const base64 = useSelector((state) => state.recipes.image.base64);
+  const cookTime = useSelector((state) => state.recipes.cookTime);
+  const prepTime = useSelector((state) => state.recipes.prepTime);
   const ingScroll = useRef();
   const insScroll = useRef();
 
@@ -144,7 +148,7 @@ const AddRecipe = (props) => {
 
   const onSaveHandler = async () => {
     try {
-      await dispatch(saveRecipe(title, ingredients, base64, instructions));
+      await dispatch(saveRecipe(title, ingredients, base64, instructions, cookTime, prepTime));
       props.navigation.navigate("My Recipes");
     } catch (err) {
       console.log(err);
@@ -153,6 +157,14 @@ const AddRecipe = (props) => {
 
   const onClearHandler = () => {
     dispatch(clearRecipe());
+  };
+
+  const onCookTimeChangeHandler = (text) => {
+    dispatch(updateCookTime(text));
+  };
+
+  const onPrepTimeChangeHandler = (text) => {
+    dispatch(updatePrepTime(text));
   };
 
   return (
@@ -273,8 +285,12 @@ const AddRecipe = (props) => {
             alignItems: "center",
           }}
         >
-          <Text>Cook Time: </Text>
-          <CustomTextInput placeholder="10mins..." />
+          <Text>Cook Time - </Text>
+          <CustomTextInput
+            onChangeText={onCookTimeChangeHandler}
+            value={cookTime}
+            placeholder="10mins..."
+          />
         </View>
         <View
           style={{
@@ -284,8 +300,12 @@ const AddRecipe = (props) => {
             alignItems: "center",
           }}
         >
-          <Text>Prep Time: </Text>
-          <CustomTextInput placeholder="10mins..." />
+          <Text>Prep Time - </Text>
+          <CustomTextInput
+            onChangeText={onPrepTimeChangeHandler}
+            value={prepTime}
+            placeholder="10mins..."
+          />
         </View>
       </View>
       <View style={styles.submitBtns}>

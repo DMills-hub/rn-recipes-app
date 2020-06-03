@@ -45,7 +45,12 @@ const MyRecipes = (props) => {
           keyExtractor={(item) => item.id.toString()}
           data={myRecipes}
           renderItem={({ item }) => (
-            <Recipe image={item.image} title={item.title} />
+            <Recipe
+              image={item.image}
+              title={item.title}
+              cookTime={item.cooktime}
+              prepTime={item.preptime}
+            />
           )}
         />
       ) : (
