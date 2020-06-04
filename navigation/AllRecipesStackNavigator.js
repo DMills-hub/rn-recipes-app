@@ -6,6 +6,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import ViewRecipesScreen from "../screens/recipes/ViewRecipe";
 import LoadCategoryScreen from "../screens/recipes/LoadCategory";
+import { Platform } from "react-native";
 
 const AllRecipesStackNavigator = createStackNavigator();
 

@@ -1,15 +1,56 @@
-import React from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import React, { useLayoutEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  Alert,
+  Button,
+  Platform,
+} from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Card from "../../components/Card/Card";
+import CustomHeaderButton from "../../components/CustomHeaderButton/CustomHeaderButton";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import { useSelector, useDispatch } from "react-redux";
+import { updateFavourite } from "../../store/actions/recipe";
 
-const ViewRecipe = (props) => {
-  const title = props.route.params.title;
-  const image = props.route.params.image;
-  const instructions = props.route.params.instructions;
-  const ingredients = props.route.params.ingredients;
-  const cookTime = props.route.params.cookTime;
-  const prepTime = props.route.params.prepTime;
+const ViewRecipe = ({ navigation, route }) => {
+  const title = route.params.title;
+  const image = route.params.image;
+  const instructions = route.params.instructions;
+  const ingredients = route.params.ingredients;
+  const cookTime = route.params.cookTime;
+  const prepTime = route.params.prepTime;
+  const recipeId = route.params.recipeId;
+  const isFav = useSelector((state) => state.recipes.isFavourite);
+  const dispatch = useDispatch();
+
+  const favouriteHandler = async () => {
+    try {
+      await dispatch(updateFavourite(!isFav, recipeId));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item
+            onPress={favouriteHandler}
+            iconName={
+              Platform.OS === "android"
+                ? `md-heart${!isFav ? "-empty" : ""}`
+                : `ios-heart${!isFav ? "-empty" : ""}`
+            }
+          />
+        </HeaderButtons>
+      ),
+    });
+  }, [navigation, isFav]);
+
   return (
     <View style={styles.screen}>
       <View style={styles.holder}>

@@ -16,32 +16,83 @@ import {
   RESET,
   UPDATE_COOK_TIME,
   UPDATE_PREP_TIME,
-  UPDATE_CATEGORY
+  UPDATE_CATEGORY,
+  UPDATE_FAVOURITE,
+  UPDATE_FAVOURITE_RECIPES,
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
 
+export const getFavouriteRecipes = () => {
+  return async dispatch => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userId = await AsyncStorage.getItem("userId");
+      const getFavouriteRecipes = await fetch(`${ENVS.url}/recipes/myFavourites/${userId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": token
+        }
+      })
+      const myFavourites = await getFavouriteRecipes.json();
+      dispatch({
+        type: UPDATE_FAVOURITE_RECIPES,
+        myFavourites: myFavourites.myFavourites
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
+
+export const updateFavourite = (fav, recipeId) => {
+  return async (dispatch) => {
+    try {
+      if (recipeId === null) return dispatch({ type: UPDATE_FAVOURITE, fav: fav}); 
+      const token = await AsyncStorage.getItem("token");
+      const userId = await AsyncStorage.getItem("userId");
+      await fetch(
+        `${ENVS.url}/recipes/${fav ? "addFavourite" : "deleteFavourite"}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": token,
+          },
+          body: JSON.stringify({ userId: userId, recipeId: recipeId }),
+          method: "POST",
+        }
+      );
+      dispatch({
+        type: UPDATE_FAVOURITE,
+        fav: fav,
+      }); 
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
 export const updateCategory = (category) => {
   return {
     type: UPDATE_CATEGORY,
-    category: category
-  }
-}
+    category: category,
+  };
+};
 
 export const updatePrepTime = (time) => {
   return {
     type: UPDATE_PREP_TIME,
-    prepTime: time
-  }
-}
+    prepTime: time,
+  };
+};
 
 export const updateCookTime = (time) => {
   return {
     type: UPDATE_COOK_TIME,
-    cookTime: time
-  }
-}
+    cookTime: time,
+  };
+};
 
 export const reset = () => {
   return {
@@ -110,7 +161,15 @@ export const clearRecipe = () => {
   };
 };
 
-export const saveRecipe = (title, ingredients, base64, instructions, cookTime, prepTime, category) => {
+export const saveRecipe = (
+  title,
+  ingredients,
+  base64,
+  instructions,
+  cookTime,
+  prepTime,
+  category
+) => {
   return async (dispatch) => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -135,7 +194,7 @@ export const saveRecipe = (title, ingredients, base64, instructions, cookTime, p
           userId: userId,
           cookTime: cookTime,
           prepTime: prepTime,
-          category: category
+          category: category,
         }),
       });
       if (saveRecipe.error)

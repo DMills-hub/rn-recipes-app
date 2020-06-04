@@ -6,6 +6,7 @@ import {
 } from "@react-navigation/drawer";
 import AllRecipesStack from "./AllRecipesStackNavigator";
 import MyRecipesStack from "./MyRecipesStackNavigator";
+import FavouritesStack from './FavouriteRecipesStackNavigator';
 import { useDispatch } from "react-redux";
 import { logout } from "../store/actions/auth";
 import { reset } from "../store/actions/recipe";
@@ -46,6 +47,7 @@ const MyStack = () => {
     >
       <MainAppDrawer.Screen component={AllRecipesStack} name="All Recipes" />
       <MainAppDrawer.Screen component={MyRecipesStack} name="My Recipes" />
+      <MainAppDrawer.Screen component={FavouritesStack} name="Favourites" />
     </MainAppDrawer.Navigator>
   );
 };

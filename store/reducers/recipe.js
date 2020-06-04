@@ -16,7 +16,9 @@ import {
   RESET,
   UPDATE_COOK_TIME,
   UPDATE_PREP_TIME,
-  UPDATE_CATEGORY
+  UPDATE_CATEGORY,
+  UPDATE_FAVOURITE,
+  UPDATE_FAVOURITE_RECIPES
 } from "../types/recipe";
 
 const initialState = {
@@ -32,7 +34,9 @@ const initialState = {
   error: null,
   recipes: [],
   myRecipes: [],
+  favouriteRecipes: [],
   category: "starter",
+  isFavourite: false,
   loading: false,
 };
 
@@ -82,6 +86,11 @@ const reducer = (state = initialState, action) => {
       return { ...state, prepTime: action.prepTime };
     case UPDATE_CATEGORY:
       return {...state, category: action.category};
+    case UPDATE_FAVOURITE:
+      return {...state, isFavourite: action.fav};
+    case UPDATE_FAVOURITE_RECIPES:
+      console.log(action.myFavourites)
+      return {...state, favouriteRecipes: action.myFavourites};
     default:
       return state;
   }

@@ -159,7 +159,28 @@ const AddRecipe = (props) => {
     }
   };
 
+  const validateRecipe = () => {
+    if (
+      title === "" ||
+      ingredients.length === 0 ||
+      instructions.length === 0 ||
+      !imageUri ||
+      !base64 ||
+      cookTime === "" ||
+      prepTime === ""
+    )
+      return false;
+    return true;
+  };
+
   const onSaveHandler = async () => {
+    const checkReicpeValidity = validateRecipe();
+    if (!checkReicpeValidity)
+      return Alert.alert(
+        "Couldn't save your recipe.",
+        "Please make sure all of the fields have something entered in them and you have a picture.",
+        [{ text: "Okay" }]
+      );
     try {
       await dispatch(
         saveRecipe(
@@ -340,7 +361,7 @@ const AddRecipe = (props) => {
         <Picker
           onValueChange={onChangeCategoryHandler}
           selectedValue={category}
-          style={{ width: 100 }}
+          style={{ width: 120 }}
         >
           <Picker.Item label="Starter" value="starter" />
           <Picker.Item label="Main" value="main" />

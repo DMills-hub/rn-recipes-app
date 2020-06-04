@@ -1,17 +1,16 @@
 import React, { useCallback } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import Spinner from "../../components/Spinner/Spinner";
+import { View, FlatList, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
+import { loading, getFavouriteRecipes } from "../../store/actions/recipe";
 import Recipe from "../../components/Recipe/Recipe";
-import { useFocusEffect } from '@react-navigation/native'
-import { loading, getAllRecipes, updateFavourite } from '../../store/actions/recipe';
+import Spinner from "../../components/Spinner/Spinner";
 import ENVS from '../../env';
 
-const LoadCategory = (props) => {
+const Favourites = (props) => {
+  const isLoading = useSelector((state) => state.recipes.loading);
+  const favouriteRecipes = useSelector((state) => state.recipes.favouriteRecipes);
   const token = useSelector((state) => state.auth.token);
-  const userId = useSelector((state) => state.auth.userId);
-  const recipes = useSelector((state) => state.recipes.recipes);
-  const isLoading = useSelector((state) => state.recipes.isLoading);
   const dispatch = useDispatch();
 
   useFocusEffect(
@@ -19,7 +18,7 @@ const LoadCategory = (props) => {
       const getRecipes = async () => {
         dispatch(loading(true));
         try {
-          await dispatch(getAllRecipes(props.route.params.category));
+          await dispatch(getFavouriteRecipes());
         } catch (err) {
           dispatch(loading(false));
         }
@@ -38,7 +37,7 @@ const LoadCategory = (props) => {
   ) => {
     try {
       const result = await fetch(
-        `${ENVS.url}/recipes/singleRecipe/${recipeId}/${userId}`,
+        `${ENVS.url}/recipes/singleRecipe/${recipeId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -47,7 +46,6 @@ const LoadCategory = (props) => {
         }
       );
       const contents = await result.json();
-      dispatch(updateFavourite(contents.isFav, null));
       props.navigation.navigate("View Recipe", {
         title: title,
         image: `${ENVS.url}/${image}`,
@@ -55,7 +53,6 @@ const LoadCategory = (props) => {
         instructions: contents.instructions,
         cookTime: cookTime,
         prepTime: prepTime,
-        recipeId: recipeId
       });
     } catch (err) {
       console.log(err);
@@ -63,8 +60,8 @@ const LoadCategory = (props) => {
   };
 
   return (
-    <View style={styles.screen}>
-      {!isLoading && recipes.length === 0 ? (
+    <View>
+      {!isLoading && favouriteRecipes.length === 0 ? (
         <Text
           style={{
             textAlign: "center",
@@ -73,15 +70,13 @@ const LoadCategory = (props) => {
             color: "grey",
           }}
         >
-          Sorry no recipes found...
+          Sorry no favourites found.
         </Text>
       ) : null}
-      {isLoading ? (
-        <Spinner />
-      ) : (
+      {!isLoading ? (
         <FlatList
           keyExtractor={(item) => item.id.toString()}
-          data={recipes}
+          data={favouriteRecipes}
           renderItem={({ item }) => (
             <Recipe
               onClick={onClickRecipeHandler.bind(
@@ -99,11 +94,11 @@ const LoadCategory = (props) => {
             />
           )}
         />
+      ) : (
+        <Spinner />
       )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({});
-
-export default LoadCategory;
+export default Favourites;
