@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -8,6 +8,7 @@ import {
   Image,
   Text,
   Picker,
+  Keyboard,
 } from "react-native";
 import CustomTextInput from "../../components/CustomTextInput/CustomTextInput";
 import CustomButton from "../../components/CustomButton/CustomButton";
@@ -42,9 +43,18 @@ const AddRecipe = (props) => {
   const base64 = useSelector((state) => state.recipes.image.base64);
   const cookTime = useSelector((state) => state.recipes.cookTime);
   const prepTime = useSelector((state) => state.recipes.prepTime);
-  const category = useSelector(state => state.recipes.category);
+  const category = useSelector((state) => state.recipes.category);
   const ingScroll = useRef();
   const insScroll = useRef();
+  const [showBtns, setShowBtns] = useState(true);
+
+  Keyboard.addListener("keyboardDidShow", () => {
+    if (Platform.OS === "android") return setShowBtns(false);
+  });
+
+  Keyboard.addListener("keyboardDidHide", () => {
+    if (Platform.OS === "android") return setShowBtns(true);
+  });
 
   const onAddIngredientHandler = () => {
     if (
@@ -152,7 +162,15 @@ const AddRecipe = (props) => {
   const onSaveHandler = async () => {
     try {
       await dispatch(
-        saveRecipe(title, ingredients, base64, instructions, cookTime, prepTime, category)
+        saveRecipe(
+          title,
+          ingredients,
+          base64,
+          instructions,
+          cookTime,
+          prepTime,
+          category
+        )
       );
       props.navigation.navigate("My Recipes");
     } catch (err) {
@@ -174,7 +192,7 @@ const AddRecipe = (props) => {
 
   const onChangeCategoryHandler = (itemValue) => {
     dispatch(updateCategory(itemValue));
-  }
+  };
 
   return (
     <View style={styles.screen}>
@@ -317,9 +335,13 @@ const AddRecipe = (props) => {
           />
         </View>
       </View>
-      <View style={{alignItems: 'center', marginTop: 20}}>
-        <Text style={{fontSize: 18, fontWeight: 'bold'}}>Category</Text>
-        <Picker onValueChange={onChangeCategoryHandler} selectedValue={category} style={{ width: 100 }}>
+      <View style={{ alignItems: "center", marginTop: 20 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Category</Text>
+        <Picker
+          onValueChange={onChangeCategoryHandler}
+          selectedValue={category}
+          style={{ width: 100 }}
+        >
           <Picker.Item label="Starter" value="starter" />
           <Picker.Item label="Main" value="main" />
           <Picker.Item label="Desert" value="desert" />
@@ -327,24 +349,26 @@ const AddRecipe = (props) => {
           <Picker.Item label="Other" value="other" />
         </Picker>
       </View>
-      <View style={styles.submitBtns}>
-        <View style={styles.submitBtnHolder}>
-          <CustomButton
-            onPress={onSaveHandler}
-            text="Save"
-            touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
-            textStyle={styles.btnText}
-          />
+      {showBtns ? (
+        <View style={styles.submitBtns}>
+          <View style={styles.submitBtnHolder}>
+            <CustomButton
+              onPress={onSaveHandler}
+              text="Save"
+              touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
+              textStyle={styles.btnText}
+            />
+          </View>
+          <View style={styles.submitBtnHolder}>
+            <CustomButton
+              onPress={onClearHandler}
+              text="Clear"
+              touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
+              textStyle={styles.btnText}
+            />
+          </View>
         </View>
-        <View style={styles.submitBtnHolder}>
-          <CustomButton
-            onPress={onClearHandler}
-            text="Clear"
-            touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
-            textStyle={styles.btnText}
-          />
-        </View>
-      </View>
+      ) : null}
     </View>
   );
 };
