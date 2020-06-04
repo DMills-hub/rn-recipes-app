@@ -5,11 +5,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import { loading, getFavouriteRecipes } from "../../store/actions/recipe";
 import Recipe from "../../components/Recipe/Recipe";
 import Spinner from "../../components/Spinner/Spinner";
-import ENVS from '../../env';
+import onClickRecipe from '../../helpers/onClickRecipe';
 
 const Favourites = (props) => {
   const isLoading = useSelector((state) => state.recipes.loading);
   const favouriteRecipes = useSelector((state) => state.recipes.favouriteRecipes);
+  const userId = useSelector((state) => state.auth.userId);
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
 
@@ -36,24 +37,7 @@ const Favourites = (props) => {
     prepTime
   ) => {
     try {
-      const result = await fetch(
-        `${ENVS.url}/recipes/singleRecipe/${recipeId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": token,
-          },
-        }
-      );
-      const contents = await result.json();
-      props.navigation.navigate("View Recipe", {
-        title: title,
-        image: `${ENVS.url}/${image}`,
-        ingredients: contents.ingredients,
-        instructions: contents.instructions,
-        cookTime: cookTime,
-        prepTime: prepTime,
-      });
+      await onClickRecipe(props.navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime);
     } catch (err) {
       console.log(err);
     }

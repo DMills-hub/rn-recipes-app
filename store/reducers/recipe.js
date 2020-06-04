@@ -63,6 +63,7 @@ const reducer = (state = initialState, action) => {
         ...initialState,
         recipes: state.recipes,
         myRecipes: state.myRecipes,
+        favouriteRecipes: state.favouriteRecipes
       };
     case ERR_RECIPE:
       return errorRecipe(state, action.error);
@@ -71,6 +72,7 @@ const reducer = (state = initialState, action) => {
         ...initialState,
         recipes: state.recipes,
         myRecipes: state.myRecipes,
+        favouriteRecipes: state.favouriteRecipes
       };
     case GET_ALL_RECIPES:
       return getAllRecipes(state, action.recipes);
@@ -89,7 +91,6 @@ const reducer = (state = initialState, action) => {
     case UPDATE_FAVOURITE:
       return {...state, isFavourite: action.fav};
     case UPDATE_FAVOURITE_RECIPES:
-      console.log(action.myFavourites)
       return {...state, favouriteRecipes: action.myFavourites};
     default:
       return state;

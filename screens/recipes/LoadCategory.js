@@ -4,8 +4,8 @@ import Spinner from "../../components/Spinner/Spinner";
 import { useSelector, useDispatch } from "react-redux";
 import Recipe from "../../components/Recipe/Recipe";
 import { useFocusEffect } from '@react-navigation/native'
-import { loading, getAllRecipes, updateFavourite } from '../../store/actions/recipe';
-import ENVS from '../../env';
+import { loading, getAllRecipes } from '../../store/actions/recipe';
+import onClickRecipe from '../../helpers/onClickRecipe';
 
 const LoadCategory = (props) => {
   const token = useSelector((state) => state.auth.token);
@@ -37,26 +37,7 @@ const LoadCategory = (props) => {
     prepTime
   ) => {
     try {
-      const result = await fetch(
-        `${ENVS.url}/recipes/singleRecipe/${recipeId}/${userId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": token,
-          },
-        }
-      );
-      const contents = await result.json();
-      dispatch(updateFavourite(contents.isFav, null));
-      props.navigation.navigate("View Recipe", {
-        title: title,
-        image: `${ENVS.url}/${image}`,
-        ingredients: contents.ingredients,
-        instructions: contents.instructions,
-        cookTime: cookTime,
-        prepTime: prepTime,
-        recipeId: recipeId
-      });
+      await onClickRecipe(props.navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime);
     } catch (err) {
       console.log(err);
     }
