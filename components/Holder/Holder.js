@@ -13,6 +13,7 @@ const IngredientHolder = (props) => {
         onChangeText={props.onChangeText}
         style={styles.ingredientAdd}
         value={props.value}
+        multiline
       />
       <CustomButton
         text={

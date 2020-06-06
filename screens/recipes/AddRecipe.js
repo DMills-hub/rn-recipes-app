@@ -29,10 +29,12 @@ import {
   updateCookTime,
   updatePrepTime,
   updateCategory,
+  loading,
 } from "../../store/actions/recipe";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import Card from "../../components/Card/Card";
+import Spinner from '../../components/Spinner/Spinner';
 
 const AddRecipe = (props) => {
   const dispatch = useDispatch();
@@ -44,6 +46,7 @@ const AddRecipe = (props) => {
   const cookTime = useSelector((state) => state.recipes.cookTime);
   const prepTime = useSelector((state) => state.recipes.prepTime);
   const category = useSelector((state) => state.recipes.category);
+  const isLoading = useSelector(state => state.recipes.loading);
   const ingScroll = useRef();
   const insScroll = useRef();
   const [showBtns, setShowBtns] = useState(true);
@@ -164,8 +167,6 @@ const AddRecipe = (props) => {
       title === "" ||
       ingredients.length === 0 ||
       instructions.length === 0 ||
-      !imageUri ||
-      !base64 ||
       cookTime === "" ||
       prepTime === ""
     )
@@ -173,7 +174,11 @@ const AddRecipe = (props) => {
     return true;
   };
 
-  const onSaveHandler = async () => {
+  const onChoosePublishHandler = () => {
+    return Alert.alert("Do you want everyone to see your recipe?", "If you make this publishable everyone will be able to see your recipe. Click Yes to make this happen or No if you want to keep it private.", [{text: 'Yes', onPress: async () => await onSaveHandler(true) }, {text: 'No', onPress: async () => await onSaveHandler(false)}])
+  }
+
+  const onSaveHandler = async (publishable) => {
     const checkReicpeValidity = validateRecipe();
     if (!checkReicpeValidity)
       return Alert.alert(
@@ -181,6 +186,7 @@ const AddRecipe = (props) => {
         "Please make sure all of the fields have something entered in them and you have a picture.",
         [{ text: "Okay" }]
       );
+    dispatch(loading(true))
     try {
       await dispatch(
         saveRecipe(
@@ -190,13 +196,15 @@ const AddRecipe = (props) => {
           instructions,
           cookTime,
           prepTime,
-          category
+          category,
+          publishable
         )
       );
       props.navigation.navigate("My Recipes");
     } catch (err) {
       console.log(err);
     }
+    dispatch(loading(false))
   };
 
   const onClearHandler = () => {
@@ -292,7 +300,7 @@ const AddRecipe = (props) => {
         <View style={styles.ingredientAddContainer}>
           <CustomButton
             touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
-            text="Add Instruction"
+            text="Add Method"
             textStyle={styles.btnText}
             onPress={onAddInstructionHandler}
           />
@@ -317,7 +325,7 @@ const AddRecipe = (props) => {
                   value={ins.instruction}
                   delete={onDeleteInstructionHandler.bind(this, ins.id)}
                   onChangeText={onChangeInstructionHandler.bind(this, index)}
-                  customPlaceholder="Instruction..."
+                  customPlaceholder="Method..."
                 />
               ))}
             </Card>
@@ -365,16 +373,16 @@ const AddRecipe = (props) => {
         >
           <Picker.Item label="Starter" value="starter" />
           <Picker.Item label="Main" value="main" />
-          <Picker.Item label="Desert" value="desert" />
+          <Picker.Item label="Dessert" value="dessert" />
           <Picker.Item label="Baking" value="baking" />
           <Picker.Item label="Other" value="other" />
         </Picker>
       </View>
-      {showBtns ? (
+      {showBtns && !isLoading ? (
         <View style={styles.submitBtns}>
           <View style={styles.submitBtnHolder}>
             <CustomButton
-              onPress={onSaveHandler}
+              onPress={onChoosePublishHandler}
               text="Save"
               touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
               textStyle={styles.btnText}
@@ -389,7 +397,7 @@ const AddRecipe = (props) => {
             />
           </View>
         </View>
-      ) : null}
+      ) : <Spinner />}
     </View>
   );
 };

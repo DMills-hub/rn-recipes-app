@@ -18,7 +18,8 @@ import {
   UPDATE_PREP_TIME,
   UPDATE_CATEGORY,
   UPDATE_FAVOURITE,
-  UPDATE_FAVOURITE_RECIPES
+  UPDATE_FAVOURITE_RECIPES,
+  DELETE_RECIPE
 } from "../types/recipe";
 
 const initialState = {
@@ -92,6 +93,8 @@ const reducer = (state = initialState, action) => {
       return {...state, isFavourite: action.fav};
     case UPDATE_FAVOURITE_RECIPES:
       return {...state, favouriteRecipes: action.myFavourites};
+    case DELETE_RECIPE:
+      return {...state, myRecipes: state.myRecipes.filter(recipe => recipe.id !== Number(action.recipeId))}
     default:
       return state;
   }

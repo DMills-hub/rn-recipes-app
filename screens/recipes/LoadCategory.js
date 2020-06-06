@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useLayoutEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import Spinner from "../../components/Spinner/Spinner";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,19 +7,25 @@ import { useFocusEffect } from '@react-navigation/native'
 import { loading, getAllRecipes } from '../../store/actions/recipe';
 import onClickRecipe from '../../helpers/onClickRecipe';
 
-const LoadCategory = (props) => {
+const LoadCategory = ({navigation, route}) => {
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
   const recipes = useSelector((state) => state.recipes.recipes);
   const isLoading = useSelector((state) => state.recipes.isLoading);
   const dispatch = useDispatch();
+  
+ useLayoutEffect(() => {
+   navigation.setOptions({
+     headerTitle: route.params.name
+   })
+ }, [route.params.name])
 
   useFocusEffect(
     useCallback(() => {
       const getRecipes = async () => {
         dispatch(loading(true));
         try {
-          await dispatch(getAllRecipes(props.route.params.category));
+          await dispatch(getAllRecipes(route.params.category));
         } catch (err) {
           dispatch(loading(false));
         }
@@ -37,7 +43,7 @@ const LoadCategory = (props) => {
     prepTime
   ) => {
     try {
-      await onClickRecipe(props.navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime);
+      await onClickRecipe(navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime);
     } catch (err) {
       console.log(err);
     }

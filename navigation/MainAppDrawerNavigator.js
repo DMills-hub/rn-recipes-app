@@ -82,7 +82,7 @@ const MyStack = () => {
           return {
             drawerIcon: () => (
               <Ionicons
-                name={Platform.OS === "android" ? "md-star" : "ios-star"}
+                name={Platform.OS === "android" ? "md-heart" : "ios-heart"}
                 size={23}
               />
             ),

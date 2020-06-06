@@ -4,8 +4,6 @@ import {
   StyleSheet,
   Text,
   Image,
-  Alert,
-  Button,
   Platform,
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
@@ -48,8 +46,9 @@ const ViewRecipe = ({ navigation, route }) => {
           />
         </HeaderButtons>
       ),
+      headerTitle: title
     });
-  }, [navigation, isFav]);
+  }, [navigation, isFav, title]);
 
   return (
     <View style={styles.screen}>

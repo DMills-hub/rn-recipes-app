@@ -25,14 +25,6 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
-// async () => {
-//   try {
-//      await dispatch(logout());
-//     props.navigation.navigate("Auth");
-//   } catch (err) {
-//     console.log(err);
-//   }
-// }
 
 const App = () => {
   return (

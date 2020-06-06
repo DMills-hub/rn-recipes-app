@@ -19,10 +19,33 @@ import {
   UPDATE_CATEGORY,
   UPDATE_FAVOURITE,
   UPDATE_FAVOURITE_RECIPES,
+  DELETE_RECIPE
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+export const deleteRecipe = (id) => {
+  return async dispatch => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      await fetch(`${ENVS.url}/recipes/deleteRecipe`, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": token
+        },
+        body: JSON.stringify({recipeId: id}),
+        method: 'POST'
+      })
+      dispatch({
+        type: DELETE_RECIPE,
+        recipeId: id
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
 
 export const getFavouriteRecipes = () => {
   return async dispatch => {
@@ -168,7 +191,8 @@ export const saveRecipe = (
   instructions,
   cookTime,
   prepTime,
-  category
+  category,
+  publishable
 ) => {
   return async (dispatch) => {
     try {
@@ -195,6 +219,7 @@ export const saveRecipe = (
           cookTime: cookTime,
           prepTime: prepTime,
           category: category,
+          publishable: publishable
         }),
       });
       if (saveRecipe.error)
