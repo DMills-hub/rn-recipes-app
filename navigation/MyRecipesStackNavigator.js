@@ -31,16 +31,6 @@ const MyStack = () => {
                 </HeaderButtons>
               );
             },
-            headerRight: () => {
-              return (
-                <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                  <Item
-                    iconName={Platform.OS === "android" ? "md-add" : "ios-add"}
-                    onPress={() => navigation.navigate("Add Recipe")}
-                  />
-                </HeaderButtons>
-              );
-            },
           };
         }}
       />

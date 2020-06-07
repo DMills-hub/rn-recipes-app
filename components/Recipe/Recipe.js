@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ENVS from "../../env";
+import Colors from "../../constants/Colors";
 
 const Recipe = (props) => {
   return (
@@ -10,11 +11,17 @@ const Recipe = (props) => {
       activeOpacity={0.6}
       style={styles.recipeHolder}
     >
-      <View style={styles.imageHolder}>
-        <Image
-          style={styles.image}
-          source={{ uri: `${ENVS.url}/${props.image}` }}
-        />
+      <View
+        style={props.image !== "" ? styles.imageHolder : styles.letterHolder}
+      >
+        {props.image !== "" ? (
+          <Image
+            style={styles.image}
+            source={{ uri: `${ENVS.url}/${props.image}` }}
+          />
+        ) : (
+          <Text style={styles.letterText}>{props.title.charAt(0)}</Text>
+        )}
       </View>
       <Text style={styles.title}>{props.title}</Text>
       <View style={styles.timeContainer}>
@@ -37,8 +44,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 10,
     paddingBottom: 5,
-    borderBottomColor: 'lightgrey',
-    borderBottomWidth: 1
+    borderBottomColor: "lightgrey",
+    borderBottomWidth: 1,
   },
   imageHolder: {
     width: 60,
@@ -46,6 +53,21 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 30,
     marginRight: 10,
+  },
+  letterHolder: {
+    width: 60,
+    height: 60,
+    overflow: "hidden",
+    borderRadius: 30,
+    marginRight: 10,
+    justifyContent: "center",
+    backgroundColor: Colors.primary,
+  },
+  letterText: {
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 30,
+    color: "white",
   },
   image: {
     width: "100%",
@@ -58,12 +80,12 @@ const styles = StyleSheet.create({
   timeContainer: {
     marginHorizontal: 10,
     flex: 1,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   timeContainerFlex: {
-    flexDirection: 'row',
-    marginVertical: 5
-  }
+    flexDirection: "row",
+    marginVertical: 5,
+  },
 });
 
 export default Recipe;

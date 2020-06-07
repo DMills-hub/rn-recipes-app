@@ -37,7 +37,7 @@ const Favourites = (props) => {
     prepTime
   ) => {
     try {
-      await onClickRecipe(props.navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime);
+      await onClickRecipe(props.navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, false);
     } catch (err) {
       console.log(err);
     }

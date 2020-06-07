@@ -1,7 +1,7 @@
 import { updateFavourite } from '../store/actions/recipe';1
 import ENVS from '../env';
 
-const onClickRecipe = async (navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime) => {
+const onClickRecipe = async (navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, fromMyRecipe) => {
   try {
     const result = await fetch(
       `${ENVS.url}/recipes/singleRecipe/${recipeId}/${userId}`,
@@ -21,7 +21,8 @@ const onClickRecipe = async (navigation, dispatch, recipeId, userId, token, titl
       instructions: contents.instructions,
       cookTime: cookTime,
       prepTime: prepTime,
-      recipeId: recipeId
+      recipeId: recipeId,
+      fromMyRecipe: fromMyRecipe
     });
   } catch (err) {
     console.log(err);

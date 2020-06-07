@@ -19,11 +19,42 @@ import {
   UPDATE_CATEGORY,
   UPDATE_FAVOURITE,
   UPDATE_FAVOURITE_RECIPES,
-  DELETE_RECIPE
+  DELETE_RECIPE,
+  UPDATE_IMAGE,
+  CLEAR_IMAGE
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+export const clearImage = () => {
+  return {
+    type: CLEAR_IMAGE
+  }
+}
+
+export const updateImage = (recipeId, uri, base64) => {
+  return async dispatch => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      await fetch(`${ENVS.url}/recipes/updateImage`, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": token
+        },
+        body: JSON.stringify({recipeId: recipeId, base64: base64}),
+        method: 'POST'
+      })
+      dispatch({
+        type: UPDATE_IMAGE,
+        uri: uri, 
+        base64: base64
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
 
 export const deleteRecipe = (id) => {
   return async dispatch => {

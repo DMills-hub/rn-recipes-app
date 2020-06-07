@@ -19,7 +19,9 @@ import {
   UPDATE_CATEGORY,
   UPDATE_FAVOURITE,
   UPDATE_FAVOURITE_RECIPES,
-  DELETE_RECIPE
+  DELETE_RECIPE,
+  UPDATE_IMAGE,
+  CLEAR_IMAGE
 } from "../types/recipe";
 
 const initialState = {
@@ -95,6 +97,10 @@ const reducer = (state = initialState, action) => {
       return {...state, favouriteRecipes: action.myFavourites};
     case DELETE_RECIPE:
       return {...state, myRecipes: state.myRecipes.filter(recipe => recipe.id !== Number(action.recipeId))}
+    case UPDATE_IMAGE:
+      return { ...state, image: { uri: action.uri, base64: action.base64 }}
+    case CLEAR_IMAGE:
+      return { ...state, image: { uri: null, base64: null } }
     default:
       return state;
   }

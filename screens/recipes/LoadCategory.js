@@ -43,7 +43,7 @@ const LoadCategory = ({navigation, route}) => {
     prepTime
   ) => {
     try {
-      await onClickRecipe(navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime);
+      await onClickRecipe(navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, false);
     } catch (err) {
       console.log(err);
     }

@@ -1,19 +1,44 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useLayoutEffect } from "react";
 import { View, FlatList, Text, Animated, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { loading, getMyRecipes, deleteRecipe } from "../../store/actions/recipe";
+import {
+  loading,
+  getMyRecipes,
+  deleteRecipe,
+  clearImage,
+} from "../../store/actions/recipe";
 import Recipe from "../../components/Recipe/Recipe";
 import Spinner from "../../components/Spinner/Spinner";
 import onClickRecipe from "../../helpers/onClickRecipe";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import CustomHeaderButton from "../../components/CustomHeaderButton/CustomHeaderButton";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
-const MyRecipes = (props) => {
+const MyRecipes = ({ navigation }) => {
   const isLoading = useSelector((state) => state.recipes.loading);
   const myRecipes = useSelector((state) => state.recipes.myRecipes);
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
   const dispatch = useDispatch();
+
+  const onAddRecipeHandler = () => {
+    dispatch(clearImage());
+    navigation.navigate("Add Recipe");
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item
+            iconName={Platform.OS === "android" ? "md-add" : "ios-add"}
+            onPress={() => onAddRecipeHandler()}
+          />
+        </HeaderButtons>
+      ),
+    });
+  }, [navigation]);
 
   useFocusEffect(
     useCallback(() => {
@@ -39,7 +64,7 @@ const MyRecipes = (props) => {
   ) => {
     try {
       await onClickRecipe(
-        props.navigation,
+        navigation,
         dispatch,
         recipeId,
         userId,
@@ -47,7 +72,8 @@ const MyRecipes = (props) => {
         title,
         image,
         cookTime,
-        prepTime
+        prepTime,
+        true
       );
     } catch (err) {
       console.log(err);
@@ -60,32 +86,39 @@ const MyRecipes = (props) => {
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   const RightActions = (id, progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
       outputRange: [0.7, 0],
-      extrapolate: 'clamp'
+      extrapolate: "clamp",
     });
     return (
       <TouchableOpacity onPress={onDeleteRecipeHandler.bind(this, id)}>
-       <View
-         style={{ flex: 1, backgroundColor: 'red', justifyContent: 'center', marginBottom: 10 }}>
-         <Animated.Text
-           style={{
-             color: 'white',
-             paddingHorizontal: 10,
-             fontWeight: '600',
-             transform: [{ scale }],
-             fontSize: 24
-           }}>
-           Delete
-         </Animated.Text>
-       </View>
-     </TouchableOpacity>
-    )
-   }
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "red",
+            justifyContent: "center",
+            marginBottom: 10,
+          }}
+        >
+          <Animated.Text
+            style={{
+              color: "white",
+              paddingHorizontal: 10,
+              fontWeight: "600",
+              transform: [{ scale }],
+              fontSize: 24,
+            }}
+          >
+            Delete
+          </Animated.Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View>
@@ -106,7 +139,10 @@ const MyRecipes = (props) => {
           keyExtractor={(item) => item.id.toString()}
           data={myRecipes}
           renderItem={({ item }) => (
-            <Swipeable friction={1} renderRightActions={RightActions.bind(this, item.id.toString())}>
+            <Swipeable
+              friction={1}
+              renderRightActions={RightActions.bind(this, item.id.toString())}
+            >
               <Recipe
                 onClick={onClickRecipeHandler.bind(
                   this,
