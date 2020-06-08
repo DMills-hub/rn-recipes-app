@@ -5,4 +5,8 @@ export default {
     backgroundColor: Colors.primary,
   },
   headerTintColor: "white",
+  headerTitleStyle: {
+    fontFamily: "lobster",
+    fontSize: 25
+  }
 };

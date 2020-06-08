@@ -1,22 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { createStore, combineReducers, applyMiddleware } from "redux";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import AuthReducer from "./store/reducers/auth";
 import RecipesReducer from "./store/reducers/recipe";
 import ReduxThunk from "redux-thunk";
-import { NavigationContainer } from "@react-navigation/native";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItem,
-  DrawerItemList,
-} from "@react-navigation/drawer";
-import AllRecipesStack from "./navigation/AllRecipesStackNavigator";
-import MyRecipesStack from "./navigation/MyRecipesStackNavigator";
-import Colors from "./constants/Colors";
-import { logout } from "./store/actions/auth";
-import Navigator from './navigation/Navigator';
-
+import Navigator from "./navigation/Navigator";
+import * as Font from "expo-font";
+import { AppLoading } from "expo";
 
 const rootReducer = combineReducers({
   auth: AuthReducer,
@@ -25,8 +15,19 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
+const fetchFonts = () => {
+  return Font.loadAsync({
+    "lobster": require('./assets/fonts/Lobster-Regular.ttf')
+  });
+};
 
 const App = () => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  if (!fontsLoaded) {
+    return <AppLoading startAsync={fetchFonts} onFinish={() => setFontsLoaded(true)} />
+  }
+
   return (
     <Provider store={store}>
       <Navigator />

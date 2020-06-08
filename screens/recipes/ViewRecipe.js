@@ -7,10 +7,10 @@ import {
   Platform,
   Alert,
   TouchableOpacity,
-  FlatList,
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import Card from "../../components/Card/Card";
 import CustomHeaderButton from "../../components/CustomHeaderButton/CustomHeaderButton";
@@ -34,6 +34,7 @@ import CustomButton from "../../components/CustomButton/CustomButton";
 import Spinner from "../../components/Spinner/Spinner";
 import Review from "../../components/Review/Review";
 import { useFocusEffect } from "@react-navigation/native";
+import Filter from 'bad-words';
 
 const ViewRecipe = ({ navigation, route }) => {
   const title = route.params.title;
@@ -45,16 +46,17 @@ const ViewRecipe = ({ navigation, route }) => {
   const recipeId = route.params.recipeId;
   const fromMyRecipe = route.params.fromMyRecipe;
   const isReviewed = route.params.isReviewed;
-  const reviews = route.params.reviews;
   const isFav = useSelector((state) => state.recipes.isFavourite);
   const imageUri = useSelector((state) => state.recipes.image.uri);
   const isLoading = useSelector((state) => state.recipes.loading);
+  const reviews = useSelector((state) => state.recipes.reviews);
   const dispatch = useDispatch();
   const [addedReview, setAddedReview] = useState(false);
   const [gettingReviews, setGettingReviews] = useState(false);
   const [review, setReview] = useState("");
   const [reviewTitle, setReviewTitle] = useState("");
   const [rating, setRating] = useState(0);
+  const filter = new Filter();
 
   const favouriteHandler = async () => {
     try {
@@ -186,10 +188,16 @@ const ViewRecipe = ({ navigation, route }) => {
   const onAddReviewHandler = async () => {
     dispatch(loading(true));
     try {
+      const filteredReview = filter.isProfane(review);
+      const filteredReviewTitle = filter.isProfane(reviewTitle);
+      if (filteredReview || filteredReviewTitle) return Alert.alert("Sorry you can't add that review.", "Sorry we couldn't add that review we don't condone bad language.", [{text: 'Okay'}])
       await dispatch(saveReview(recipeId, review, rating, reviewTitle));
       setAddedReview(true);
-      setGettingReviews(true);
-      await dispatch(getAllReviews(recipeId))
+      Alert.alert(
+        "Review Added",
+        "We've successfully added your review on this recipe.",
+        [{ text: "Okay" }]
+      );
     } catch (err) {
       console.log(err);
     }
@@ -198,114 +206,148 @@ const ViewRecipe = ({ navigation, route }) => {
   };
 
   return (
-      <TouchableWithoutFeedback onPress={onDismissKeyboard}>
-        <View style={styles.screen}>
-          <View style={styles.holder}>
-            <Text style={styles.title}>{title}</Text>
-            {image === `${ENVS.url}/` && imageUri === null && fromMyRecipe ? (
-              <View style={styles.addImage}>
-                <TouchableOpacity onPress={onAddNewImageHandler}>
-                  <Ionicons
-                    color="white"
-                    name={Platform.OS === "android" ? "md-add" : "ios-add"}
-                    size={60}
-                  />
-                </TouchableOpacity>
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={{flex: 1}}
+      keyboardVerticalOffset={20}
+    >
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={onDismissKeyboard}>
+          <View style={styles.screen}>
+            <View style={styles.holder}>
+              <Text style={styles.title}>{title}</Text>
+              {image === `${ENVS.url}/` && imageUri === null && fromMyRecipe ? (
+                <View style={styles.addImage}>
+                  <TouchableOpacity onPress={onAddNewImageHandler}>
+                    <Ionicons
+                      color="white"
+                      name={Platform.OS === "android" ? "md-add" : "ios-add"}
+                      size={60}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Image
+                  source={{
+                    uri: `${image !== `${ENVS.url}/` ? image : imageUri}`,
+                  }}
+                  style={{ width: 80, height: 80, borderRadius: 40 }}
+                />
+              )}
+            </View>
+            <Card style={{ ...styles.holder, alignItems: "flex-start" }}>
+              <View style={{ width: "50%" }}>
+                <Text style={styles.holderText}>Ingredients</Text>
+                {ingredients.map((ingredient) => (
+                  <View style={styles.contentsHolder} key={ingredient.id}>
+                    <Text>
+                      - {ingredient.ingredient}
+                    </Text>
+                  </View>
+                ))}
               </View>
-            ) : (
-              <Image
-                source={{
-                  uri: `${image !== `${ENVS.url}/` ? image : imageUri}`,
-                }}
-                style={{ width: 80, height: 80, borderRadius: 40 }}
-              />
-            )}
-          </View>
-          <Card style={{ ...styles.holder, alignItems: "flex-start" }}>
-            <View>
-              <Text>Ingredients</Text>
-              <FlatList
-                data={ingredients}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <View style={styles.contentsHolder}>
-                    <Text style={styles.holderText}>- {item.ingredient}</Text>
+              <View style={{ width: "50%" }}>
+                <Text style={styles.holderText}>Instructions</Text>
+                {instructions.map((instruction) => (
+                  <View key={instruction.id} style={styles.contentsHolder}>
+                    <Text>
+                      - {instruction.instruction}
+                    </Text>
                   </View>
-                )}
-              />
+                ))}
+              </View>
+            </Card>
+            <View style={styles.timeContainer}>
+              <Text>Cook Time - {cookTime}</Text>
+              <Text>Prep Time - {prepTime}</Text>
             </View>
-            <View>
-              <Text>Instructions</Text>
-              <FlatList
-                data={instructions}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <View style={styles.contentsHolder}>
-                    <Text style={styles.holderText}>- {item.instruction}</Text>
-                  </View>
-                )}
-              />
-            </View>
-          </Card>
-          <View style={styles.timeContainer}>
-            <Text>Cook Time - {cookTime}</Text>
-            <Text>Prep Time - {prepTime}</Text>
-          </View>
-          {isReviewed || addedReview ? null : (
-            <Card
-              style={{ width: "80%", justifyContent: "center", padding: 20 }}
-            >
-              <Text
+            {isReviewed || addedReview || fromMyRecipe ? null : (
+              <Card
                 style={{
-                  fontSize: 25,
-                  fontWeight: "bold",
-                  textAlign: "center",
-                  paddingBottom: 10,
+                  width: "80%",
+                  justifyContent: "center",
+                  padding: 20,
+                  marginBottom: 20,
                 }}
               >
-                Add Review
-              </Text>
-              <CustomTextInput
-                placeholder="Title..."
-                onChangeText={onChangeReviewTitleHandler}
-                value={reviewTitle}
-                style={{ fontSize: 25, fontWeight: "bold" }}
-              />
-              <CustomTextInput
-                multiline
-                placeholder="Review..."
-                onChangeText={onChangeReviewHandler}
-                value={review}
-              />
-              <AirbnbRating
-                defaultRating={0}
-                onFinishRating={onFinishRatingHandler}
-                size={30}
-              />
-              <CustomButton
-                touchStyle={styles.touch}
-                textStyle={styles.btnText}
-                text="Add Review"
-                onPress={onAddReviewHandler}
-              />
-            </Card>
-          )}
-          {isLoading && !addedReview ? <Spinner /> : null}
-          <View>
-            {!isLoading && !gettingReviews ? (
-              reviews.map((review) => (
-                <Review
-                  title={review.title}
-                  review={review.review}
-                  rating={review.rating}
+                <Text
+                  style={{
+                    fontSize: 25,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    paddingBottom: 10,
+                  }}
+                >
+                  Add Review
+                </Text>
+                <CustomTextInput
+                  placeholder="Title..."
+                  onChangeText={onChangeReviewTitleHandler}
+                  value={reviewTitle}
+                  style={{ fontSize: 25, fontWeight: "bold" }}
                 />
-              ))
-            ) : (
-              <Spinner />
+                <CustomTextInput
+                  multiline
+                  placeholder="Review..."
+                  onChangeText={onChangeReviewHandler}
+                  value={review}
+                />
+                <AirbnbRating
+                  defaultRating={0}
+                  onFinishRating={onFinishRatingHandler}
+                  size={30}
+                />
+                <CustomButton
+                  touchStyle={styles.touch}
+                  textStyle={styles.btnText}
+                  text="Add Review"
+                  onPress={onAddReviewHandler}
+                />
+              </Card>
             )}
+            {reviews.length !== 0 ? (
+              <Card style={{ width: "80%", padding: 20, marginBottom: 30 }}>
+                <Text
+                  style={{
+                    fontSize: 25,
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    paddingBottom: 10,
+                  }}
+                >
+                  Reviews
+                </Text>
+                {!isLoading && !gettingReviews ? (
+                  reviews.map((review) => (
+                    <Review
+                      key={review.title}
+                      username={review.username}
+                      title={review.title}
+                      review={review.review}
+                      rating={review.rating}
+                    />
+                  ))
+                ) : (
+                  <View>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        fontSize: 16,
+                        paddingBottom: 10,
+                      }}
+                    >
+                      Getting Reviews...
+                    </Text>
+                    <Spinner />
+                  </View>
+                )}
+              </Card>
+            ) : null}
           </View>
-        </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -322,20 +364,17 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginTop: 10,
     padding: 10,
-    maxHeight: "60%",
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
   },
   contentsHolder: {
-    alignItems: "center",
     marginTop: 10,
   },
   holderText: {
     fontWeight: "bold",
     fontSize: 16,
-    textAlign: "center",
   },
   timeContainer: {
     flexDirection: "row",

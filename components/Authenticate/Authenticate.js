@@ -35,6 +35,24 @@ const Authenticate = (props) => {
               />
             </View>
           </View>
+          {!props.loginMode ? (
+            <View style={styles.formController}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Email</Text>
+              </View>
+              <View style={styles.formControls}>
+                <Ionicons
+                  size={20}
+                  name={Platform.OS === "android" ? "md-mail" : "ios-mail"}
+                />
+                <CustomTextInput
+                  style={styles.textInput}
+                  value={props.email}
+                  onChangeText={props.onEmailChange}
+                />
+              </View>
+            </View>
+          ) : null}
           <View style={styles.formController}>
             <View style={styles.labelContainer}>
               <Text style={styles.label}>Password</Text>
@@ -105,10 +123,11 @@ const styles = StyleSheet.create({
     zIndex: 100
   },
   authContainer: {
-    height: 400,
+    height: 500,
     width: "80%",
     alignItems: "center",
     justifyContent: "center",
+    minHeight: '60%'
   },
   scrollViewContainer: {
     alignItems: "center",

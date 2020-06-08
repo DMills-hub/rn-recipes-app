@@ -112,7 +112,7 @@ const reducer = (state = initialState, action) => {
     case CLEAR_IMAGE:
       return { ...state, image: { uri: null, base64: null } };
     case SAVE_REVIEW:
-      return { ...state };
+      return { ...state, reviews: state.reviews.concat({ title: action.title, review: action.review, rating: action.rating, username: action.username }) };
     case GET_REVIEWS:
       return { ...state, reviews: action.reviews }
     default:

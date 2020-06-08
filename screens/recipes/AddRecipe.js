@@ -9,6 +9,7 @@ import {
   Text,
   Picker,
   Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import CustomTextInput from "../../components/CustomTextInput/CustomTextInput";
 import CustomButton from "../../components/CustomButton/CustomButton";
@@ -237,183 +238,188 @@ const AddRecipe = (props) => {
   };
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.title}>
-        <View style={styles.titleHolder}>
-          <CustomTextInput
-            onChangeText={onChangeTitleHandler}
-            placeholder="Title..."
-            style={styles.customText}
-            value={title}
-          />
-        </View>
-        {imageUri ? (
-          <View style={styles.imageHolder}>
-            <Image source={{ uri: imageUri }} style={styles.image} />
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.screen}>
+        <View style={styles.title}>
+          <View style={styles.titleHolder}>
+            <CustomTextInput
+              onChangeText={onChangeTitleHandler}
+              placeholder="Title..."
+              style={styles.customText}
+              value={title}
+            />
           </View>
-        ) : null}
-      </View>
+          {imageUri ? (
+            <View style={styles.imageHolder}>
+              <Image source={{ uri: imageUri }} style={styles.image} />
+            </View>
+          ) : null}
+        </View>
 
-      {imageUri ? null : (
-        <View style={styles.button}>
-          <View style={styles.btnContainer}>
-            <CustomButton
-              touchStyle={styles.touch}
-              text="Take Picture"
-              textStyle={styles.btnText}
-              onPress={onTakePictureHandler}
-            />
+        {imageUri ? null : (
+          <View style={styles.button}>
+            <View style={styles.btnContainer}>
+              <CustomButton
+                touchStyle={styles.touch}
+                text="Take Picture"
+                textStyle={styles.btnText}
+                onPress={onTakePictureHandler}
+              />
+            </View>
+            <View style={styles.btnContainer}>
+              <CustomButton
+                touchStyle={styles.touch}
+                text="Choose from Gallery"
+                textStyle={styles.btnText}
+                onPress={onChooseFromGalleryHandler}
+              />
+            </View>
           </View>
-          <View style={styles.btnContainer}>
+        )}
+        <View style={styles.controlsContainer}>
+          <View style={styles.ingredientAddContainer}>
             <CustomButton
-              touchStyle={styles.touch}
-              text="Choose from Gallery"
+              touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
+              text="Add Ingredient"
               textStyle={styles.btnText}
-              onPress={onChooseFromGalleryHandler}
+              onPress={onAddIngredientHandler}
             />
-          </View>
-        </View>
-      )}
-      <View style={styles.controlsContainer}>
-        <View style={styles.ingredientAddContainer}>
-          <CustomButton
-            touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
-            text="Add Ingredient"
-            textStyle={styles.btnText}
-            onPress={onAddIngredientHandler}
-          />
 
-          <ScrollView
-            ref={ingScroll}
-            onContentSizeChange={() =>
-              ingScroll.current.scrollToEnd({ animated: true })
-            }
-          >
-            <Card
-              style={{
-                shadowColor: "white",
-                shadowOpacity: 0,
-                shadowOffset: { width: 0, height: 0 },
-                shadowRadius: 0,
-                elevation: 0,
-              }}
+            <ScrollView
+              ref={ingScroll}
+              onContentSizeChange={() =>
+                ingScroll.current.scrollToEnd({ animated: true })
+              }
             >
-              {ingredients.map((ing, index) => (
-                <Holder
-                  key={ing.id}
-                  onChangeText={onChangeIngredientTextHandler.bind(this, index)}
-                  delete={onDeleteIngredientHandler.bind(this, ing.id)}
-                  customPlaceholder="Ingredient..."
-                  value={ing.ing}
-                />
-              ))}
-            </Card>
-          </ScrollView>
-        </View>
-        <View style={styles.ingredientAddContainer}>
-          <CustomButton
-            touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
-            text="Add Method"
-            textStyle={styles.btnText}
-            onPress={onAddInstructionHandler}
-          />
-          <ScrollView
-            ref={insScroll}
-            onContentSizeChange={() =>
-              insScroll.current.scrollToEnd({ animated: true })
-            }
-          >
-            <Card
-              style={{
-                shadowColor: "white",
-                shadowOpacity: 0,
-                shadowOffset: { width: 0, height: 0 },
-                shadowRadius: 0,
-                elevation: 0,
-              }}
-            >
-              {instructions.map((ins, index) => (
-                <Holder
-                  key={ins.id}
-                  value={ins.instruction}
-                  delete={onDeleteInstructionHandler.bind(this, ins.id)}
-                  onChangeText={onChangeInstructionHandler.bind(this, index)}
-                  customPlaceholder="Method..."
-                />
-              ))}
-            </Card>
-          </ScrollView>
-        </View>
-      </View>
-      <View style={styles.time}>
-        <View
-          style={{
-            ...styles.time,
-            width: "40%",
-            justifyContent: "flex-start",
-            alignItems: "center",
-          }}
-        >
-          <Text>Cook Time - </Text>
-          <CustomTextInput
-            onChangeText={onCookTimeChangeHandler}
-            value={cookTime}
-            placeholder="10mins..."
-          />
-        </View>
-        <View
-          style={{
-            ...styles.time,
-            width: "40%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text>Prep Time - </Text>
-          <CustomTextInput
-            onChangeText={onPrepTimeChangeHandler}
-            value={prepTime}
-            placeholder="10mins..."
-          />
-        </View>
-      </View>
-      <View style={{ alignItems: "center", marginTop: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Category</Text>
-        <Picker
-          onValueChange={onChangeCategoryHandler}
-          selectedValue={category}
-          style={{ width: 120 }}
-        >
-          <Picker.Item label="Starter" value="starter" />
-          <Picker.Item label="Main" value="main" />
-          <Picker.Item label="Dessert" value="dessert" />
-          <Picker.Item label="Baking" value="baking" />
-          <Picker.Item label="Other" value="other" />
-        </Picker>
-      </View>
-      {showBtns && !isLoading ? (
-        <View style={styles.submitBtns}>
-          <View style={styles.submitBtnHolder}>
+              <Card
+                style={{
+                  shadowColor: "white",
+                  shadowOpacity: 0,
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowRadius: 0,
+                  elevation: 0,
+                }}
+              >
+                {ingredients.map((ing, index) => (
+                  <Holder
+                    key={ing.id}
+                    onChangeText={onChangeIngredientTextHandler.bind(
+                      this,
+                      index
+                    )}
+                    delete={onDeleteIngredientHandler.bind(this, ing.id)}
+                    customPlaceholder="Ingredient..."
+                    value={ing.ing}
+                  />
+                ))}
+              </Card>
+            </ScrollView>
+          </View>
+          <View style={styles.ingredientAddContainer}>
             <CustomButton
-              onPress={onChoosePublishHandler}
-              text="Save"
               touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
+              text="Add Method"
               textStyle={styles.btnText}
+              onPress={onAddInstructionHandler}
+            />
+            <ScrollView
+              ref={insScroll}
+              onContentSizeChange={() =>
+                insScroll.current.scrollToEnd({ animated: true })
+              }
+            >
+              <Card
+                style={{
+                  shadowColor: "white",
+                  shadowOpacity: 0,
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowRadius: 0,
+                  elevation: 0,
+                }}
+              >
+                {instructions.map((ins, index) => (
+                  <Holder
+                    key={ins.id}
+                    value={ins.instruction}
+                    delete={onDeleteInstructionHandler.bind(this, ins.id)}
+                    onChangeText={onChangeInstructionHandler.bind(this, index)}
+                    customPlaceholder="Method..."
+                  />
+                ))}
+              </Card>
+            </ScrollView>
+          </View>
+        </View>
+        <View style={styles.time}>
+          <View
+            style={{
+              ...styles.time,
+              width: "40%",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <Text>Cook Time - </Text>
+            <CustomTextInput
+              onChangeText={onCookTimeChangeHandler}
+              value={cookTime}
+              placeholder="10mins..."
             />
           </View>
-          <View style={styles.submitBtnHolder}>
-            <CustomButton
-              onPress={onClearHandler}
-              text="Clear"
-              touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
-              textStyle={styles.btnText}
+          <View
+            style={{
+              ...styles.time,
+              width: "40%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text>Prep Time - </Text>
+            <CustomTextInput
+              onChangeText={onPrepTimeChangeHandler}
+              value={prepTime}
+              placeholder="10mins..."
             />
           </View>
         </View>
-      ) : (
-        <Spinner />
-      )}
-    </View>
+        <View style={{ alignItems: "center", marginTop: 20 }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Category</Text>
+          <Picker
+            onValueChange={onChangeCategoryHandler}
+            selectedValue={category}
+            style={{ width: 120 }}
+          >
+            <Picker.Item label="Starter" value="starter" />
+            <Picker.Item label="Main" value="main" />
+            <Picker.Item label="Dessert" value="dessert" />
+            <Picker.Item label="Baking" value="baking" />
+            <Picker.Item label="Other" value="other" />
+          </Picker>
+        </View>
+        {showBtns && !isLoading ? (
+          <View style={styles.submitBtns}>
+            <View style={styles.submitBtnHolder}>
+              <CustomButton
+                onPress={onChoosePublishHandler}
+                text="Save"
+                touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
+                textStyle={styles.btnText}
+              />
+            </View>
+            <View style={styles.submitBtnHolder}>
+              <CustomButton
+                onPress={onClearHandler}
+                text="Clear"
+                touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
+                textStyle={styles.btnText}
+              />
+            </View>
+          </View>
+        ) : (
+          <Spinner />
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

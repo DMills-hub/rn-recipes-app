@@ -55,6 +55,7 @@ export const saveReview = (recipeId, review, rating, title) => {
     try {
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
+      const username = await AsyncStorage.getItem("username");
       await fetch(`${ENVS.url}/recipes/addReview`, {
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +68,8 @@ export const saveReview = (recipeId, review, rating, title) => {
         type: SAVE_REVIEW,
         review: review,
         rating: rating,
-        title: title
+        title: title,
+        username: username
       });
     } catch (err) {
       console.log(err);
