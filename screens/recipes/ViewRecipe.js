@@ -1,24 +1,39 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useState, useCallback } from "react";
 import {
   View,
   StyleSheet,
   Text,
   Image,
   Platform,
-  Button,
   Alert,
+  TouchableOpacity,
+  FlatList,
+  Keyboard,
+  TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import Card from "../../components/Card/Card";
 import CustomHeaderButton from "../../components/CustomHeaderButton/CustomHeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector, useDispatch } from "react-redux";
-import { updateFavourite, updateImage } from "../../store/actions/recipe";
+import {
+  updateFavourite,
+  updateImage,
+  saveReview,
+  loading,
+  getAllReviews,
+} from "../../store/actions/recipe";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
 import ENVS from "../../env";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+import { AirbnbRating } from "react-native-ratings";
+import CustomTextInput from "../../components/CustomTextInput/CustomTextInput";
+import CustomButton from "../../components/CustomButton/CustomButton";
+import Spinner from "../../components/Spinner/Spinner";
+import Review from "../../components/Review/Review";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ViewRecipe = ({ navigation, route }) => {
   const title = route.params.title;
@@ -29,9 +44,17 @@ const ViewRecipe = ({ navigation, route }) => {
   const prepTime = route.params.prepTime;
   const recipeId = route.params.recipeId;
   const fromMyRecipe = route.params.fromMyRecipe;
+  const isReviewed = route.params.isReviewed;
+  const reviews = route.params.reviews;
   const isFav = useSelector((state) => state.recipes.isFavourite);
   const imageUri = useSelector((state) => state.recipes.image.uri);
+  const isLoading = useSelector((state) => state.recipes.loading);
   const dispatch = useDispatch();
+  const [addedReview, setAddedReview] = useState(false);
+  const [gettingReviews, setGettingReviews] = useState(false);
+  const [review, setReview] = useState("");
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [rating, setRating] = useState(0);
 
   const favouriteHandler = async () => {
     try {
@@ -58,6 +81,23 @@ const ViewRecipe = ({ navigation, route }) => {
       headerTitle: title,
     });
   }, [navigation, isFav, title]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const getReviews = async () => {
+        setGettingReviews(true);
+        dispatch(loading(true));
+        try {
+          await dispatch(getAllReviews(recipeId));
+        } catch (err) {
+          dispatch(loading(false));
+        }
+        dispatch(loading(false));
+        setGettingReviews(false);
+      };
+      getReviews();
+    }, [dispatch])
+  );
 
   const getPermissions = async () => {
     try {
@@ -127,58 +167,145 @@ const ViewRecipe = ({ navigation, route }) => {
     );
   };
 
+  const onFinishRatingHandler = (rating) => {
+    setRating(rating);
+  };
+
+  const onChangeReviewHandler = (text) => {
+    setReview(text);
+  };
+
+  const onChangeReviewTitleHandler = (text) => {
+    setReviewTitle(text);
+  };
+
+  const onDismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
+  const onAddReviewHandler = async () => {
+    dispatch(loading(true));
+    try {
+      await dispatch(saveReview(recipeId, review, rating, reviewTitle));
+      setAddedReview(true);
+      setGettingReviews(true);
+      await dispatch(getAllReviews(recipeId))
+    } catch (err) {
+      console.log(err);
+    }
+    dispatch(loading(false));
+    setGettingReviews(false);
+  };
+
   return (
-    <View style={styles.screen}>
-      <View style={styles.holder}>
-        <Text style={styles.title}>{title}</Text>
-        {image === `${ENVS.url}/` && imageUri === null && fromMyRecipe ? (
-          <View style={styles.addImage}>
-            <TouchableOpacity onPress={onAddNewImageHandler}>
-              <Ionicons
-                color="white"
-                name={Platform.OS === "android" ? "md-add" : "ios-add"}
-                size={60}
+      <TouchableWithoutFeedback onPress={onDismissKeyboard}>
+        <View style={styles.screen}>
+          <View style={styles.holder}>
+            <Text style={styles.title}>{title}</Text>
+            {image === `${ENVS.url}/` && imageUri === null && fromMyRecipe ? (
+              <View style={styles.addImage}>
+                <TouchableOpacity onPress={onAddNewImageHandler}>
+                  <Ionicons
+                    color="white"
+                    name={Platform.OS === "android" ? "md-add" : "ios-add"}
+                    size={60}
+                  />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <Image
+                source={{
+                  uri: `${image !== `${ENVS.url}/` ? image : imageUri}`,
+                }}
+                style={{ width: 80, height: 80, borderRadius: 40 }}
               />
-            </TouchableOpacity>
+            )}
           </View>
-        ) : (
-          <Image
-            source={{ uri: `${image !== `${ENVS.url}/` ? image : imageUri}` }}
-            style={{ width: 80, height: 80, borderRadius: 40 }}
-          />
-        )}
-      </View>
-      <Card style={{ ...styles.holder, alignItems: "flex-start" }}>
-        <View>
-          <Text>Ingredients</Text>
-          <FlatList
-            data={ingredients}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.contentsHolder}>
-                <Text style={styles.holderText}>- {item.ingredient}</Text>
-              </View>
+          <Card style={{ ...styles.holder, alignItems: "flex-start" }}>
+            <View>
+              <Text>Ingredients</Text>
+              <FlatList
+                data={ingredients}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.contentsHolder}>
+                    <Text style={styles.holderText}>- {item.ingredient}</Text>
+                  </View>
+                )}
+              />
+            </View>
+            <View>
+              <Text>Instructions</Text>
+              <FlatList
+                data={instructions}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.contentsHolder}>
+                    <Text style={styles.holderText}>- {item.instruction}</Text>
+                  </View>
+                )}
+              />
+            </View>
+          </Card>
+          <View style={styles.timeContainer}>
+            <Text>Cook Time - {cookTime}</Text>
+            <Text>Prep Time - {prepTime}</Text>
+          </View>
+          {isReviewed || addedReview ? null : (
+            <Card
+              style={{ width: "80%", justifyContent: "center", padding: 20 }}
+            >
+              <Text
+                style={{
+                  fontSize: 25,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  paddingBottom: 10,
+                }}
+              >
+                Add Review
+              </Text>
+              <CustomTextInput
+                placeholder="Title..."
+                onChangeText={onChangeReviewTitleHandler}
+                value={reviewTitle}
+                style={{ fontSize: 25, fontWeight: "bold" }}
+              />
+              <CustomTextInput
+                multiline
+                placeholder="Review..."
+                onChangeText={onChangeReviewHandler}
+                value={review}
+              />
+              <AirbnbRating
+                defaultRating={0}
+                onFinishRating={onFinishRatingHandler}
+                size={30}
+              />
+              <CustomButton
+                touchStyle={styles.touch}
+                textStyle={styles.btnText}
+                text="Add Review"
+                onPress={onAddReviewHandler}
+              />
+            </Card>
+          )}
+          {isLoading && !addedReview ? <Spinner /> : null}
+          <View>
+            {!isLoading && !gettingReviews ? (
+              reviews.map((review) => (
+                <Review
+                  title={review.title}
+                  review={review.review}
+                  rating={review.rating}
+                />
+              ))
+            ) : (
+              <Spinner />
             )}
-          />
+          </View>
         </View>
-        <View>
-          <Text>Instructions</Text>
-          <FlatList
-            data={instructions}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.contentsHolder}>
-                <Text style={styles.holderText}>- {item.instruction}</Text>
-              </View>
-            )}
-          />
-        </View>
-      </Card>
-      <View style={styles.timeContainer}>
-        <Text>Cook Time - {cookTime}</Text>
-        <Text>Prep Time - {prepTime}</Text>
-      </View>
-    </View>
+      </TouchableWithoutFeedback>
   );
 };
 
@@ -224,6 +351,21 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
+  },
+  touch: {
+    backgroundColor: Colors.primary,
+    padding: 5,
+    width: "100%",
+    height: 50,
+    justifyContent: "center",
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  btnText: {
+    fontSize: 15,
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "white",
   },
 });
 

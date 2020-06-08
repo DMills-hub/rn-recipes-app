@@ -34,7 +34,7 @@ import {
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import Card from "../../components/Card/Card";
-import Spinner from '../../components/Spinner/Spinner';
+import Spinner from "../../components/Spinner/Spinner";
 
 const AddRecipe = (props) => {
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const AddRecipe = (props) => {
   const cookTime = useSelector((state) => state.recipes.cookTime);
   const prepTime = useSelector((state) => state.recipes.prepTime);
   const category = useSelector((state) => state.recipes.category);
-  const isLoading = useSelector(state => state.recipes.loading);
+  const isLoading = useSelector((state) => state.recipes.loading);
   const ingScroll = useRef();
   const insScroll = useRef();
   const [showBtns, setShowBtns] = useState(true);
@@ -90,6 +90,12 @@ const AddRecipe = (props) => {
   };
 
   const onChangeTitleHandler = (text) => {
+    if (text.length >= 18)
+      return Alert.alert(
+        "Title too long.",
+        "Sorry but your title can only be up to 18 characters long.",
+        [{ text: "Okay" }]
+      );
     dispatch(updateTitle(text));
   };
 
@@ -175,8 +181,15 @@ const AddRecipe = (props) => {
   };
 
   const onChoosePublishHandler = () => {
-    return Alert.alert("Do you want everyone to see your recipe?", "If you make this publishable everyone will be able to see your recipe. Click Yes to make this happen or No if you want to keep it private.", [{text: 'Yes', onPress: async () => await onSaveHandler(true) }, {text: 'No', onPress: async () => await onSaveHandler(false)}])
-  }
+    return Alert.alert(
+      "Do you want everyone to see your recipe?",
+      "If you make this publishable everyone will be able to see your recipe. Click Yes to make this happen or No if you want to keep it private.",
+      [
+        { text: "Yes", onPress: async () => await onSaveHandler(true) },
+        { text: "No", onPress: async () => await onSaveHandler(false) },
+      ]
+    );
+  };
 
   const onSaveHandler = async (publishable) => {
     const checkReicpeValidity = validateRecipe();
@@ -186,7 +199,7 @@ const AddRecipe = (props) => {
         "Please make sure all of the fields have something entered in them and you have a picture.",
         [{ text: "Okay" }]
       );
-    dispatch(loading(true))
+    dispatch(loading(true));
     try {
       await dispatch(
         saveRecipe(
@@ -204,7 +217,7 @@ const AddRecipe = (props) => {
     } catch (err) {
       console.log(err);
     }
-    dispatch(loading(false))
+    dispatch(loading(false));
   };
 
   const onClearHandler = () => {
@@ -397,7 +410,9 @@ const AddRecipe = (props) => {
             />
           </View>
         </View>
-      ) : <Spinner />}
+      ) : (
+        <Spinner />
+      )}
     </View>
   );
 };

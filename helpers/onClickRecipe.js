@@ -1,4 +1,4 @@
-import { updateFavourite } from '../store/actions/recipe';1
+import { updateFavourite, addRating, addReview } from '../store/actions/recipe';1
 import ENVS from '../env';
 
 const onClickRecipe = async (navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, fromMyRecipe) => {
@@ -22,7 +22,9 @@ const onClickRecipe = async (navigation, dispatch, recipeId, userId, token, titl
       cookTime: cookTime,
       prepTime: prepTime,
       recipeId: recipeId,
-      fromMyRecipe: fromMyRecipe
+      fromMyRecipe: fromMyRecipe,
+      reviews: contents.reviews,
+      isReviewed: contents.isReviewed
     });
   } catch (err) {
     console.log(err);

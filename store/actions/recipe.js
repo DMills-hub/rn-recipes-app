@@ -21,11 +21,59 @@ import {
   UPDATE_FAVOURITE_RECIPES,
   DELETE_RECIPE,
   UPDATE_IMAGE,
-  CLEAR_IMAGE
+  CLEAR_IMAGE,
+  SAVE_REVIEW,
+  GET_REVIEWS
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+export const getAllReviews = (recipeId) => {
+  return async dispatch => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const reviews = await fetch(`${ENVS.url}/recipes/reviews/${recipeId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        }
+      });
+      const recipeReviews = await reviews.json();
+      dispatch({
+        type: GET_REVIEWS,
+        reviews: recipeReviews.reviews
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
+
+export const saveReview = (recipeId, review, rating, title) => {
+  return async dispatch => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userId = await AsyncStorage.getItem("userId");
+      await fetch(`${ENVS.url}/recipes/addReview`, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": token
+        },
+        method: 'POST',
+        body: JSON.stringify({recipeId: recipeId, userId: userId, review: review, rating: rating, title: title})
+      })
+      dispatch({
+        type: SAVE_REVIEW,
+        review: review,
+        rating: rating,
+        title: title
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+}
 
 export const clearImage = () => {
   return {

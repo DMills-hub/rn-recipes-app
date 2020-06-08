@@ -28,6 +28,7 @@ const MyStack = () => {
                 </TouchableOpacity>
               );
             },
+            headerTitle: "Recipes & Me",
           };
         }}
       />

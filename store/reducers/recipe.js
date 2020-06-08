@@ -21,7 +21,11 @@ import {
   UPDATE_FAVOURITE_RECIPES,
   DELETE_RECIPE,
   UPDATE_IMAGE,
-  CLEAR_IMAGE
+  CLEAR_IMAGE,
+  ADD_RATING,
+  ADD_REVIEW,
+  SAVE_REVIEW,
+  GET_REVIEWS,
 } from "../types/recipe";
 
 const initialState = {
@@ -41,6 +45,7 @@ const initialState = {
   category: "starter",
   isFavourite: false,
   loading: false,
+  reviews: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -66,7 +71,7 @@ const reducer = (state = initialState, action) => {
         ...initialState,
         recipes: state.recipes,
         myRecipes: state.myRecipes,
-        favouriteRecipes: state.favouriteRecipes
+        favouriteRecipes: state.favouriteRecipes,
       };
     case ERR_RECIPE:
       return errorRecipe(state, action.error);
@@ -75,7 +80,7 @@ const reducer = (state = initialState, action) => {
         ...initialState,
         recipes: state.recipes,
         myRecipes: state.myRecipes,
-        favouriteRecipes: state.favouriteRecipes
+        favouriteRecipes: state.favouriteRecipes,
       };
     case GET_ALL_RECIPES:
       return getAllRecipes(state, action.recipes);
@@ -90,17 +95,26 @@ const reducer = (state = initialState, action) => {
     case UPDATE_PREP_TIME:
       return { ...state, prepTime: action.prepTime };
     case UPDATE_CATEGORY:
-      return {...state, category: action.category};
+      return { ...state, category: action.category };
     case UPDATE_FAVOURITE:
-      return {...state, isFavourite: action.fav};
+      return { ...state, isFavourite: action.fav };
     case UPDATE_FAVOURITE_RECIPES:
-      return {...state, favouriteRecipes: action.myFavourites};
+      return { ...state, favouriteRecipes: action.myFavourites };
     case DELETE_RECIPE:
-      return {...state, myRecipes: state.myRecipes.filter(recipe => recipe.id !== Number(action.recipeId))}
+      return {
+        ...state,
+        myRecipes: state.myRecipes.filter(
+          (recipe) => recipe.id !== Number(action.recipeId)
+        ),
+      };
     case UPDATE_IMAGE:
-      return { ...state, image: { uri: action.uri, base64: action.base64 }}
+      return { ...state, image: { uri: action.uri, base64: action.base64 } };
     case CLEAR_IMAGE:
-      return { ...state, image: { uri: null, base64: null } }
+      return { ...state, image: { uri: null, base64: null } };
+    case SAVE_REVIEW:
+      return { ...state };
+    case GET_REVIEWS:
+      return { ...state, reviews: action.reviews }
     default:
       return state;
   }

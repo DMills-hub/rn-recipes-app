@@ -2,6 +2,7 @@ import React from "react";
 import {
   StyleSheet,
   View,
+  KeyboardAvoidingView,
   Platform,
   Text,
   Button,
@@ -15,7 +16,7 @@ import CustomTextInput from "../CustomTextInput/CustomTextInput";
 
 const Authenticate = (props) => {
   return (
-    <View style={styles.authScreen}>
+    <KeyboardAvoidingView keyboardVerticalOffset={50} behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.authScreen}>
       <Card style={styles.authContainer}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.formController}>
@@ -92,7 +93,7 @@ const Authenticate = (props) => {
           ) : null}
         </ScrollView>
       </Card>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -101,9 +102,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 100
   },
   authContainer: {
-    height: 350,
+    height: 400,
     width: "80%",
     alignItems: "center",
     justifyContent: "center",
@@ -111,6 +113,7 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     alignItems: "center",
     justifyContent: "center",
+    flex: 1,
   },
   formController: {
     width: "100%",
