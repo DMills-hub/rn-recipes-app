@@ -216,7 +216,7 @@ const ViewRecipe = ({ navigation, route }) => {
           <View style={styles.screen}>
             <View style={styles.holder}>
               <Text style={styles.title}>{title}</Text>
-              {image === `${ENVS.url}/` && imageUri === null && fromMyRecipe ? (
+              {image === `${ENVS.imagesUrl}/` && imageUri === null && fromMyRecipe ? (
                 <View style={styles.addImage}>
                   <TouchableOpacity onPress={onAddNewImageHandler}>
                     <Ionicons
@@ -229,7 +229,7 @@ const ViewRecipe = ({ navigation, route }) => {
               ) : (
                 <Image
                   source={{
-                    uri: `${image !== `${ENVS.url}/` ? image : imageUri}`,
+                    uri: `${image !== `${ENVS.imagesUrl}/` ? image : imageUri}`,
                   }}
                   style={{ width: 80, height: 80, borderRadius: 40 }}
                 />

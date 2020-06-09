@@ -75,6 +75,7 @@ export const login = (username, password) => {
         },
       });
     } catch (err) {
+      console.log(err);
       dispatch({
         type: ERROR,
         message: err,

@@ -16,7 +16,7 @@ const onClickRecipe = async (navigation, dispatch, recipeId, userId, token, titl
     dispatch(updateFavourite(contents.isFav, null));
     navigation.navigate("View Recipe", {
       title: title,
-      image: `${ENVS.url}/${image}`,
+      image: `${ENVS.imagesUrl}/${image}`,
       ingredients: contents.ingredients,
       instructions: contents.instructions,
       cookTime: cookTime,

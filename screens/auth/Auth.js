@@ -91,7 +91,8 @@ const Auth = (props) => {
       await dispatch(login(username, password));
       dispatch(loading(false));
     } catch (err) {
-      dispatch(err(err));
+      // console.log(err);
+      // dispatch(err(err));
     }
   };
 

@@ -17,7 +17,7 @@ const Recipe = (props) => {
         {props.image !== "" ? (
           <Image
             style={styles.image}
-            source={{ uri: `${ENVS.url}/${props.image}` }}
+            source={{ uri: `${ENVS.imagesUrl}/${props.image}` }}
           />
         ) : (
           <Text style={styles.letterText}>{props.title.charAt(0)}</Text>

@@ -7,6 +7,7 @@ import {
 import AllRecipesStack from "./AllRecipesStackNavigator";
 import MyRecipesStack from "./MyRecipesStackNavigator";
 import FavouritesStack from "./FavouriteRecipesStackNavigator";
+import AccountStack from "./AccountStackNavigator";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/actions/auth";
 import { reset } from "../store/actions/recipe";
@@ -83,6 +84,20 @@ const MyStack = () => {
             drawerIcon: () => (
               <Ionicons
                 name={Platform.OS === "android" ? "md-heart" : "ios-heart"}
+                size={23}
+              />
+            ),
+          };
+        }}
+      />
+      <MainAppDrawer.Screen
+        component={AccountStack}
+        name="Account"
+        options={() => {
+          return {
+            drawerIcon: () => (
+              <Ionicons
+                name={Platform.OS === "android" ? "md-person" : "ios-person"}
                 size={23}
               />
             ),

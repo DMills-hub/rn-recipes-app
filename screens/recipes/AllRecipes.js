@@ -27,7 +27,7 @@ const AllRecipes = (props) => {
       />
       <Category
         onPress={onLoadCategoryHandler.bind(this, "dessert", "Desserts")}
-        text="Deserts"
+        text="Desserts"
         source={require("../../assets/desert.jpg")}
       />
       <Category
