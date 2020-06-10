@@ -8,10 +8,10 @@ import AllRecipesStack from "./AllRecipesStackNavigator";
 import MyRecipesStack from "./MyRecipesStackNavigator";
 import FavouritesStack from "./FavouriteRecipesStackNavigator";
 import AccountStack from "./AccountStackNavigator";
+import ConversionChartStack from "./ConversionChartStackNavigator";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/actions/auth";
 import { reset } from "../store/actions/recipe";
-import Colors from "../constants/Colors";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
@@ -27,18 +27,12 @@ const MyStack = () => {
           <DrawerContentScrollView {...props}>
             <DrawerItemList {...props} />
             <DrawerItem
+              icon={() => <Ionicons name={Platform.OS === "android" ? "md-log-out" : "ios-log-out"} size={23} />}
               style={{
-                flex: 1,
-                backgroundColor: Colors.primary,
-                alignItems: "center",
+                alignItems: "left",
                 justifyContent: "center",
               }}
               label="Logout"
-              labelStyle={{
-                fontWeight: "bold",
-                color: "white",
-                padding: 20,
-              }}
               onPress={() => {
                 dispatch(logout());
                 dispatch(reset());
@@ -99,6 +93,24 @@ const MyStack = () => {
               <Ionicons
                 name={Platform.OS === "android" ? "md-person" : "ios-person"}
                 size={23}
+              />
+            ),
+          };
+        }}
+      />
+      <MainAppDrawer.Screen
+        component={ConversionChartStack}
+        name="Conversion Chart"
+        options={() => {
+          return {
+            drawerIcon: () => (
+              <Ionicons
+                size={23}
+                name={
+                  Platform.OS === "android"
+                    ? "md-information-circle"
+                    : "ios-information-circle"
+                }
               />
             ),
           };
