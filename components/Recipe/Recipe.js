@@ -23,18 +23,18 @@ const Recipe = (props) => {
           <Text style={styles.letterText}>{props.title.charAt(0)}</Text>
         )}
       </View>
-      <Text style={styles.title}>{props.title}</Text>
+      <View style={styles.titleHolder}><Text style={styles.title}>{props.title}</Text></View>
       <View style={styles.timeContainer}>
         <View style={styles.timeContainerFlex}>
-          <Text>Cook Time - </Text>
+          <Text style={styles.bold}>Cook Time </Text>
           <Text>{props.cookTime}</Text>
         </View>
         <View style={styles.timeContainerFlex}>
-          <Text>Prep Time - </Text>
+          <Text style={styles.bold}>Prep Time </Text>
           <Text>{props.prepTime}</Text>
         </View>
         <View style={styles.timeContainerFlex}>
-          <Text>Serves - </Text>
+          <Text style={styles.bold}>Serves </Text>
           <Text>{props.serves}</Text>
         </View>
       </View>
@@ -57,6 +57,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 30,
     marginRight: 10,
+  },
+  titleHolder: {
+    width: '50%',
   },
   letterHolder: {
     width: 60,
@@ -83,13 +86,17 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     marginHorizontal: 10,
-    flex: 1,
-    alignItems: "flex-start",
+    width: '30%',
+    alignItems: "center",
+    paddingRight: 30
   },
   timeContainerFlex: {
     flexDirection: "row",
     marginVertical: 5,
   },
+  bold: {
+    fontWeight: 'bold'
+  }
 });
 
 export default Recipe;

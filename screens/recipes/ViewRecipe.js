@@ -35,7 +35,7 @@ import CustomButton from "../../components/CustomButton/CustomButton";
 import Spinner from "../../components/Spinner/Spinner";
 import Review from "../../components/Review/Review";
 import { useFocusEffect } from "@react-navigation/native";
-import Filter from 'bad-words';
+import Filter from "bad-words";
 import onClearRecipeError from "../../helpers/onClearRecipeError";
 
 const ViewRecipe = ({ navigation, route }) => {
@@ -66,7 +66,7 @@ const ViewRecipe = ({ navigation, route }) => {
     try {
       await dispatch(updateFavourite(!isFav, recipeId));
     } catch (err) {
-      dispatch(setError("Sorry we couldn't update your favourite status."))
+      dispatch(setError("Sorry we couldn't update your favourite status."));
     }
   };
 
@@ -96,7 +96,9 @@ const ViewRecipe = ({ navigation, route }) => {
         try {
           await dispatch(getAllReviews(recipeId));
         } catch (err) {
-          dispatch(setError("Sorry we couldn't get the reviews for this recipe."))
+          dispatch(
+            setError("Sorry we couldn't get the reviews for this recipe.")
+          );
           dispatch(loading(false));
         }
         dispatch(loading(false));
@@ -125,7 +127,7 @@ const ViewRecipe = ({ navigation, route }) => {
       }
       return true;
     } catch (err) {
-      dispatch(setError("Sorry we couldn't get the permissions for this."))
+      dispatch(setError("Sorry we couldn't get the permissions for this."));
     }
   };
 
@@ -142,7 +144,7 @@ const ViewRecipe = ({ navigation, route }) => {
       if (image.cancelled) return;
       dispatch(updateImage(recipeId, image.uri, image.base64));
     } catch (err) {
-      dispatch(setError("Sorry we couldn't process the image."))
+      dispatch(setError("Sorry we couldn't process the image."));
     }
   };
 
@@ -159,7 +161,7 @@ const ViewRecipe = ({ navigation, route }) => {
       if (image.cancelled) return;
       dispatch(updateImage(recipeId, image.uri, image.base64));
     } catch (err) {
-      dispatch(setError("Sorry we couldn't process the image."))
+      dispatch(setError("Sorry we couldn't process the image."));
     }
   };
 
@@ -195,7 +197,12 @@ const ViewRecipe = ({ navigation, route }) => {
     try {
       const filteredReview = filter.isProfane(review);
       const filteredReviewTitle = filter.isProfane(reviewTitle);
-      if (filteredReview || filteredReviewTitle) return Alert.alert("Sorry you can't add that review.", "Sorry we couldn't add that review we don't condone bad language.", [{text: 'Okay'}])
+      if (filteredReview || filteredReviewTitle)
+        return Alert.alert(
+          "Sorry you can't add that review.",
+          "Sorry we couldn't add that review we don't condone bad language.",
+          [{ text: "Okay" }]
+        );
       await dispatch(saveReview(recipeId, review, rating, reviewTitle));
       setAddedReview(true);
       Alert.alert(
@@ -204,20 +211,22 @@ const ViewRecipe = ({ navigation, route }) => {
         [{ text: "Okay" }]
       );
     } catch (err) {
-      dispatch(setError("Sorry we couldn't add that review to this recipe."))
+      dispatch(setError("Sorry we couldn't add that review to this recipe."));
     }
     dispatch(loading(false));
     setGettingReviews(false);
   };
 
   if (myError) {
-    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
+    Alert.alert("Error", myError, [
+      { text: "Okay", onPress: () => onClearRecipeError(dispatch) },
+    ]);
   }
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
-      style={{flex: 1}}
+      style={{ flex: 1 }}
       keyboardVerticalOffset={20}
     >
       <ScrollView>
@@ -225,7 +234,9 @@ const ViewRecipe = ({ navigation, route }) => {
           <View style={styles.screen}>
             <View style={styles.holder}>
               <Text style={styles.title}>{title}</Text>
-              {image === `${ENVS.imagesUrl}/` && imageUri === null && fromMyRecipe ? (
+              {image === `${ENVS.imagesUrl}/` &&
+              imageUri === null &&
+              fromMyRecipe ? (
                 <View style={styles.addImage}>
                   <TouchableOpacity onPress={onAddNewImageHandler}>
                     <Ionicons
@@ -249,9 +260,7 @@ const ViewRecipe = ({ navigation, route }) => {
                 <Text style={styles.holderText}>Ingredients</Text>
                 {ingredients.map((ingredient) => (
                   <View style={styles.contentsHolder} key={ingredient.id}>
-                    <Text>
-                      - {ingredient.ingredient}
-                    </Text>
+                    <Text>- {ingredient.ingredient}</Text>
                   </View>
                 ))}
               </View>
@@ -259,17 +268,24 @@ const ViewRecipe = ({ navigation, route }) => {
                 <Text style={styles.holderText}>Instructions</Text>
                 {instructions.map((instruction) => (
                   <View key={instruction.id} style={styles.contentsHolder}>
-                    <Text>
-                      - {instruction.instruction}
-                    </Text>
+                    <Text>- {instruction.instruction}</Text>
                   </View>
                 ))}
               </View>
             </Card>
             <View style={styles.timeContainer}>
-              <Text>Cook Time - {cookTime}</Text>
-              <Text>Prep Time - {prepTime}</Text>
-              <Text>Serves - {serves}</Text>
+              <View style={styles.timeHolder}>
+                <Text style={styles.timeTitle}>Cook Time</Text>
+                <Text>{cookTime}</Text>
+              </View>
+              <View style={styles.timeHolder}>
+                <Text style={styles.timeTitle}>Prep Time</Text>
+                <Text>{prepTime}</Text>
+              </View>
+              <View style={styles.timeHolder}>
+                <Text style={styles.timeTitle}>Serves</Text>
+                <Text>{serves}</Text>
+              </View>
             </View>
             {isReviewed || addedReview || fromMyRecipe ? null : (
               <Card
@@ -370,7 +386,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width: "80%",
+    width: "100%",
     overflow: "hidden",
     marginTop: 10,
     padding: 10,
@@ -415,6 +431,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
     color: "white",
+  },
+  timeHolder: {
+    alignItems: "center",
+  },
+  timeTitle: {
+    fontWeight: "bold",
   },
 });
 

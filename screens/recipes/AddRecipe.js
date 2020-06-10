@@ -32,13 +32,14 @@ import {
   updateCategory,
   loading,
   updateServes,
-  setError
+  setError,
+  clearImage,
 } from "../../store/actions/recipe";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import Card from "../../components/Card/Card";
 import Spinner from "../../components/Spinner/Spinner";
-import onClearRecipeError from '../../helpers/onClearRecipeError';
+import onClearRecipeError from "../../helpers/onClearRecipeError";
 
 const AddRecipe = (props) => {
   const dispatch = useDispatch();
@@ -96,12 +97,6 @@ const AddRecipe = (props) => {
   };
 
   const onChangeTitleHandler = (text) => {
-    if (text.length >= 18)
-      return Alert.alert(
-        "Title too long.",
-        "Sorry but your title can only be up to 18 characters long.",
-        [{ text: "Okay" }]
-      );
     dispatch(updateTitle(text));
   };
 
@@ -136,7 +131,8 @@ const AddRecipe = (props) => {
       }
       return true;
     } catch (err) {
-      dispatch(setError("Sorry we had an issue asking for permissons."))
+      if (err)
+        dispatch(setError("Sorry we had an issue asking for permissons."));
     }
   };
 
@@ -153,7 +149,8 @@ const AddRecipe = (props) => {
       if (image.cancelled) return;
       dispatch(addImage(image.uri, image.base64));
     } catch (err) {
-      dispatch(setError("Sorry we had an issue processing the picture."))
+      if (err)
+        dispatch(setError("Sorry we had an issue processing the picture."));
     }
   };
 
@@ -170,7 +167,8 @@ const AddRecipe = (props) => {
       if (image.cancelled) return;
       dispatch(addImage(image.uri, image.base64));
     } catch (err) {
-      dispatch(setError("Sorry we had an issue processing the picture."))
+      if (err)
+        dispatch(setError("Sorry we had an issue processing the picture."));
     }
   };
 
@@ -223,7 +221,7 @@ const AddRecipe = (props) => {
       );
       props.navigation.navigate("My Recipes");
     } catch (err) {
-      dispatch(setError("Sorry we had an issue saving your recipe."))
+      if (err) dispatch(setError("Sorry we had an issue saving your recipe."));
     }
     dispatch(loading(false));
   };
@@ -242,14 +240,20 @@ const AddRecipe = (props) => {
 
   const onServingChangeHandler = (text) => {
     dispatch(updateServes(text));
-  }
+  };
 
   const onChangeCategoryHandler = (itemValue) => {
     dispatch(updateCategory(itemValue));
   };
 
+  const onRemovePictureHandler = () => {
+    dispatch(clearImage());
+  };
+
   if (myError) {
-    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
+    Alert.alert("Error", myError, [
+      { text: "Okay", onPress: () => onClearRecipeError(dispatch) },
+    ]);
   }
 
   return (
@@ -262,15 +266,25 @@ const AddRecipe = (props) => {
               placeholder="Title..."
               style={styles.customText}
               value={title}
+              multiline
             />
           </View>
           {imageUri ? (
-            <View style={styles.imageHolder}>
-              <Image source={{ uri: imageUri }} style={styles.image} />
+            <View>
+              <View style={styles.imageHolder}>
+                <Image source={{ uri: imageUri }} style={styles.image} />
+              </View>
+              <View style={{marginTop: 3}}>
+              <CustomButton
+                  touchStyle={styles.touch}
+                  text="Remove"
+                  textStyle={styles.btnText}
+                  onPress={onRemovePictureHandler}
+                />
+              </View>
             </View>
           ) : null}
         </View>
-
         {imageUri ? null : (
           <View style={styles.button}>
             <View style={styles.btnContainer}>
@@ -370,11 +384,11 @@ const AddRecipe = (props) => {
             style={{
               ...styles.time,
               width: "33%",
-              justifyContent: "flex-start",
+              justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <Text style={styles.smallText}>Cook Time - </Text>
+            <Text style={styles.smallText}>Cook Time </Text>
             <CustomTextInput
               onChangeText={onCookTimeChangeHandler}
               value={cookTime}
@@ -390,7 +404,7 @@ const AddRecipe = (props) => {
               alignItems: "center",
             }}
           >
-            <Text style={styles.smallText}>Prep Time - </Text>
+            <Text style={styles.smallText}>Prep Time </Text>
             <CustomTextInput
               onChangeText={onPrepTimeChangeHandler}
               value={prepTime}
@@ -401,12 +415,12 @@ const AddRecipe = (props) => {
           <View
             style={{
               ...styles.time,
-              width: "33%",
               justifyContent: "center",
               alignItems: "center",
+              width: '33%'
             }}
           >
-            <Text style={styles.smallText}>Serves - </Text>
+            <Text style={styles.smallText}>Serves </Text>
             <CustomTextInput
               onChangeText={onServingChangeHandler}
               value={serves}
@@ -541,8 +555,9 @@ const styles = StyleSheet.create({
     width: "95%",
   },
   smallText: {
-    fontSize: 12
-  }
+    fontSize: 11,
+    width: '50%',
+  },
 });
 
 export default AddRecipe;

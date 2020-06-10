@@ -161,7 +161,6 @@ export const getFavouriteRecipes = () => {
         }
       })
       const myFavourites = await getFavouriteRecipes.json();
-      if (myFavourites.error) return dispatch({type: ERR_RECIPE, error: myFavourites.error})
       dispatch({
         type: UPDATE_FAVOURITE_RECIPES,
         myFavourites: myFavourites.myFavourites
@@ -260,8 +259,6 @@ export const getMyRecipes = () => {
         },
       });
       const myRecipes = await result.json();
-      if (myRecipes.error)
-        return dispatch({ type: ERR_RECIPE, error: myRecipes.error });
       dispatch({
         type: GET_MY_RECIPES,
         myRecipes: myRecipes.myRecipes,
@@ -286,7 +283,6 @@ export const getAllRecipes = (category) => {
         },
       });
       const recipes = await result.json();
-      if (recipes.error) return dispatch({type: ERR_RECIPE, error: recipes.error})
       dispatch({
         type: GET_ALL_RECIPES,
         recipes: recipes.recipes,
