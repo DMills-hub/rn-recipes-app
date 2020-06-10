@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect } from "react";
-import { View, FlatList, Text, Animated, TouchableOpacity } from "react-native";
+import { View, FlatList, Text, Animated, TouchableOpacity, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -7,6 +7,7 @@ import {
   getMyRecipes,
   deleteRecipe,
   clearImage,
+  setError,
 } from "../../store/actions/recipe";
 import Recipe from "../../components/Recipe/Recipe";
 import Spinner from "../../components/Spinner/Spinner";
@@ -14,10 +15,12 @@ import onClickRecipe from "../../helpers/onClickRecipe";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import CustomHeaderButton from "../../components/CustomHeaderButton/CustomHeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import onClearRecipeError from "../../helpers/onClearRecipeError";
 
 const MyRecipes = ({ navigation }) => {
   const isLoading = useSelector((state) => state.recipes.loading);
   const myRecipes = useSelector((state) => state.recipes.myRecipes);
+  const myError = useSelector((state) => state.recipes.error);
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
   const dispatch = useDispatch();
@@ -47,6 +50,7 @@ const MyRecipes = ({ navigation }) => {
         try {
           await dispatch(getMyRecipes());
         } catch (err) {
+          dispatch(setError("Sorry we couldn't get your recipes."))
           dispatch(loading(false));
         }
         dispatch(loading(false));
@@ -78,7 +82,7 @@ const MyRecipes = ({ navigation }) => {
         true
       );
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we couldn't load that recipe."))
     }
   };
 
@@ -86,7 +90,7 @@ const MyRecipes = ({ navigation }) => {
     try {
       await dispatch(deleteRecipe(id));
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we coudln't delete that recipe."))
     }
   };
 
@@ -121,6 +125,10 @@ const MyRecipes = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+  if (myError) {
+    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
+  }
 
   return (
     <View>

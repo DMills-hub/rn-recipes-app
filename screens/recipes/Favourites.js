@@ -1,15 +1,17 @@
 import React, { useCallback } from "react";
-import { View, FlatList, Text } from "react-native";
+import { View, FlatList, Text, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { loading, getFavouriteRecipes } from "../../store/actions/recipe";
+import { loading, getFavouriteRecipes, setError } from "../../store/actions/recipe";
 import Recipe from "../../components/Recipe/Recipe";
 import Spinner from "../../components/Spinner/Spinner";
 import onClickRecipe from '../../helpers/onClickRecipe';
+import onClearRecipeError from '../../helpers/onClearRecipeError';
 
 const Favourites = (props) => {
   const isLoading = useSelector((state) => state.recipes.loading);
   const favouriteRecipes = useSelector((state) => state.recipes.favouriteRecipes);
+  const myError = useSelector((state) => state.recipes.error);
   const userId = useSelector((state) => state.auth.userId);
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
@@ -21,6 +23,7 @@ const Favourites = (props) => {
         try {
           await dispatch(getFavouriteRecipes());
         } catch (err) {
+          dispatch(setError("Sorry we couldn't get your favourite recipes."))
           dispatch(loading(false));
         }
         dispatch(loading(false));
@@ -40,9 +43,13 @@ const Favourites = (props) => {
     try {
       await onClickRecipe(props.navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, serving, false);
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we couldn't get that recipe."))
     }
   };
+
+  if (myError) {
+    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
+  }
 
   return (
     <View>

@@ -7,7 +7,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import ENVS from "../../env";
 import Spinner from "../../components/Spinner/Spinner";
 import { useSelector, useDispatch } from "react-redux";
-import { loading } from "../../store/actions/auth";
+import { loading, err } from "../../store/actions/auth";
+import onClearAuthError from '../../helpers/onClearAuthError';
 
 const Account = (props) => {
   const [newPassword, setNewPassword] = useState("");
@@ -15,6 +16,7 @@ const Account = (props) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const isLoading = useSelector((state) => state.auth.loading);
+  const myError = useSelector((state) => state.auth.error);
   const dispatch = useDispatch();
 
   useFocusEffect(
@@ -33,11 +35,10 @@ const Account = (props) => {
             }
           );
           const userData = await getUserData.json();
-          console.log(userData);
           setUsername(userData.username);
           setEmail(userData.email);
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          dispatch(err("Sorry we couldn't get your account details."))
         }
       };
       getAccountDetails();
@@ -84,10 +85,15 @@ const Account = (props) => {
         "Your password has successfully been changed. This should take effect on next login.",
         [{ text: "Okay" }]
       );
-    } catch (err) {
+    } catch (error) {
+      dispatch(err("Sorry we couldn't change your password."))
       dispatch(loading(false));
     }
   };
+
+  if (myError) {
+    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearAuthError(dispatch)}])
+  }
 
   return (
     <View style={styles.screen}>

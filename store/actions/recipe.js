@@ -24,7 +24,8 @@ import {
   CLEAR_IMAGE,
   SAVE_REVIEW,
   GET_REVIEWS,
-  UPDATE_SERVES
+  UPDATE_SERVES,
+  CLEAR_ERROR
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
@@ -41,12 +42,16 @@ export const getAllReviews = (recipeId) => {
         }
       });
       const recipeReviews = await reviews.json();
+      if (recipeReviews.error) return dispatch({type: ERR_RECIPE, error: recipeReviews.error})
       dispatch({
         type: GET_REVIEWS,
         reviews: recipeReviews.reviews
       })
     } catch (err) {
-      console.log(err);
+      dispatch({
+        type: ERR_RECIPE,
+        error: "Sorry we couldn't get the reviews for this recipe."
+      })
     }
   }
 }
@@ -57,7 +62,7 @@ export const saveReview = (recipeId, review, rating, title) => {
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
       const username = await AsyncStorage.getItem("username");
-      await fetch(`${ENVS.url}/recipes/addReview`, {
+      const attemptSave = await fetch(`${ENVS.url}/recipes/addReview`, {
         headers: {
           'Content-Type': 'application/json',
           "Authorization": token
@@ -65,6 +70,8 @@ export const saveReview = (recipeId, review, rating, title) => {
         method: 'POST',
         body: JSON.stringify({recipeId: recipeId, userId: userId, review: review, rating: rating, title: title})
       })
+      const saveReview = await attemptSave.json();
+      if (saveReview.error) return dispatch({type: ERR_RECIPE, error: saveReview.error})
       dispatch({
         type: SAVE_REVIEW,
         review: review,
@@ -73,7 +80,10 @@ export const saveReview = (recipeId, review, rating, title) => {
         username: username
       });
     } catch (err) {
-      console.log(err);
+      dispatch({
+        type: ERR_RECIPE,
+        error: "Sorry we couldn't save the review for this recipe."
+      })
     }
   };
 }
@@ -88,7 +98,7 @@ export const updateImage = (recipeId, uri, base64) => {
   return async dispatch => {
     try {
       const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/updateImage`, {
+      const attemptUpate = await fetch(`${ENVS.url}/recipes/updateImage`, {
         headers: {
           'Content-Type': 'application/json',
           "Authorization": token
@@ -96,13 +106,18 @@ export const updateImage = (recipeId, uri, base64) => {
         body: JSON.stringify({recipeId: recipeId, base64: base64}),
         method: 'POST'
       })
+      const updateImage = await attemptUpate.json();
+      if (updateImage.error) return dispatch({type: ERR_RECIPE, error: updateImage.error})
       dispatch({
         type: UPDATE_IMAGE,
         uri: uri, 
         base64: base64
       })
     } catch (err) {
-      console.log(err);
+      dispatch({
+        type: ERR_RECIPE,
+        error: "Sorry we couldn't update the image for this recipe."
+      })
     }
   }
 }
@@ -111,7 +126,7 @@ export const deleteRecipe = (id) => {
   return async dispatch => {
     try {
       const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/deleteRecipe`, {
+      const attemptDelete = await fetch(`${ENVS.url}/recipes/deleteRecipe`, {
         headers: {
           'Content-Type': 'application/json',
           "Authorization": token
@@ -119,12 +134,17 @@ export const deleteRecipe = (id) => {
         body: JSON.stringify({recipeId: id}),
         method: 'POST'
       })
+      const deleteRecipe = attemptDelete.json();
+      if (deleteRecipe.error) return dispatch({type: ERR_RECIPE, error: deleteRecipe.error})
       dispatch({
         type: DELETE_RECIPE,
         recipeId: id
       })
     } catch (err) {
-      console.log(err);
+      dispatch({
+        type: ERR_RECIPE,
+        error: "Sorry we couldn't delete this recipe."
+      })
     }
   }
 }
@@ -141,12 +161,16 @@ export const getFavouriteRecipes = () => {
         }
       })
       const myFavourites = await getFavouriteRecipes.json();
+      if (myFavourites.error) return dispatch({type: ERR_RECIPE, error: myFavourites.error})
       dispatch({
         type: UPDATE_FAVOURITE_RECIPES,
         myFavourites: myFavourites.myFavourites
       })
     } catch (err) {
-      console.log(err);
+      dispatch({
+        type: ERR_RECIPE,
+        error: "Sorry we couldn't get your favourite recipes."
+      })
     }
   }
 };
@@ -157,7 +181,7 @@ export const updateFavourite = (fav, recipeId) => {
       if (recipeId === null) return dispatch({ type: UPDATE_FAVOURITE, fav: fav}); 
       const token = await AsyncStorage.getItem("token");
       const userId = await AsyncStorage.getItem("userId");
-      await fetch(
+      const attemptUpdateFavourite = await fetch(
         `${ENVS.url}/recipes/${fav ? "addFavourite" : "deleteFavourite"}`,
         {
           headers: {
@@ -168,12 +192,17 @@ export const updateFavourite = (fav, recipeId) => {
           method: "POST",
         }
       );
+      const updateFavourite = await attemptUpdateFavourite.json();
+      if (updateFavourite.error) return dispatch({type: ERR_RECIPE, error: updateFavourite.error})
       dispatch({
         type: UPDATE_FAVOURITE,
         fav: fav,
       }); 
     } catch (err) {
-      console.log(err);
+      dispatch({
+        type: ERR_RECIPE,
+        error: "Sorry we couldn't update your favourite status for this recipe."
+      })
     }
   };
 };
@@ -240,8 +269,8 @@ export const getMyRecipes = () => {
     } catch (err) {
       dispatch({
         type: ERR_RECIPE,
-        error: err,
-      });
+        error: "Sorry we couldn't get your recipes."
+      })
     }
   };
 };
@@ -257,12 +286,16 @@ export const getAllRecipes = (category) => {
         },
       });
       const recipes = await result.json();
+      if (recipes.error) return dispatch({type: ERR_RECIPE, error: recipes.error})
       dispatch({
         type: GET_ALL_RECIPES,
         recipes: recipes.recipes,
       });
     } catch (err) {
-      console.log(err);
+      dispatch({
+        type: ERR_RECIPE,
+        error: "Sorry we couldn't get recipes for this category."
+      })
     }
   };
 };
@@ -322,7 +355,10 @@ export const saveRecipe = (
         type: SAVE_RECIPE,
       });
     } catch (err) {
-      console.log(err);
+      dispatch({
+        type: ERR_RECIPE,
+        error: "Sorry we couldn't save this recipe."
+      })
     }
   };
 };
@@ -395,3 +431,16 @@ export const updateTitle = (title) => {
     title: title,
   };
 };
+
+export const setError = (err) => {
+  return {
+    type: ERR_RECIPE,
+    error: err
+  }
+}
+
+export const clearError = () => {
+  return {
+    type: CLEAR_ERROR
+  }
+}

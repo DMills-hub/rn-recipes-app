@@ -32,11 +32,13 @@ import {
   updateCategory,
   loading,
   updateServes,
+  setError
 } from "../../store/actions/recipe";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import Card from "../../components/Card/Card";
 import Spinner from "../../components/Spinner/Spinner";
+import onClearRecipeError from '../../helpers/onClearRecipeError';
 
 const AddRecipe = (props) => {
   const dispatch = useDispatch();
@@ -50,6 +52,7 @@ const AddRecipe = (props) => {
   const serves = useSelector((state) => state.recipes.serves);
   const category = useSelector((state) => state.recipes.category);
   const isLoading = useSelector((state) => state.recipes.loading);
+  const myError = useSelector((state) => state.recipes.error);
   const ingScroll = useRef();
   const insScroll = useRef();
   const [showBtns, setShowBtns] = useState(true);
@@ -133,7 +136,7 @@ const AddRecipe = (props) => {
       }
       return true;
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we had an issue asking for permissons."))
     }
   };
 
@@ -150,7 +153,7 @@ const AddRecipe = (props) => {
       if (image.cancelled) return;
       dispatch(addImage(image.uri, image.base64));
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we had an issue processing the picture."))
     }
   };
 
@@ -167,7 +170,7 @@ const AddRecipe = (props) => {
       if (image.cancelled) return;
       dispatch(addImage(image.uri, image.base64));
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we had an issue processing the picture."))
     }
   };
 
@@ -220,7 +223,7 @@ const AddRecipe = (props) => {
       );
       props.navigation.navigate("My Recipes");
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we had an issue saving your recipe."))
     }
     dispatch(loading(false));
   };
@@ -244,6 +247,10 @@ const AddRecipe = (props) => {
   const onChangeCategoryHandler = (itemValue) => {
     dispatch(updateCategory(itemValue));
   };
+
+  if (myError) {
+    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

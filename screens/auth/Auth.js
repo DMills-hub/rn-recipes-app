@@ -4,6 +4,7 @@ import ENVS from "../../env";
 import { useDispatch, useSelector } from "react-redux";
 import { login, loading, err } from "../../store/actions/auth";
 import { Alert, TouchableOpacity, Text, StyleSheet } from "react-native";
+import onClearAuthError from "../../helpers/onClearAuthError";
 
 const Auth = (props) => {
   const [username, setUsername] = useState("");
@@ -12,7 +13,7 @@ const Auth = (props) => {
   const [email, setEmail] = useState("");
   const [mode, setMode] = useState(true);
   const load = useSelector((state) => state.auth.loading);
-  const error = useSelector((state) => state.auth.error);
+  const myError = useSelector((state) => state.auth.error);
 
   const dispatch = useDispatch();
 
@@ -24,9 +25,7 @@ const Auth = (props) => {
             onPress={() => changeModeHandler()}
             style={styles.authButton}
           >
-            <Text style={styles.buttonText}>
-              {mode ? "Sign Up" : "Login"}
-            </Text>
+            <Text style={styles.buttonText}>{mode ? "Sign Up" : "Login"}</Text>
           </TouchableOpacity>
         );
       },
@@ -62,7 +61,12 @@ const Auth = (props) => {
     )
       return dispatch(err("No blank values."));
     const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-    if (!emailRegex.test(email.toLowerCase())) return Alert.alert("Email not valid.", "Please type in a valid email address", [{text: 'Okay'}])
+    if (!emailRegex.test(email.toLowerCase()))
+      return Alert.alert(
+        "Email not valid.",
+        "Please type in a valid email address",
+        [{ text: "Okay" }]
+      );
     if (password !== confirmPassword)
       return dispatch(err(`Password's don't match.`));
     dispatch(loading(true));
@@ -90,7 +94,7 @@ const Auth = (props) => {
       }
       dispatch(err(registeredAttempt.error));
     } catch (err) {
-      dispatch(err(registeredAttempt.error));
+      dispatch(err("Sorry we couldn't register you."));
     }
     dispatch(loading(false));
   };
@@ -102,11 +106,16 @@ const Auth = (props) => {
       dispatch(loading(true));
       await dispatch(login(username, password));
       dispatch(loading(false));
-    } catch (err) {
-      // console.log(err);
-      // dispatch(err(err));
+    } catch (error) {
+      dispatch(err("Sorry we coudln't log you in."));
     }
   };
+
+  if (myError) {
+    Alert.alert("Error", myError, [
+      { text: "Okay", onPress: () => onClearAuthError(dispatch) },
+    ]);
+  }
 
   return (
     <Authenticate
@@ -119,7 +128,6 @@ const Auth = (props) => {
       password={password}
       confirmPassword={confirmPassword}
       email={email}
-      error={error}
       loginMode={mode}
       loading={load}
     />
@@ -138,6 +146,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-})
+});
 
 export default Auth;

@@ -1,5 +1,5 @@
 import ENVS from "../../env";
-import { LOGIN, LOADING, ERROR, LOGOUT, AUTO_LOGIN } from "../types/auth";
+import { LOGIN, LOADING, ERROR, LOGOUT, AUTO_LOGIN, CLEAR_ERR } from "../types/auth";
 import { AsyncStorage } from "react-native";
 
 export const autoLogin = () => {
@@ -23,7 +23,12 @@ export const autoLogin = () => {
           username: username,
         },
       });
-    } catch (err) {}
+    } catch (err) {
+      dispatch({
+        type: ERROR,
+        message: "Sorry we couldn't auto log you in.",
+      });
+    }
   };
 };
 
@@ -75,10 +80,9 @@ export const login = (username, password) => {
         },
       });
     } catch (err) {
-      console.log(err);
       dispatch({
         type: ERROR,
-        message: err,
+        message: "Sorry we couldn't log you in.",
       });
     }
   };
@@ -92,9 +96,14 @@ export const loading = (load) => {
 };
 
 export const err = (err) => {
-  console.log(err);
   return {
     type: ERROR,
     message: err,
   };
 };
+
+export const clearErr = () => {
+  return {
+    type: CLEAR_ERR
+  }
+}

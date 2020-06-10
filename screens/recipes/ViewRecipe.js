@@ -22,6 +22,7 @@ import {
   saveReview,
   loading,
   getAllReviews,
+  setError,
 } from "../../store/actions/recipe";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
@@ -35,6 +36,7 @@ import Spinner from "../../components/Spinner/Spinner";
 import Review from "../../components/Review/Review";
 import { useFocusEffect } from "@react-navigation/native";
 import Filter from 'bad-words';
+import onClearRecipeError from "../../helpers/onClearRecipeError";
 
 const ViewRecipe = ({ navigation, route }) => {
   const title = route.params.title;
@@ -51,6 +53,7 @@ const ViewRecipe = ({ navigation, route }) => {
   const imageUri = useSelector((state) => state.recipes.image.uri);
   const isLoading = useSelector((state) => state.recipes.loading);
   const reviews = useSelector((state) => state.recipes.reviews);
+  const myError = useSelector((state) => state.recipes.error);
   const dispatch = useDispatch();
   const [addedReview, setAddedReview] = useState(false);
   const [gettingReviews, setGettingReviews] = useState(false);
@@ -63,7 +66,7 @@ const ViewRecipe = ({ navigation, route }) => {
     try {
       await dispatch(updateFavourite(!isFav, recipeId));
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we couldn't update your favourite status."))
     }
   };
 
@@ -93,6 +96,7 @@ const ViewRecipe = ({ navigation, route }) => {
         try {
           await dispatch(getAllReviews(recipeId));
         } catch (err) {
+          dispatch(setError("Sorry we couldn't get the reviews for this recipe."))
           dispatch(loading(false));
         }
         dispatch(loading(false));
@@ -121,7 +125,7 @@ const ViewRecipe = ({ navigation, route }) => {
       }
       return true;
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we couldn't get the permissions for this."))
     }
   };
 
@@ -138,7 +142,7 @@ const ViewRecipe = ({ navigation, route }) => {
       if (image.cancelled) return;
       dispatch(updateImage(recipeId, image.uri, image.base64));
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we couldn't process the image."))
     }
   };
 
@@ -155,7 +159,7 @@ const ViewRecipe = ({ navigation, route }) => {
       if (image.cancelled) return;
       dispatch(updateImage(recipeId, image.uri, image.base64));
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we couldn't process the image."))
     }
   };
 
@@ -200,11 +204,15 @@ const ViewRecipe = ({ navigation, route }) => {
         [{ text: "Okay" }]
       );
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we couldn't add that review to this recipe."))
     }
     dispatch(loading(false));
     setGettingReviews(false);
   };
+
+  if (myError) {
+    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
+  }
 
   return (
     <KeyboardAvoidingView

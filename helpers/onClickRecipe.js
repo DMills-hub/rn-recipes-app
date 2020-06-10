@@ -1,4 +1,4 @@
-import { updateFavourite, addRating, addReview } from '../store/actions/recipe';1
+import { updateFavourite, setError } from '../store/actions/recipe';
 import ENVS from '../env';
 
 const onClickRecipe = async (navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, serving, fromMyRecipe) => {
@@ -28,7 +28,7 @@ const onClickRecipe = async (navigation, dispatch, recipeId, userId, token, titl
       isReviewed: contents.isReviewed
     });
   } catch (err) {
-    console.log(err);
+    dispatch(setError("Sorry we coudln't get that recipe"))
   }
 }
 

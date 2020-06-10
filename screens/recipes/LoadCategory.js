@@ -1,17 +1,19 @@
 import React, { useCallback, useLayoutEffect } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
 import Spinner from "../../components/Spinner/Spinner";
 import { useSelector, useDispatch } from "react-redux";
 import Recipe from "../../components/Recipe/Recipe";
 import { useFocusEffect } from '@react-navigation/native'
-import { loading, getAllRecipes } from '../../store/actions/recipe';
+import { loading, getAllRecipes, setError } from '../../store/actions/recipe';
 import onClickRecipe from '../../helpers/onClickRecipe';
+import onClearRecipeError from "../../helpers/onClearRecipeError";
 
 const LoadCategory = ({navigation, route}) => {
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
   const recipes = useSelector((state) => state.recipes.recipes);
   const isLoading = useSelector((state) => state.recipes.isLoading);
+  const myError = useSelector((state) => state.recipes.error);
   const dispatch = useDispatch();
   
  useLayoutEffect(() => {
@@ -27,6 +29,7 @@ const LoadCategory = ({navigation, route}) => {
         try {
           await dispatch(getAllRecipes(route.params.category));
         } catch (err) {
+          dispatch(setError("Sorry we couldn't get the reviews for this recipe."))
           dispatch(loading(false));
         }
         dispatch(loading(false));
@@ -46,9 +49,13 @@ const LoadCategory = ({navigation, route}) => {
     try {
       await onClickRecipe(navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, serving, false);
     } catch (err) {
-      console.log(err);
+      dispatch(setError("Sorry we couldn't load that recipe."))
     }
   };
+
+  if (myError) {
+    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
+  }
 
   return (
     <View style={styles.screen}>

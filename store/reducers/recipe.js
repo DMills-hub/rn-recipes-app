@@ -27,6 +27,7 @@ import {
   SAVE_REVIEW,
   GET_REVIEWS,
   UPDATE_SERVES,
+  CLEAR_ERROR,
 } from "../types/recipe";
 
 const initialState = {
@@ -119,6 +120,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, reviews: state.reviews.concat({ title: action.title, review: action.review, rating: action.rating, username: action.username }) };
     case GET_REVIEWS:
       return { ...state, reviews: action.reviews }
+    case CLEAR_ERROR:
+      return { ...state, error: null }
     default:
       return state;
   }

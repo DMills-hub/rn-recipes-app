@@ -104,11 +104,6 @@ const Authenticate = (props) => {
           ) : (
             <Spinner />
           )}
-          {props.error ? (
-            <View style={styles.errorContainer}>
-              <Text>{props.error}</Text>
-            </View>
-          ) : null}
         </ScrollView>
       </Card>
     </KeyboardAvoidingView>
