@@ -33,6 +33,10 @@ const Recipe = (props) => {
           <Text>Prep Time - </Text>
           <Text>{props.prepTime}</Text>
         </View>
+        <View style={styles.timeContainerFlex}>
+          <Text>Serves - </Text>
+          <Text>{props.serves}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -80,7 +84,7 @@ const styles = StyleSheet.create({
   timeContainer: {
     marginHorizontal: 10,
     flex: 1,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
   },
   timeContainerFlex: {
     flexDirection: "row",

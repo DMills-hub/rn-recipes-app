@@ -43,6 +43,7 @@ const ViewRecipe = ({ navigation, route }) => {
   const ingredients = route.params.ingredients;
   const cookTime = route.params.cookTime;
   const prepTime = route.params.prepTime;
+  const serves = route.params.serves;
   const recipeId = route.params.recipeId;
   const fromMyRecipe = route.params.fromMyRecipe;
   const isReviewed = route.params.isReviewed;
@@ -260,6 +261,7 @@ const ViewRecipe = ({ navigation, route }) => {
             <View style={styles.timeContainer}>
               <Text>Cook Time - {cookTime}</Text>
               <Text>Prep Time - {prepTime}</Text>
+              <Text>Serves - {serves}</Text>
             </View>
             {isReviewed || addedReview || fromMyRecipe ? null : (
               <Card
@@ -379,7 +381,7 @@ const styles = StyleSheet.create({
   timeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "80%",
+    width: "95%",
     paddingHorizontal: 5,
     marginVertical: 20,
   },

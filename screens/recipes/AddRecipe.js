@@ -31,6 +31,7 @@ import {
   updatePrepTime,
   updateCategory,
   loading,
+  updateServes,
 } from "../../store/actions/recipe";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
@@ -46,6 +47,7 @@ const AddRecipe = (props) => {
   const base64 = useSelector((state) => state.recipes.image.base64);
   const cookTime = useSelector((state) => state.recipes.cookTime);
   const prepTime = useSelector((state) => state.recipes.prepTime);
+  const serves = useSelector((state) => state.recipes.serves);
   const category = useSelector((state) => state.recipes.category);
   const isLoading = useSelector((state) => state.recipes.loading);
   const ingScroll = useRef();
@@ -175,7 +177,8 @@ const AddRecipe = (props) => {
       ingredients.length === 0 ||
       instructions.length === 0 ||
       cookTime === "" ||
-      prepTime === ""
+      prepTime === "" ||
+      serves === ""
     )
       return false;
     return true;
@@ -211,6 +214,7 @@ const AddRecipe = (props) => {
           cookTime,
           prepTime,
           category,
+          serves,
           publishable
         )
       );
@@ -232,6 +236,10 @@ const AddRecipe = (props) => {
   const onPrepTimeChangeHandler = (text) => {
     dispatch(updatePrepTime(text));
   };
+
+  const onServingChangeHandler = (text) => {
+    dispatch(updateServes(text));
+  }
 
   const onChangeCategoryHandler = (itemValue) => {
     dispatch(updateCategory(itemValue));
@@ -354,31 +362,49 @@ const AddRecipe = (props) => {
           <View
             style={{
               ...styles.time,
-              width: "40%",
+              width: "33%",
               justifyContent: "flex-start",
               alignItems: "center",
             }}
           >
-            <Text>Cook Time - </Text>
+            <Text style={styles.smallText}>Cook Time - </Text>
             <CustomTextInput
               onChangeText={onCookTimeChangeHandler}
               value={cookTime}
               placeholder="10mins..."
+              style={styles.smallText}
             />
           </View>
           <View
             style={{
               ...styles.time,
-              width: "40%",
+              width: "33%",
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <Text>Prep Time - </Text>
+            <Text style={styles.smallText}>Prep Time - </Text>
             <CustomTextInput
               onChangeText={onPrepTimeChangeHandler}
               value={prepTime}
               placeholder="10mins..."
+              style={styles.smallText}
+            />
+          </View>
+          <View
+            style={{
+              ...styles.time,
+              width: "33%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text style={styles.smallText}>Serves - </Text>
+            <CustomTextInput
+              onChangeText={onServingChangeHandler}
+              value={serves}
+              placeholder="6 people..."
+              style={styles.smallText}
             />
           </View>
         </View>
@@ -505,8 +531,11 @@ const styles = StyleSheet.create({
   time: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "80%",
+    width: "95%",
   },
+  smallText: {
+    fontSize: 12
+  }
 });
 
 export default AddRecipe;

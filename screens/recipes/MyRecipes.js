@@ -60,7 +60,8 @@ const MyRecipes = ({ navigation }) => {
     title,
     image,
     cookTime,
-    prepTime
+    prepTime,
+    serving
   ) => {
     try {
       await onClickRecipe(
@@ -73,6 +74,7 @@ const MyRecipes = ({ navigation }) => {
         image,
         cookTime,
         prepTime,
+        serving,
         true
       );
     } catch (err) {
@@ -150,12 +152,14 @@ const MyRecipes = ({ navigation }) => {
                   item.title,
                   item.image,
                   item.cooktime,
-                  item.preptime
+                  item.preptime,
+                  item.serving
                 )}
                 title={item.title}
                 image={item.image}
                 cookTime={item.cooktime}
                 prepTime={item.preptime}
+                serves={item.serving}
               />
             </Swipeable>
           )}

@@ -26,6 +26,7 @@ import {
   ADD_REVIEW,
   SAVE_REVIEW,
   GET_REVIEWS,
+  UPDATE_SERVES,
 } from "../types/recipe";
 
 const initialState = {
@@ -38,6 +39,7 @@ const initialState = {
   instructions: [],
   cookTime: "",
   prepTime: "",
+  serves: "",
   error: null,
   recipes: [],
   myRecipes: [],
@@ -94,6 +96,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, cookTime: action.cookTime };
     case UPDATE_PREP_TIME:
       return { ...state, prepTime: action.prepTime };
+    case UPDATE_SERVES:
+      return { ...state, serves: action.serves }
     case UPDATE_CATEGORY:
       return { ...state, category: action.category };
     case UPDATE_FAVOURITE:

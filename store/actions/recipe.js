@@ -23,7 +23,8 @@ import {
   UPDATE_IMAGE,
   CLEAR_IMAGE,
   SAVE_REVIEW,
-  GET_REVIEWS
+  GET_REVIEWS,
+  UPDATE_SERVES
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
@@ -184,6 +185,13 @@ export const updateCategory = (category) => {
   };
 };
 
+export const updateServes = (serves) => {
+  return {
+    type: UPDATE_SERVES,
+    serves: serves
+  }
+}
+
 export const updatePrepTime = (time) => {
   return {
     type: UPDATE_PREP_TIME,
@@ -273,6 +281,7 @@ export const saveRecipe = (
   cookTime,
   prepTime,
   category,
+  serves,
   publishable
 ) => {
   return async (dispatch) => {
@@ -299,6 +308,7 @@ export const saveRecipe = (
           userId: userId,
           cookTime: cookTime,
           prepTime: prepTime,
+          serves: serves,
           category: category,
           publishable: publishable
         }),
