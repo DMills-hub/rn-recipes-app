@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import Authenticate from "../../components/Authenticate/Authenticate";
 import ENVS from "../../env";
 import { useDispatch, useSelector } from "react-redux";
 import { login, loading, err } from "../../store/actions/auth";
-import { Alert } from "react-native";
+import { Alert, TouchableOpacity, Text, StyleSheet } from "react-native";
 
 const Auth = (props) => {
   const [username, setUsername] = useState("");
@@ -16,10 +16,22 @@ const Auth = (props) => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    props.navigation.setParams({ changeMode: changeModeHandler });
-    props.navigation.setParams({ mode: mode });
-  }, [changeModeHandler, mode]);
+  useLayoutEffect(() => {
+    props.navigation.setOptions({
+      headerRight: () => {
+        return (
+          <TouchableOpacity
+            onPress={() => changeModeHandler()}
+            style={styles.authButton}
+          >
+            <Text style={styles.buttonText}>
+              {mode ? "Sign Up" : "Login"}
+            </Text>
+          </TouchableOpacity>
+        );
+      },
+    });
+  }, [mode, changeModeHandler]);
 
   const changeModeHandler = () => {
     setMode((prevState) => !prevState);
@@ -113,5 +125,19 @@ const Auth = (props) => {
     />
   );
 };
+
+const styles = StyleSheet.create({
+  authButton: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+})
 
 export default Auth;
