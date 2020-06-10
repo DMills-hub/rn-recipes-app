@@ -93,8 +93,8 @@ const Auth = (props) => {
         return;
       }
       dispatch(err(registeredAttempt.error));
-    } catch (err) {
-      dispatch(err("Sorry we couldn't register you."));
+    } catch (error) {
+      if (error) dispatch(err("Sorry we couldn't register you."));
     }
     dispatch(loading(false));
   };
@@ -107,7 +107,7 @@ const Auth = (props) => {
       await dispatch(login(username, password));
       dispatch(loading(false));
     } catch (error) {
-      dispatch(err("Sorry we coudln't log you in."));
+      if (error) dispatch(err("Sorry we coudln't log you in."));
     }
   };
 

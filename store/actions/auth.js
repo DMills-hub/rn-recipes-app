@@ -24,6 +24,7 @@ export const autoLogin = () => {
         },
       });
     } catch (err) {
+      if (err)
       dispatch({
         type: ERROR,
         message: "Sorry we couldn't auto log you in.",
@@ -42,6 +43,7 @@ export const logout = () => {
         type: LOGOUT,
       });
     } catch (err) {
+      if (err)
       dispatch({
         type: ERROR,
         message: err,
@@ -80,6 +82,7 @@ export const login = (username, password) => {
         },
       });
     } catch (err) {
+      if (err)
       dispatch({
         type: ERROR,
         message: "Sorry we couldn't log you in.",

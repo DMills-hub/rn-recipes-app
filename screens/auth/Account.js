@@ -38,7 +38,7 @@ const Account = (props) => {
           setUsername(userData.username);
           setEmail(userData.email);
         } catch (error) {
-          dispatch(err("Sorry we couldn't get your account details."))
+          if (error) dispatch(err("Sorry we couldn't get your account details."))
         }
       };
       getAccountDetails();
@@ -86,8 +86,10 @@ const Account = (props) => {
         [{ text: "Okay" }]
       );
     } catch (error) {
-      dispatch(err("Sorry we couldn't change your password."))
-      dispatch(loading(false));
+      if (error) {
+        dispatch(err("Sorry we couldn't change your password."))
+        dispatch(loading(false));
+      }
     }
   };
 

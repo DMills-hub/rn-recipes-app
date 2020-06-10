@@ -48,6 +48,7 @@ export const getAllReviews = (recipeId) => {
         reviews: recipeReviews.reviews
       })
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't get the reviews for this recipe."
@@ -80,6 +81,7 @@ export const saveReview = (recipeId, review, rating, title) => {
         username: username
       });
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't save the review for this recipe."
@@ -114,6 +116,7 @@ export const updateImage = (recipeId, uri, base64) => {
         base64: base64
       })
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't update the image for this recipe."
@@ -141,6 +144,7 @@ export const deleteRecipe = (id) => {
         recipeId: id
       })
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't delete this recipe."
@@ -166,6 +170,7 @@ export const getFavouriteRecipes = () => {
         myFavourites: myFavourites.myFavourites
       })
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't get your favourite recipes."
@@ -198,6 +203,7 @@ export const updateFavourite = (fav, recipeId) => {
         fav: fav,
       }); 
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't update your favourite status for this recipe."
@@ -264,6 +270,7 @@ export const getMyRecipes = () => {
         myRecipes: myRecipes.myRecipes,
       });
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't get your recipes."
@@ -288,6 +295,7 @@ export const getAllRecipes = (category) => {
         recipes: recipes.recipes,
       });
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't get recipes for this category."
@@ -351,6 +359,7 @@ export const saveRecipe = (
         type: SAVE_RECIPE,
       });
     } catch (err) {
+      if (err)
       dispatch({
         type: ERR_RECIPE,
         error: "Sorry we couldn't save this recipe."
