@@ -40,10 +40,11 @@ const LoadCategory = ({navigation, route}) => {
     title,
     image,
     cookTime,
-    prepTime
+    prepTime,
+    serving
   ) => {
     try {
-      await onClickRecipe(navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, false);
+      await onClickRecipe(navigation, dispatch, recipeId, userId, token, title, image, cookTime, prepTime, serving, false);
     } catch (err) {
       console.log(err);
     }
@@ -77,12 +78,14 @@ const LoadCategory = ({navigation, route}) => {
                 item.title,
                 item.image,
                 item.cooktime,
-                item.preptime
+                item.preptime,
+                item.serving
               )}
               title={item.title}
               image={item.image}
               cookTime={item.cooktime}
               prepTime={item.preptime}
+              serves={item.serving}
             />
           )}
         />

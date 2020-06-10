@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     zIndex: 100
   },
   authContainer: {
-    height: 500,
+    height: 550,
     width: "80%",
     alignItems: "center",
     justifyContent: "center",
