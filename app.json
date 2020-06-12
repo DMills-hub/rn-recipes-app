@@ -24,7 +24,7 @@
     "ios": {
       "bundleIdentifier": "com.myrecipes.recipe-me",
       "buildNumber": "1.0.0",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to save images of there recipes that they have created."
       }

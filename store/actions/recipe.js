@@ -42,7 +42,7 @@ export const getAllReviews = (recipeId) => {
         }
       });
       const recipeReviews = await reviews.json();
-      if (recipeReviews.error) return dispatch({type: ERR_RECIPE, error: recipeReviews.error})
+      if (recipeReviews.error) return
       dispatch({
         type: GET_REVIEWS,
         reviews: recipeReviews.reviews
@@ -72,7 +72,7 @@ export const saveReview = (recipeId, review, rating, title) => {
         body: JSON.stringify({recipeId: recipeId, userId: userId, review: review, rating: rating, title: title})
       })
       const saveReview = await attemptSave.json();
-      if (saveReview.error) return dispatch({type: ERR_RECIPE, error: saveReview.error})
+      if (saveReview.error) return
       dispatch({
         type: SAVE_REVIEW,
         review: review,
@@ -109,7 +109,7 @@ export const updateImage = (recipeId, uri, base64) => {
         method: 'POST'
       })
       const updateImage = await attemptUpate.json();
-      if (updateImage.error) return dispatch({type: ERR_RECIPE, error: updateImage.error})
+      if (updateImage.error) return
       dispatch({
         type: UPDATE_IMAGE,
         uri: uri, 
@@ -138,7 +138,7 @@ export const deleteRecipe = (id) => {
         method: 'POST'
       })
       const deleteRecipe = attemptDelete.json();
-      if (deleteRecipe.error) return dispatch({type: ERR_RECIPE, error: deleteRecipe.error})
+      if (deleteRecipe.error) return
       dispatch({
         type: DELETE_RECIPE,
         recipeId: id
@@ -165,6 +165,7 @@ export const getFavouriteRecipes = () => {
         }
       })
       const myFavourites = await getFavouriteRecipes.json();
+      if (myFavourites.error) return
       dispatch({
         type: UPDATE_FAVOURITE_RECIPES,
         myFavourites: myFavourites.myFavourites
@@ -197,7 +198,7 @@ export const updateFavourite = (fav, recipeId) => {
         }
       );
       const updateFavourite = await attemptUpdateFavourite.json();
-      if (updateFavourite.error) return dispatch({type: ERR_RECIPE, error: updateFavourite.error})
+      if (updateFavourite.error) return
       dispatch({
         type: UPDATE_FAVOURITE,
         fav: fav,
@@ -265,6 +266,7 @@ export const getMyRecipes = () => {
         },
       });
       const myRecipes = await result.json();
+      if (myRecipes.error) return
       dispatch({
         type: GET_MY_RECIPES,
         myRecipes: myRecipes.myRecipes,
@@ -350,11 +352,7 @@ export const saveRecipe = (
           publishable: publishable
         }),
       });
-      if (saveRecipe.error)
-        return dispatch({
-          type: ERR_RECIPE,
-          error: saveRecipe.error,
-        });
+      if (saveRecipe.error) return
       dispatch({
         type: SAVE_RECIPE,
       });
