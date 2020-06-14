@@ -29,7 +29,7 @@ const MyStack = () => {
             <DrawerItem
               icon={() => <Ionicons name={Platform.OS === "android" ? "md-log-out" : "ios-log-out"} size={23} />}
               style={{
-                alignItems: "left",
+                alignItems: "flex-start",
                 justifyContent: "center",
               }}
               label="Logout"

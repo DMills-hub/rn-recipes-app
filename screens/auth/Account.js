@@ -8,7 +8,7 @@ import ENVS from "../../env";
 import Spinner from "../../components/Spinner/Spinner";
 import { useSelector, useDispatch } from "react-redux";
 import { loading, err } from "../../store/actions/auth";
-import onClearAuthError from '../../helpers/onClearAuthError';
+import onClearAuthError from "../../helpers/onClearAuthError";
 
 const Account = (props) => {
   const [newPassword, setNewPassword] = useState("");
@@ -30,7 +30,7 @@ const Account = (props) => {
             {
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": token,
+                Authorization: token,
               },
             }
           );
@@ -38,7 +38,8 @@ const Account = (props) => {
           setUsername(userData.username);
           setEmail(userData.email);
         } catch (error) {
-          if (error) dispatch(err("Sorry we couldn't get your account details."))
+          if (error)
+            dispatch(err("Sorry we couldn't get your account details."));
         }
       };
       getAccountDetails();
@@ -72,7 +73,7 @@ const Account = (props) => {
       await fetch(`${ENVS.url}/auth/changePassword`, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token,
+          Authorization: token,
         },
         method: "POST",
         body: JSON.stringify({ userId: userId, newPassword: newPassword }),
@@ -87,14 +88,16 @@ const Account = (props) => {
       );
     } catch (error) {
       if (error) {
-        dispatch(err("Sorry we couldn't change your password."))
+        dispatch(err("Sorry we couldn't change your password."));
         dispatch(loading(false));
       }
     }
   };
 
   if (myError) {
-    Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearAuthError(dispatch)}])
+    Alert.alert("Error", myError, [
+      { text: "Okay", onPress: () => onClearAuthError(dispatch) },
+    ]);
   }
 
   return (
@@ -111,9 +114,11 @@ const Account = (props) => {
           {email === "" ? <Spinner /> : email}
         </Text>
       </View>
-      <Text style={styles.generalText}>
-        Think somebody knows your password? Reset it below.
-      </Text>
+      <View>
+        <Text style={styles.generalText}>
+          Think somebody knows your password? Reset it below.
+        </Text>
+      </View>
       <View style={styles.changePasswordHolder}>
         <View style={styles.controller}>
           <CustomTextInput
@@ -166,6 +171,7 @@ const styles = StyleSheet.create({
   },
   textHolder: {
     fontSize: 16,
+    width: '100%'
   },
   generalText: {
     fontSize: 14,
