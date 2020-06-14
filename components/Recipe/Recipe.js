@@ -59,7 +59,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   titleHolder: {
-    width: '50%',
+    width: '40%',
+    marginRight: 20
   },
   letterHolder: {
     width: 60,

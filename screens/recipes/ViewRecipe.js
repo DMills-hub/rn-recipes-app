@@ -394,6 +394,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
+    width: '70%'
   },
   contentsHolder: {
     marginTop: 10,
