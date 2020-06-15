@@ -14,10 +14,10 @@ const Recipe = (props) => {
       activeOpacity={0.6}
       style={styles.recipeHolder}
     >
+      {!imageLoaded && props.image !== "" ? <Spinner /> : null}
       <View
         style={props.image !== "" ? styles.imageHolder : styles.letterHolder}
       >
-        {!imageLoaded && props.image !== "" ? <Spinner /> : null}
         {props.image !== "" ? (
             <Image
             style={styles.image}
