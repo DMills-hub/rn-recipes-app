@@ -17,7 +17,7 @@ const Recipe = (props) => {
       <View
         style={props.image !== "" ? styles.imageHolder : styles.letterHolder}
       >
-        {!imageLoaded ? <Spinner /> : null}
+        {!imageLoaded && props.image !== "" ? <Spinner /> : null}
         {props.image !== "" ? (
             <Image
             style={styles.image}
