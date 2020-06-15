@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ENVS from "../../env";
 import Colors from "../../constants/Colors";
+import Spinner from "../Spinner/Spinner";
 
 const Recipe = (props) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
     <TouchableOpacity
       onPress={props.onClick}
@@ -14,10 +17,12 @@ const Recipe = (props) => {
       <View
         style={props.image !== "" ? styles.imageHolder : styles.letterHolder}
       >
+        {!imageLoaded ? <Spinner /> : null}
         {props.image !== "" ? (
-          <Image
+            <Image
             style={styles.image}
             source={{ uri: `${ENVS.imagesUrl}/${props.image}` }}
+            onLoad={() => setImageLoaded(true)}
           />
         ) : (
           <Text style={styles.letterText}>{props.title.charAt(0)}</Text>
@@ -57,6 +62,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 30,
     marginRight: 10,
+    justifyContent: "center"
   },
   titleHolder: {
     width: '40%',
