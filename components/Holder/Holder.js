@@ -14,6 +14,7 @@ const IngredientHolder = (props) => {
         style={styles.ingredientAdd}
         value={props.value}
         multiline
+        onEndEditing={props.onEndEditing}
       />
       <CustomButton
         text={

@@ -5,6 +5,7 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import React from "react";
 import { Platform } from "react-native";
 import AddRecipesScreen from "../screens/recipes/AddRecipe";
+import EditRecipesScreen from '../screens/recipes/EditRecipe';
 import { createStackNavigator } from "@react-navigation/stack";
 import ViewRecipesScreen from "../screens/recipes/ViewRecipe";
 
@@ -39,6 +40,7 @@ const MyStack = () => {
         name="View Recipe"
         component={ViewRecipesScreen}
       />
+      <MyRecipesStack.Screen name="Edit Recipe" component={EditRecipesScreen} />
     </MyRecipesStack.Navigator>
   );
 };

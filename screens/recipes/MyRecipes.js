@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect } from "react";
-import { View, FlatList, Text, Animated, TouchableOpacity, Alert } from "react-native";
+import { View, FlatList, Text, Animated, TouchableOpacity, Alert, AsyncStorage } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -16,6 +16,7 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import CustomHeaderButton from "../../components/CustomHeaderButton/CustomHeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import onClearRecipeError from "../../helpers/onClearRecipeError";
+import ENVS from '../../env';
 
 const MyRecipes = ({ navigation }) => {
   const isLoading = useSelector((state) => state.recipes.loading);
@@ -94,20 +95,49 @@ const MyRecipes = ({ navigation }) => {
     }
   };
 
-  const RightActions = (id, progress, dragX) => {
+  const onEditRecipeHandler = async (recipeId, title, image, cooktime, preptime, serving) => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem('token');
+      const getRecipe = await fetch(`${ENVS.url}/recipes/singleRecipe/${recipeId}/${userId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token,
+        },
+      })
+      const getRecipeResult = await getRecipe.json();
+      navigation.navigate("Edit Recipe", {
+        recipeId: recipeId,
+        title: title,
+        image: `${ENVS.imagesUrl}/${image}`,
+        cooktime: cooktime,
+        preptime: preptime,
+        serving: serving,
+        instructions: getRecipeResult.instructions,
+        ingredients: getRecipeResult.ingredients
+      })
+    } catch (err) {
+      return
+    }
+  }
+
+  const RightActions = (id, title, image, cooktime, preptime, serving, progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
       outputRange: [0.7, 0],
       extrapolate: "clamp",
     });
     return (
-      <TouchableOpacity onPress={onDeleteRecipeHandler.bind(this, id)}>
+      <>
+        <TouchableOpacity onPress={onDeleteRecipeHandler.bind(this, id)}>
         <View
           style={{
-            flex: 1,
+            width: 100,
             backgroundColor: "red",
             justifyContent: "center",
             marginBottom: 10,
+            height: '90%',
+            alignItems: 'center'
           }}
         >
           <Animated.Text
@@ -123,6 +153,32 @@ const MyRecipes = ({ navigation }) => {
           </Animated.Text>
         </View>
       </TouchableOpacity>
+      <TouchableOpacity onPress={onEditRecipeHandler.bind(this, id, title, image, cooktime, preptime, serving)}>
+        <View
+          style={{
+            backgroundColor: "blue",
+            justifyContent: "center",
+            alignItems: 'center',
+            marginBottom: 10,
+            width: 100,
+            height: '90%'
+          }}
+        >
+          <Animated.Text
+            style={{
+              color: "white",
+              paddingHorizontal: 10,
+              fontWeight: "600",
+              transform: [{ scale }],
+              fontSize: 24,
+            }}
+          >
+            Edit
+          </Animated.Text>
+        </View>
+      </TouchableOpacity>
+      </>
+      
     );
   };
 
@@ -151,7 +207,7 @@ const MyRecipes = ({ navigation }) => {
           renderItem={({ item }) => (
             <Swipeable
               friction={1}
-              renderRightActions={RightActions.bind(this, item.id.toString())}
+              renderRightActions={RightActions.bind(this, item.id.toString(), item.title, item.image, item.cooktime, item.preptime, item.serving)}
             >
               <Recipe
                 onClick={onClickRecipeHandler.bind(
