@@ -60,6 +60,7 @@ const ViewRecipe = ({ navigation, route }) => {
   const [review, setReview] = useState("");
   const [reviewTitle, setReviewTitle] = useState("");
   const [rating, setRating] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const filter = new Filter();
 
   const favouriteHandler = async () => {
@@ -234,6 +235,7 @@ const ViewRecipe = ({ navigation, route }) => {
           <View style={styles.screen}>
             <View style={styles.holder}>
               <Text style={styles.title}>{title}</Text>
+              {!imageLoaded && image !== `${ENVS.url}/` ? <Spinner /> : null}
               {image === `${ENVS.imagesUrl}/` &&
               imageUri === null &&
               fromMyRecipe ? (
@@ -252,6 +254,7 @@ const ViewRecipe = ({ navigation, route }) => {
                     uri: `${image !== `${ENVS.imagesUrl}/` ? image : imageUri}`,
                   }}
                   style={{ width: 80, height: 80, borderRadius: 40 }}
+                  onLoad={() => setImageLoaded(true)}
                 />
               )}
             </View>
