@@ -11,6 +11,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import { CheckBox } from "react-native-elements";
 import CustomTextInput from "../../components/CustomTextInput/CustomTextInput";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import Colors from "../../constants/Colors";
@@ -54,6 +55,7 @@ const AddRecipe = (props) => {
   const category = useSelector((state) => state.recipes.category);
   const isLoading = useSelector((state) => state.recipes.loading);
   const myError = useSelector((state) => state.recipes.error);
+  const [share, setShared] = useState(true);
   const ingScroll = useRef();
   const insScroll = useRef();
   const [showBtns, setShowBtns] = useState(true);
@@ -185,18 +187,7 @@ const AddRecipe = (props) => {
     return true;
   };
 
-  const onChoosePublishHandler = () => {
-    return Alert.alert(
-      "Do you want everyone to see your recipe?",
-      "If you make this publishable everyone will be able to see your recipe. Click Yes to make this happen or No if you want to keep it private.",
-      [
-        { text: "Yes", onPress: async () => await onSaveHandler(true) },
-        { text: "No", onPress: async () => await onSaveHandler(false) },
-      ]
-    );
-  };
-
-  const onSaveHandler = async (publishable) => {
+  const onSaveHandler = async () => {
     const checkReicpeValidity = validateRecipe();
     if (!checkReicpeValidity)
       return Alert.alert(
@@ -216,7 +207,7 @@ const AddRecipe = (props) => {
           prepTime,
           category,
           serves,
-          publishable
+          share
         )
       );
       props.navigation.navigate("My Recipes");
@@ -257,6 +248,7 @@ const AddRecipe = (props) => {
   }
 
   return (
+    <ScrollView>
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.screen}>
         <View style={styles.title}>
@@ -443,11 +435,14 @@ const AddRecipe = (props) => {
             <Picker.Item label="Other" value="other" />
           </Picker>
         </View>
+        <View>
+          <CheckBox checkedColor="green" containerStyle={{backgroundColor: 'transparent'}} onPress={() => setShared((state) => !state)} checked={share} title="Share" />
+        </View>
         {showBtns && !isLoading ? (
           <View style={styles.submitBtns}>
             <View style={styles.submitBtnHolder}>
               <CustomButton
-                onPress={onChoosePublishHandler}
+                onPress={async () => await onSaveHandler()}
                 text="Save"
                 touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
                 textStyle={styles.btnText}
@@ -467,6 +462,7 @@ const AddRecipe = (props) => {
         )}
       </View>
     </TouchableWithoutFeedback>
+    </ScrollView>
   );
 };
 
@@ -541,8 +537,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 10,
     width: "95%",
-    position: "absolute",
-    bottom: 0,
   },
   submitBtnHolder: {
     marginLeft: 10,
