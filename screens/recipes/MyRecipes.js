@@ -114,7 +114,8 @@ const MyRecipes = ({ navigation }) => {
         preptime: preptime,
         serving: serving,
         instructions: getRecipeResult.instructions,
-        ingredients: getRecipeResult.ingredients
+        ingredients: getRecipeResult.ingredients,
+        category: getRecipeResult.category
       })
     } catch (err) {
       return

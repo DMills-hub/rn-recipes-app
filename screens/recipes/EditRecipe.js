@@ -17,7 +17,6 @@ import Card from "../../components/Card/Card";
 import Colors from "../../constants/Colors";
 import Holder from "../../components/Holder/Holder";
 import ENVS from "../../env";
-import { v4 as uuid } from 'uuid';
 
 const guidGenerator = () => {
   var S4 = function() {
@@ -37,16 +36,36 @@ const EditRecipe = ({ navigation, route }) => {
   const [instructions, setInstructions] = useState(route.params.instructions);
   const [addNewIngredients, setAddNewIngredients] = useState([]);
   const [addNewInstructions, setAddNewInstructions] = useState([]);
-  const [category, setCategory] = useState("starter");
+  const [category, setCategory] = useState(route.params.category);
   const ingScroll = useRef();
   const insScroll = useRef();
 
+  const checkEmpty = (checkString) => {
+    if (checkString === "") return true;
+    return false;
+  }
+
   const onAddNewIngredientHandler =  () => {
+    if (addNewIngredients.length !== 0) {
+      if (checkEmpty(addNewIngredients[addNewIngredients.length - 1].ingredient)) return Alert.alert("Sorry we couldn't add a new ingredient.", "Make sure your most recent ingredient has some text in it.", [{text: 'Okay'}])
+    }
       const addIngredient = addNewIngredients.concat({
         id: guidGenerator(),
         ingredient: "",
       });
       setAddNewIngredients(addIngredient);
+  };
+
+
+  const onAddNewInstructionHandler =  () => {
+    if (addNewInstructions.length !== 0) {
+      if (checkEmpty(addNewInstructions[addNewInstructions.length - 1].instruction)) return Alert.alert("Sorry we couldn't add a new method.", "Make sure your most recent method has some text in it.", [{text: 'Okay'}])
+    }
+      const addInstruction = addNewInstructions.concat({
+        id: guidGenerator(),
+        instruction: "",
+      });
+      setAddNewInstructions(addInstruction);
   };
 
   const onChangeInstructionHandler = (id, text) => {
@@ -61,6 +80,7 @@ const EditRecipe = ({ navigation, route }) => {
     try {
       const token = await AsyncStorage.getItem("token");
       const findInstruction = instructions.find((ins) => ins.id === id);
+      if (checkEmpty(findInstruction.instruction)) Alert.alert("Sorry we couldn't save your method", "Please make sure that your method contains some text.", [{text: 'Okay'}])
       await fetch(`${ENVS.url}/recipes/updateInstruction`, {
         headers: {
           "Content-Type": "application/json",
@@ -92,13 +112,56 @@ const EditRecipe = ({ navigation, route }) => {
     newAddIngredients[index] = updateNewIngredient;
     setAddNewIngredients(newAddIngredients);
   };
+  const onChangeNewInstructionHandler = (id, text) => {
+    const newAddInstructions = [...addNewInstructions];
+    const index = newAddInstructions.findIndex((ins) => ins.id === id);
+    const updateNewInstruction = {
+      ...newAddInstructions[index],
+      instruction: text,
+    };
+    newAddInstructions[index] = updateNewInstruction;
+    setAddNewInstructions(newAddInstructions);
+  }
+
+  const onEndNewInstructionEdit = async (id) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const findNewInstruction = addNewInstructions.find((ins) => ins.id === id);
+      if (checkEmpty(findNewInstruction.instruction)) Alert.alert("We couldn't save your ingredient.", "Sorry we couldn't save your ingredient, make sure that it's not empty", [{text: 'Okay'}])
+      const getId = await fetch(`${ENVS.url}/recipes/addInstruction`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token,
+        },
+        method: "POST",
+        body: JSON.stringify({
+          recipeId: recipeId,
+          instruction: findNewInstruction.instruction,
+          id: id
+        }),
+      });
+      const addId = await getId.json();
+      const findIndex = addNewInstructions.findIndex(ins => ins.id === id);
+      const newInstructions = [...addNewInstructions];
+      const newId = { ...addNewInstructions[findIndex], id: addId.id };
+      newInstructions[findIndex] = newId;
+      setAddNewInstructions(newInstructions);
+    } catch (err) {
+      if (err)
+        Alert.alert(
+          "Sorry we couldn't add your instruction.",
+          "Sorry we couldn't add your instruction.",
+          [{ text: "Okay" }]
+        );
+    }
+  };
 
   const onEndNewIngredientEdit = async (id) => {
     try {
       const token = await AsyncStorage.getItem("token");
       const findNewIngredient = addNewIngredients.find((ing) => ing.id === id);
-      console.log(findNewIngredient);
-      await fetch(`${ENVS.url}/recipes/addIngredient`, {
+      if (checkEmpty(findNewIngredient.ingredient)) Alert.alert("We couldn't save your ingredient.", "Sorry we couldn't save your ingredient, make sure that it's not empty", [{text: 'Okay'}])
+      const getId = await fetch(`${ENVS.url}/recipes/addIngredient`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": token,
@@ -107,10 +170,16 @@ const EditRecipe = ({ navigation, route }) => {
         body: JSON.stringify({
           recipeId: recipeId,
           ingredient: findNewIngredient.ingredient,
+          id: id
         }),
       });
+      const addId = await getId.json();
+      const findIndex = addNewIngredients.findIndex(ing => ing.id === id);
+      const newIngredients = [...addNewIngredients];
+      const newId = { ...addNewIngredients[findIndex], id: addId.id };
+      newIngredients[findIndex] = newId;
+      setAddNewIngredients(newIngredients);
     } catch (err) {
-      console.log(err);
       if (err)
         Alert.alert(
           "Sorry we couldn't add your ingredient.",
@@ -132,6 +201,7 @@ const EditRecipe = ({ navigation, route }) => {
     try {
       const token = await AsyncStorage.getItem("token");
       const findIngredient = ingredients.find((ing) => ing.id === id);
+      if (checkEmpty(findIngredient.ingredient)) return Alert.alert("Sorry we can't update your ingredient", "Please make sure your last ingredient contains some text.", [{text: 'Okay'}])
       await fetch(`${ENVS.url}/recipes/updateIngredient`, {
         headers: {
           "Content-Type": "application/json",
@@ -144,6 +214,23 @@ const EditRecipe = ({ navigation, route }) => {
       console.log(err);
     }
   };
+
+  const onEndTitleHandler = async () => {
+    try {
+      if (checkEmpty(title)) return Alert.alert("Sorry we couldn't update your title", "Please make sure that your title has some text in it.", [{text: 'Okay'}])
+      const token = await AsyncStorage.getItem("token");
+      await fetch(`${ENVS.url}/recipes/updateTitle`, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": token
+        },
+        method: 'POST',
+        body: JSON.stringify({ recipeId: recipeId, title: title })
+      })
+    } catch (err) {
+      if (err) Alert.alert("Sorry we couldn't update your title", "Sorry we couldn't update your title", [{text: 'Okay'}])
+    }
+  }
 
   return (
     <ScrollView contentContainerStyle={{ flex: 1 }}>
@@ -161,6 +248,8 @@ const EditRecipe = ({ navigation, route }) => {
                 style={styles.customText}
                 value={title}
                 multiline
+                onChangeText={(text) => setTitle(text)}
+                onEndEditing={onEndTitleHandler}
               />
             </View>
             <View
@@ -202,7 +291,7 @@ const EditRecipe = ({ navigation, route }) => {
                     elevation: 0,
                   }}
                 >
-                  {ingredients.map((ing, index) => (
+                  {ingredients.map((ing) => (
                     <Holder
                       key={ing.id}
                       customPlaceholder="Ingredient..."
@@ -234,6 +323,7 @@ const EditRecipe = ({ navigation, route }) => {
                 touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
                 text="Add Method"
                 textStyle={styles.btnText}
+                onPress={onAddNewInstructionHandler}
               />
               <ScrollView
                 ref={insScroll}
@@ -260,6 +350,15 @@ const EditRecipe = ({ navigation, route }) => {
                         ins.id
                       )}
                       onEndEditing={onEndInstructionEdit.bind(this, ins.id)}
+                    />
+                  ))}
+                  {addNewInstructions.map((ins) => (
+                    <Holder
+                      key={ins.id}
+                      customPlaceholder="Instruction..."
+                      value={ins.instruction}
+                      onChangeText={onChangeNewInstructionHandler.bind(this, ins.id)}
+                      onEndEditing={onEndNewInstructionEdit.bind(this, ins.id)}
                     />
                   ))}
                 </Card>
