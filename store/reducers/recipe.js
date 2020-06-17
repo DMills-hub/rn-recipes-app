@@ -22,12 +22,11 @@ import {
   DELETE_RECIPE,
   UPDATE_IMAGE,
   CLEAR_IMAGE,
-  ADD_RATING,
-  ADD_REVIEW,
   SAVE_REVIEW,
   GET_REVIEWS,
   UPDATE_SERVES,
   CLEAR_ERROR,
+  SEARCH_RECIPES,
 } from "../types/recipe";
 
 const initialState = {
@@ -122,6 +121,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, reviews: action.reviews }
     case CLEAR_ERROR:
       return { ...state, error: null }
+    case SEARCH_RECIPES:
+      return { ...state, recipes: action.recipes }
     default:
       return state;
   }

@@ -25,3 +25,4 @@ export const SAVE_REVIEW = "SAVE_REVIEW";
 export const GET_REVIEWS = "GET_REVIEWS";
 export const UPDATE_SERVES = "UPDATE_SERVES";
 export const CLEAR_ERROR = "CLEAR_ERROR";
+export const SEARCH_RECIPES = "SEARCH_RECIPES";

@@ -25,11 +25,30 @@ import {
   SAVE_REVIEW,
   GET_REVIEWS,
   UPDATE_SERVES,
-  CLEAR_ERROR
+  CLEAR_ERROR,
+  SEARCH_RECIPES
 } from "../types/recipe";
 import * as Random from "expo-random";
 import ENVS from "../../env";
 import { AsyncStorage } from "react-native";
+
+
+export const searchRecipes = (category, title) => {
+  return async dispatch => {
+    const token = await AsyncStorage.getItem("token");
+    const attemptSearchRecipes = await fetch(`${ENVS.url}/recipes/search/${category}/${title}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": token
+      }
+    })
+    const searchedRecipes = await attemptSearchRecipes.json();
+    dispatch({
+      type: SEARCH_RECIPES,
+      recipes: searchedRecipes.recipes
+    })
+  }
+}
 
 export const getAllReviews = (recipeId) => {
   return async dispatch => {

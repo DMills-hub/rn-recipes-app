@@ -1,5 +1,5 @@
-import React, { useCallback, useLayoutEffect } from "react";
-import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
+import React, { useCallback, useLayoutEffect, useState } from "react";
+import { View, Text, StyleSheet, FlatList, Alert, Platform } from "react-native";
 import Spinner from "../../components/Spinner/Spinner";
 import { useSelector, useDispatch } from "react-redux";
 import Recipe from "../../components/Recipe/Recipe";
@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { loading, getAllRecipes, setError } from '../../store/actions/recipe';
 import onClickRecipe from '../../helpers/onClickRecipe';
 import onClearRecipeError from "../../helpers/onClearRecipeError";
+import Search from '../../components/Search/Search';
 
 const LoadCategory = ({navigation, route}) => {
   const token = useSelector((state) => state.auth.token);
@@ -14,6 +15,7 @@ const LoadCategory = ({navigation, route}) => {
   const recipes = useSelector((state) => state.recipes.recipes);
   const isLoading = useSelector((state) => state.recipes.isLoading);
   const myError = useSelector((state) => state.recipes.error);
+  const category = route.params.category;
   const dispatch = useDispatch();
   
  useLayoutEffect(() => {
@@ -27,7 +29,7 @@ const LoadCategory = ({navigation, route}) => {
       const getRecipes = async () => {
         dispatch(loading(true));
         try {
-          await dispatch(getAllRecipes(route.params.category));
+          await dispatch(getAllRecipes(category));
         } catch (err) {
           dispatch(setError("Sorry we couldn't get the reviews for this recipe."))
           dispatch(loading(false));
@@ -57,8 +59,13 @@ const LoadCategory = ({navigation, route}) => {
     Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
   }
 
+  
+
+
+
   return (
     <View style={styles.screen}>
+      <Search category={category} />
       {!isLoading && recipes.length === 0 ? (
         <Text
           style={{
