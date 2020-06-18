@@ -41,6 +41,7 @@ import * as ImagePicker from "expo-image-picker";
 import Card from "../../components/Card/Card";
 import Spinner from "../../components/Spinner/Spinner";
 import onClearRecipeError from "../../helpers/onClearRecipeError";
+import Filter from "bad-words";
 
 const AddRecipe = (props) => {
   const dispatch = useDispatch();
@@ -55,6 +56,7 @@ const AddRecipe = (props) => {
   const category = useSelector((state) => state.recipes.category);
   const isLoading = useSelector((state) => state.recipes.loading);
   const myError = useSelector((state) => state.recipes.error);
+  const filter = new Filter();
   const [share, setShared] = useState(true);
   const ingScroll = useRef();
   const insScroll = useRef();
@@ -184,6 +186,24 @@ const AddRecipe = (props) => {
       serves === ""
     )
       return false;
+
+    const filteredTitle = filter.isProfane(title);
+    const filteredCooktime = filter.isProfane(cookTime);
+    const filteredPreptime = filter.isProfane(prepTime);
+    const filteredServes = filter.isProfane(serves);
+
+    if (filteredTitle || filteredCooktime || filteredPreptime || filteredServes) return false;
+    
+      for (let i = 0; i < ingredients.length; i++) {
+        const filterIngredient = filter.isProfane(ingredients[i].ingredient);
+        if (filterIngredient) return false;
+      }
+
+      for (let i = 0; i < instructions.length; i++) {
+        const filterInstruction = filter.isProfane(instructions[i].instruction);
+        if (filterInstruction) return false;
+      }
+
     return true;
   };
 
@@ -192,7 +212,7 @@ const AddRecipe = (props) => {
     if (!checkReicpeValidity)
       return Alert.alert(
         "Couldn't save your recipe.",
-        "Please make sure all of the fields have something entered in them and you have a picture.",
+        "Please make sure all of the fields have something entered in them and there is no bad language used.",
         [{ text: "Okay" }]
       );
     dispatch(loading(true));
