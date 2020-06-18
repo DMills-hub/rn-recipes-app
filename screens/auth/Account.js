@@ -104,14 +104,16 @@ const Account = (props) => {
     <View style={styles.screen}>
       <View style={styles.infoHolder}>
         <Text style={styles.titleHolder}>User: </Text>
+        {username === "" ? <Spinner /> : null}
         <Text style={styles.textHolder}>
-          {username === "" ? <Spinner /> : username}
+          {username === "" ? null : username}
         </Text>
       </View>
       <View style={styles.infoHolder}>
         <Text style={styles.titleHolder}>Email: </Text>
+        {email === "" ? <Spinner /> : null}
         <Text style={styles.textHolder}>
-          {email === "" ? <Spinner /> : email}
+          {email === "" ? null : email}
         </Text>
       </View>
       <View>
