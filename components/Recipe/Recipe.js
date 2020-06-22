@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import ENVS from "../../env";
 import Colors from "../../constants/Colors";
 import Spinner from "../Spinner/Spinner";
+import { scale } from 'react-native-size-matters';
 
 const Recipe = (props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   letterText: {
     fontWeight: "bold",
     textAlign: "center",
-    fontSize: 30,
+    fontSize: scale(30),
     color: "white",
   },
   image: {
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: scale(16),
   },
   timeContainer: {
     marginHorizontal: 10,
@@ -102,7 +103,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   bold: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontSize: scale(12)
   }
 });
 

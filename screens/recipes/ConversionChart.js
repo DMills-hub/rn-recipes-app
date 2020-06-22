@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View, Text, Dimensions } from "react-native";
 import Card from "../../components/Card/Card";
 import Colors from "../../constants/Colors";
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 const ConversionChart = (props) => {
   return (
@@ -76,13 +77,13 @@ const ConversionChart = (props) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    margin: 40,
+    margin: scale(40),
     alignItems: "center",
     justifyContent: "center",
     overflow: 'hidden'
   },
   title: {
-    fontSize: Dimensions.get('screen').height < 750 ? 16 : 20,
+    fontSize: scale(18),
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 5,
@@ -93,16 +94,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   textHolder: {
-    marginVertical: Dimensions.get('screen').height < 750 ? 3 : 5,
+    marginVertical: scale(3),
   },
   titleHolder: {
     backgroundColor: Colors.primary,
     width: "90%",
-    padding: 10,
+    padding: verticalScale(3),
     borderRadius: 10,
   },
   text: {
-    fontSize: Dimensions.get('screen').height < 750 ? 10 : 14
+    fontSize: verticalScale(12)
   }
 });
 

@@ -37,6 +37,7 @@ import Review from "../../components/Review/Review";
 import { useFocusEffect } from "@react-navigation/native";
 import Filter from "bad-words";
 import onClearRecipeError from "../../helpers/onClearRecipeError";
+import { scale } from "react-native-size-matters";
 
 const ViewRecipe = ({ navigation, route }) => {
   const title = route.params.title;
@@ -61,6 +62,7 @@ const ViewRecipe = ({ navigation, route }) => {
   const [reviewTitle, setReviewTitle] = useState("");
   const [rating, setRating] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imgClicked, setImgClicked] = useState(false);
   const filter = new Filter();
 
   const favouriteHandler = async () => {
@@ -224,12 +226,33 @@ const ViewRecipe = ({ navigation, route }) => {
     ]);
   }
 
+  const onImageClickedHandler = () => {
+    setImgClicked((state) => !state);
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
       keyboardVerticalOffset={20}
     >
+      {imgClicked && imageLoaded && image !== `${ENVS.url}` ? (
+        <View
+          style={styles.imageClickedHolder}
+        >
+          <View>
+            <TouchableOpacity onPress={onImageClickedHandler} style={{alignItems: 'flex-end'}}>
+              <Text style={{color: 'white', fontSize: scale(30)}}>X</Text>
+            </TouchableOpacity>
+            <Image
+              source={{
+                uri: `${image !== `${ENVS.imagesUrl}/` ? image : imageUri}`,
+              }}
+              style={styles.bigImage}
+            />
+          </View>
+        </View>
+      ) : null}
       <ScrollView>
         <TouchableWithoutFeedback onPress={onDismissKeyboard}>
           <View style={styles.screen}>
@@ -249,13 +272,17 @@ const ViewRecipe = ({ navigation, route }) => {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <Image
-                  source={{
-                    uri: `${image !== `${ENVS.imagesUrl}/` ? image : imageUri}`,
-                  }}
-                  style={{ width: 80, height: 80, borderRadius: 40 }}
-                  onLoad={() => setImageLoaded(true)}
-                />
+                <TouchableOpacity onPress={onImageClickedHandler}>
+                  <Image
+                    source={{
+                      uri: `${
+                        image !== `${ENVS.imagesUrl}/` ? image : imageUri
+                      }`,
+                    }}
+                    style={styles.smallImage}
+                    onLoad={() => setImageLoaded(true)}
+                  />
+                </TouchableOpacity>
               )}
             </View>
             <Card style={{ ...styles.holder, alignItems: "flex-start" }}>
@@ -301,7 +328,7 @@ const ViewRecipe = ({ navigation, route }) => {
               >
                 <Text
                   style={{
-                    fontSize: 25,
+                    fontSize: scale(20),
                     fontWeight: "bold",
                     textAlign: "center",
                     paddingBottom: 10,
@@ -397,7 +424,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    width: '70%'
+    width: "70%",
   },
   contentsHolder: {
     marginTop: 10,
@@ -442,6 +469,23 @@ const styles = StyleSheet.create({
   timeTitle: {
     fontWeight: "bold",
   },
+  imageClickedHolder: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    zIndex: 100,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.6)",
+  },
+  bigImage: {
+    width: scale(300),
+    height: scale(300),
+    borderRadius: scale(150),
+  },
+  smallImage: { width: scale(80), height: scale(80), borderRadius: scale(40) }
 });
 
 export default ViewRecipe;

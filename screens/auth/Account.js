@@ -118,7 +118,8 @@ const Account = (props) => {
       </View>
       <View>
         <Text style={styles.generalText}>
-          Think somebody knows your password? Reset it below.
+          {`Think somebody knows your password?
+Reset it below.`}
         </Text>
       </View>
       <View style={styles.changePasswordHolder}>
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
   },
   generalText: {
     fontSize: 14,
-    textAlign: "center",
+    textAlign: "left",
     fontWeight: "bold",
     marginTop: 5,
   },

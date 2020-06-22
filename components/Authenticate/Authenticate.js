@@ -13,10 +13,11 @@ import Colors from "../../constants/Colors";
 import Spinner from "../Spinner/Spinner";
 import Card from "../Card/Card";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 const Authenticate = (props) => {
   return (
-    <KeyboardAvoidingView keyboardVerticalOffset={50} behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.authScreen}>
+    <KeyboardAvoidingView keyboardVerticalOffset={scale(110)} behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.authScreen}>
       <Card style={styles.authContainer}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.formController}>
@@ -25,7 +26,7 @@ const Authenticate = (props) => {
             </View>
             <View style={styles.formControls}>
               <Ionicons
-                size={20}
+                size={scale(14)}
                 name={Platform.OS === "android" ? "md-person" : "ios-person"}
               />
               <CustomTextInput
@@ -42,7 +43,7 @@ const Authenticate = (props) => {
               </View>
               <View style={styles.formControls}>
                 <Ionicons
-                  size={20}
+                  size={scale(14)}
                   name={Platform.OS === "android" ? "md-mail" : "ios-mail"}
                 />
                 <CustomTextInput
@@ -59,7 +60,7 @@ const Authenticate = (props) => {
             </View>
             <View style={styles.formControls}>
               <Ionicons
-                size={20}
+                size={scale(14)}
                 name={Platform.OS === "android" ? "md-key" : "ios-key"}
               />
               <CustomTextInput
@@ -77,7 +78,7 @@ const Authenticate = (props) => {
               </View>
               <View style={styles.formControls}>
                 <Ionicons
-                  size={20}
+                  size={scale(14)}
                   name={Platform.OS === "android" ? "md-key" : "ios-key"}
                 />
                 <CustomTextInput
@@ -118,11 +119,10 @@ const styles = StyleSheet.create({
     zIndex: 100
   },
   authContainer: {
-    height: 550,
+    height: scale(350),
     width: "80%",
     alignItems: "center",
     justifyContent: "center",
-    minHeight: '60%'
   },
   scrollViewContainer: {
     alignItems: "center",
@@ -131,13 +131,14 @@ const styles = StyleSheet.create({
   },
   formController: {
     width: "100%",
-    padding: 30,
+    padding: 15,
   },
   textInput: {
     width: "90%",
     marginLeft: 10,
     borderBottomColor: "black",
     borderBottomWidth: 1,
+    fontSize: scale(12)
   },
   formControls: {
     flexDirection: "row",
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: "bold",
-    fontSize: 17,
+    fontSize: scale(14),
   },
   buttonContainer: {
     width: "40%",

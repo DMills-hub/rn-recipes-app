@@ -62,7 +62,7 @@ const Favourites = (props) => {
             color: "grey",
           }}
         >
-          Sorry no favourites found.
+          Sorry no favourites found. To add one click on the Heart in the top right hand corner of one of the Recipes.
         </Text>
       ) : null}
       {!isLoading ? (
