@@ -9,6 +9,7 @@ import MyRecipesStack from "./MyRecipesStackNavigator";
 import FavouritesStack from "./FavouriteRecipesStackNavigator";
 import AccountStack from "./AccountStackNavigator";
 import ConversionChartStack from "./ConversionChartStackNavigator";
+import FaqStackNavigator from './FaqStackNavigator';
 import { useDispatch } from "react-redux";
 import { logout } from "../store/actions/auth";
 import { reset } from "../store/actions/recipe";
@@ -116,6 +117,21 @@ const MyStack = () => {
           };
         }}
       />
+      <MainAppDrawer.Screen component={FaqStackNavigator} name="Faq" options={() => {
+          return {
+            drawerIcon: () => (
+              <Ionicons
+                size={23}
+                name={
+                  Platform.OS === "android"
+                    ? "md-list-box"
+                    : "ios-list-box"
+                }
+              />
+            ),
+            title: 'FAQ'
+          };
+        }} />
     </MainAppDrawer.Navigator>
   );
 };

@@ -1,5 +1,5 @@
-import React, { useCallback, useLayoutEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, Alert, Platform } from "react-native";
+import React, { useCallback, useLayoutEffect } from "react";
+import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
 import Spinner from "../../components/Spinner/Spinner";
 import { useSelector, useDispatch } from "react-redux";
 import Recipe from "../../components/Recipe/Recipe";
@@ -7,7 +7,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { loading, getAllRecipes, setError } from '../../store/actions/recipe';
 import onClickRecipe from '../../helpers/onClickRecipe';
 import onClearRecipeError from "../../helpers/onClearRecipeError";
-import Search from '../../components/Search/Search';
+import Search from '../../components/SearchCategory/SearchCategory';
 
 const LoadCategory = ({navigation, route}) => {
   const token = useSelector((state) => state.auth.token);

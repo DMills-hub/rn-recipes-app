@@ -27,6 +27,7 @@ import {
   UPDATE_SERVES,
   CLEAR_ERROR,
   SEARCH_RECIPES,
+  SEARCH_MY_RECIPES
 } from "../types/recipe";
 
 const initialState = {
@@ -123,6 +124,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, error: null }
     case SEARCH_RECIPES:
       return { ...state, recipes: action.recipes }
+    case SEARCH_MY_RECIPES:
+      return { ...state, myRecipes: action.myRecipes }
     default:
       return state;
   }

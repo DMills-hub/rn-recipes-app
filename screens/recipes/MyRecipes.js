@@ -17,6 +17,7 @@ import CustomHeaderButton from "../../components/CustomHeaderButton/CustomHeader
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import onClearRecipeError from "../../helpers/onClearRecipeError";
 import ENVS from '../../env';
+import SearchMyRecipes from '../../components/SearchMyRecipes/SearchMyRecipes';
 
 const MyRecipes = ({ navigation }) => {
   const isLoading = useSelector((state) => state.recipes.loading);
@@ -189,6 +190,7 @@ const MyRecipes = ({ navigation }) => {
 
   return (
     <View>
+      <SearchMyRecipes />
       {!isLoading && myRecipes.length === 0 ? (
         <Text
           style={{
