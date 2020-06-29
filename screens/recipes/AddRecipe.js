@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -10,6 +10,7 @@ import {
   Picker,
   Keyboard,
   TouchableWithoutFeedback,
+  LayoutAnimation
 } from "react-native";
 import { CheckBox } from "react-native-elements";
 import CustomTextInput from "../../components/CustomTextInput/CustomTextInput";
@@ -42,6 +43,7 @@ import Card from "../../components/Card/Card";
 import Spinner from "../../components/Spinner/Spinner";
 import onClearRecipeError from "../../helpers/onClearRecipeError";
 import Filter from "bad-words";
+import onTriggerLayoutAnimation from '../../helpers/onTriggerLayoutAnimation';
 
 const AddRecipe = (props) => {
   const dispatch = useDispatch();
@@ -58,16 +60,20 @@ const AddRecipe = (props) => {
   const myError = useSelector((state) => state.recipes.error);
   const filter = new Filter();
   const [share, setShared] = useState(true);
-  const ingScroll = useRef();
-  const insScroll = useRef();
   const [showBtns, setShowBtns] = useState(true);
 
   Keyboard.addListener("keyboardDidShow", () => {
-    if (Platform.OS === "android") return setShowBtns(false);
+    if (Platform.OS === "android") {
+      dispatch(loading(false));
+      setShowBtns(false);
+    }
   });
 
   Keyboard.addListener("keyboardDidHide", () => {
-    if (Platform.OS === "android") return setShowBtns(true);
+    if (Platform.OS === "android") {
+      dispatch(loading(false));
+      setShowBtns(true);
+    } 
   });
 
   const onAddIngredientHandler = () => {
@@ -80,6 +86,7 @@ const AddRecipe = (props) => {
         "Previous ingredients must not be empty!",
         [{ text: "Okay" }]
       );
+    onTriggerLayoutAnimation();
     dispatch(addIngredient());
   };
 
@@ -93,6 +100,7 @@ const AddRecipe = (props) => {
         "Previous Instruction must not be empty.",
         [{ text: "Okay" }]
       );
+      onTriggerLayoutAnimation();
     dispatch(addInstruction());
   };
 
@@ -109,10 +117,12 @@ const AddRecipe = (props) => {
   };
 
   const onDeleteIngredientHandler = (id) => {
+    onTriggerLayoutAnimation();
     dispatch(deleteIngredient(id));
   };
 
   const onDeleteInstructionHandler = (instruction) => {
+    onTriggerLayoutAnimation();
     dispatch(deleteInstruction(instruction));
   };
 
@@ -466,8 +476,9 @@ const AddRecipe = (props) => {
             </View>
           </View>
         ) : (
-          <Spinner />
+          null
         )}
+        {isLoading ? <Spinner /> : null}
       </View>
     </TouchableWithoutFeedback>
     </ScrollView>

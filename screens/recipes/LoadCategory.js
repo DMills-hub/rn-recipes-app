@@ -1,9 +1,8 @@
-import React, { useCallback, useLayoutEffect } from "react";
-import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
+import React, { useCallback, useLayoutEffect, useState, useEffect } from "react";
+import { View, Text, FlatList, Alert, RefreshControl } from "react-native";
 import Spinner from "../../components/Spinner/Spinner";
 import { useSelector, useDispatch } from "react-redux";
 import Recipe from "../../components/Recipe/Recipe";
-import { useFocusEffect } from '@react-navigation/native'
 import { loading, getAllRecipes, setError } from '../../store/actions/recipe';
 import onClickRecipe from '../../helpers/onClickRecipe';
 import onClearRecipeError from "../../helpers/onClearRecipeError";
@@ -15,6 +14,8 @@ const LoadCategory = ({navigation, route}) => {
   const recipes = useSelector((state) => state.recipes.recipes);
   const isLoading = useSelector((state) => state.recipes.isLoading);
   const myError = useSelector((state) => state.recipes.error);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [ refreshing, setRefreshing ] = useState(false);
   const category = route.params.category;
   const dispatch = useDispatch();
   
@@ -24,21 +25,20 @@ const LoadCategory = ({navigation, route}) => {
    })
  }, [route.params.name])
 
-  useFocusEffect(
-    useCallback(() => {
-      const getRecipes = async () => {
-        dispatch(loading(true));
-        try {
-          await dispatch(getAllRecipes(category));
-        } catch (err) {
-          dispatch(setError("Sorry we couldn't get the reviews for this recipe."))
-          dispatch(loading(false));
-        }
+  useEffect(() => {
+    const getRecipes = async () => {
+      dispatch(loading(true));
+      try {
+        await dispatch(getAllRecipes(category));
+        setInitialLoad(false);
+      } catch (err) {
+        dispatch(setError("Sorry we couldn't get the recipes."))
         dispatch(loading(false));
-      };
-      getRecipes();
-    }, [dispatch])
-  );
+      }
+      dispatch(loading(false));
+    };
+    getRecipes();
+  }, [dispatch])
 
   const onClickRecipeHandler = async (
     recipeId,
@@ -59,14 +59,20 @@ const LoadCategory = ({navigation, route}) => {
     Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
   }
 
-  
-
-
+  const onRefreshHandler = async () => {
+    setRefreshing(true);
+    try {
+      await dispatch(getAllRecipes(category));
+    } catch (err) {
+      dispatch(setError("Sorry we couldn't get the recipes."))
+    }
+    setRefreshing(false);
+  }
 
   return (
-    <View style={styles.screen}>
+    <View>
       <Search category={category} />
-      {!isLoading && recipes.length === 0 ? (
+      {!isLoading && recipes.length === 0 && !initialLoad ? (
         <Text
           style={{
             textAlign: "center",
@@ -84,6 +90,8 @@ const LoadCategory = ({navigation, route}) => {
         <FlatList
           keyExtractor={(item) => item.id.toString()}
           data={recipes}
+          refreshing={refreshing}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={async () => await onRefreshHandler()} />}
           renderItem={({ item }) => (
             <Recipe
               onClick={onClickRecipeHandler.bind(
@@ -108,6 +116,5 @@ const LoadCategory = ({navigation, route}) => {
   );
 };
 
-const styles = StyleSheet.create({});
 
 export default LoadCategory;

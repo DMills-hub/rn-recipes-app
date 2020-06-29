@@ -1,50 +1,76 @@
-import React, { useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, Image, StyleSheet, Animated } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ENVS from "../../env";
 import Colors from "../../constants/Colors";
 import Spinner from "../Spinner/Spinner";
-import { scale } from 'react-native-size-matters';
+import { scale } from "react-native-size-matters";
 
 const Recipe = (props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const recipeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(recipeAnim, {
+      toValue: 1,
+      duration: 600,
+    }).start();
+  }, []);
 
   return (
-    <TouchableOpacity
-      onPress={props.onClick}
-      activeOpacity={0.6}
-      style={styles.recipeHolder}
+    <Animated.View
+      style={{
+        opacity: recipeAnim,
+        transform: [
+          { scale: recipeAnim },
+          {
+            rotate: recipeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: ["30deg", "0deg"],
+              extrapolate: "clamp",
+            }),
+          },
+        ],
+      }}
     >
-      {!imageLoaded && props.image !== "" ? <Spinner /> : null}
-      <View
-        style={props.image !== "" ? styles.imageHolder : styles.letterHolder}
+      <TouchableOpacity
+        onPress={props.onClick}
+        activeOpacity={0.6}
+        style={styles.recipeHolder}
       >
-        {props.image !== "" ? (
+        {!imageLoaded && props.image !== "" ? <Spinner /> : null}
+        <View
+          style={props.image !== "" ? styles.imageHolder : styles.letterHolder}
+        >
+          {props.image !== "" ? (
             <Image
-            style={styles.image}
-            source={{ uri: `${ENVS.imagesUrl}/${props.image}` }}
-            onLoad={() => setImageLoaded(true)}
-          />
-        ) : (
-          <Text style={styles.letterText}>{props.title.charAt(0)}</Text>
-        )}
-      </View>
-      <View style={styles.titleHolder}><Text style={styles.title}>{props.title}</Text></View>
-      <View style={styles.timeContainer}>
-        <View style={styles.timeContainerFlex}>
-          <Text style={styles.bold}>Cook Time </Text>
-          <Text>{props.cookTime}</Text>
+              style={styles.image}
+              source={{ uri: `${ENVS.imagesUrl}/${props.image}` }}
+              onLoad={() => setImageLoaded(true)}
+            />
+          ) : (
+            <Text style={styles.letterText}>{props.title.charAt(0)}</Text>
+          )}
         </View>
-        <View style={styles.timeContainerFlex}>
-          <Text style={styles.bold}>Prep Time </Text>
-          <Text>{props.prepTime}</Text>
+        <View style={styles.titleHolder}>
+          <Text style={styles.title}>{props.title}</Text>
         </View>
-        <View style={styles.timeContainerFlex}>
-          <Text style={styles.bold}>Serves </Text>
-          <Text>{props.serves}</Text>
+        <View style={styles.timeContainer}>
+          <View style={styles.timeContainerFlex}>
+            <Text style={styles.bold}>Cook Time </Text>
+            <Text>{props.cookTime}</Text>
+          </View>
+          <View style={styles.timeContainerFlex}>
+            <Text style={styles.bold}>Prep Time </Text>
+            <Text>{props.prepTime}</Text>
+          </View>
+          <View style={styles.timeContainerFlex}>
+            <Text style={styles.bold}>Serves </Text>
+            <Text>{props.serves}</Text>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
@@ -63,11 +89,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 30,
     marginRight: 10,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   titleHolder: {
-    width: '40%',
-    marginRight: 20
+    width: "40%",
+    marginRight: 20,
   },
   letterHolder: {
     width: 60,
@@ -94,18 +120,18 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     marginHorizontal: 10,
-    width: '30%',
+    width: "30%",
     alignItems: "center",
-    paddingRight: 30
+    paddingRight: 30,
   },
   timeContainerFlex: {
     flexDirection: "row",
     marginVertical: 5,
   },
   bold: {
-    fontWeight: 'bold',
-    fontSize: scale(12)
-  }
+    fontWeight: "bold",
+    fontSize: scale(12),
+  },
 });
 
 export default Recipe;

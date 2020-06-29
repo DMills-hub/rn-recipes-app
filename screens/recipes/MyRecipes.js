@@ -1,5 +1,5 @@
-import React, { useCallback, useLayoutEffect } from "react";
-import { View, FlatList, Text, Animated, TouchableOpacity, Alert, AsyncStorage } from "react-native";
+import React, { useCallback, useLayoutEffect, useState } from "react";
+import { View, FlatList, Text, Animated, TouchableOpacity, Alert, AsyncStorage, RefreshControl } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -25,6 +25,7 @@ const MyRecipes = ({ navigation }) => {
   const myError = useSelector((state) => state.recipes.error);
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
+  const [ refreshing, setRefreshing ] = useState(false);
   const dispatch = useDispatch();
 
   const onAddRecipeHandler = () => {
@@ -184,6 +185,16 @@ const MyRecipes = ({ navigation }) => {
     );
   };
 
+  const onRefreshHandler = async () => {
+    setRefreshing(true);
+    try {
+      await dispatch(getMyRecipes());
+    } catch (err) {
+      dispatch(setError("Sorry we couldn't get the recipes."))
+    }
+    setRefreshing(false);
+  }
+
   if (myError) {
     Alert.alert("Error", myError, [{text: 'Okay', onPress: () => onClearRecipeError(dispatch)}])
   }
@@ -207,6 +218,8 @@ const MyRecipes = ({ navigation }) => {
         <FlatList
           keyExtractor={(item) => item.id.toString()}
           data={myRecipes}
+          refreshing={refreshing}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefreshHandler} />}
           renderItem={({ item }) => (
             <Swipeable
               friction={1}

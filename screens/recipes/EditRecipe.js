@@ -22,6 +22,7 @@ import Spinner from '../../components/Spinner/Spinner';
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from 'expo-image-picker';
 import Filter from 'bad-words';
+import onTriggerLayoutAnimation from '../../helpers/onTriggerLayoutAnimation';
 
 const guidGenerator = () => {
   var S4 = function () {
@@ -106,16 +107,19 @@ const EditRecipe = ({ navigation, route }) => {
   }
 
    const onDeleteInstructionHandler = (id) => {
+     onTriggerLayoutAnimation();
      const oldInstructions = instructions.filter((ing) => ing.id !== id);
      setInstructions(oldInstructions);
   };
 
   const onDeleteIngredientHandler = (id) => {
+    onTriggerLayoutAnimation();
     const oldIngredients = ingredients.filter((ing) => ing.id !== id);
     setIngredients(oldIngredients);
   };
 
   const onAddNewIngredientHandler = () => {
+    onTriggerLayoutAnimation();
     const addIngredient = ingredients.concat({
       id: guidGenerator(),
       ingredient: "",
@@ -124,6 +128,7 @@ const EditRecipe = ({ navigation, route }) => {
   };
 
   const onAddNewInstructionHandler = () => {
+    onTriggerLayoutAnimation();
     const addInstruction = instructions.concat({
       id: guidGenerator(),
       instruction: "",

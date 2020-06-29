@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   KeyboardAvoidingView,
+  Animated
 } from "react-native";
 import Card from "../../components/Card/Card";
 import CustomHeaderButton from "../../components/CustomHeaderButton/CustomHeaderButton";
@@ -38,6 +39,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import Filter from "bad-words";
 import onClearRecipeError from "../../helpers/onClearRecipeError";
 import { scale } from "react-native-size-matters";
+import onTriggerLayoutAnimation from '../../helpers/onTriggerLayoutAnimation';
 
 const ViewRecipe = ({ navigation, route }) => {
   const title = route.params.title;
@@ -64,6 +66,7 @@ const ViewRecipe = ({ navigation, route }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imgClicked, setImgClicked] = useState(false);
   const filter = new Filter();
+
 
   const favouriteHandler = async () => {
     try {
@@ -227,8 +230,10 @@ const ViewRecipe = ({ navigation, route }) => {
   }
 
   const onImageClickedHandler = () => {
+    onTriggerLayoutAnimation();
     setImgClicked((state) => !state);
   };
+
 
   return (
     <KeyboardAvoidingView
@@ -237,7 +242,7 @@ const ViewRecipe = ({ navigation, route }) => {
       keyboardVerticalOffset={20}
     >
       {imgClicked && imageLoaded && image !== `${ENVS.url}` ? (
-        <View
+        <Animated.View
           style={styles.imageClickedHolder}
         >
           <View>
@@ -251,7 +256,7 @@ const ViewRecipe = ({ navigation, route }) => {
               style={styles.bigImage}
             />
           </View>
-        </View>
+        </Animated.View>
       ) : null}
       <ScrollView>
         <TouchableWithoutFeedback onPress={onDismissKeyboard}>
@@ -473,8 +478,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    height: "100%",
     width: "100%",
+    height: '100%',
     zIndex: 100,
     alignItems: "center",
     justifyContent: "center",
