@@ -7,7 +7,7 @@
       "ios",
       "android"
     ],
-    "version": "1.0.1",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -23,7 +23,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.myrecipes.recipe-me",
-      "buildNumber": "1.0.1",
+      "buildNumber": "1.1.1",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to save images of there recipes that they have created."
@@ -31,7 +31,7 @@
     },
     "android": {
       "package": "com.myrecipes.recipeme",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive_icon.png",
         "backgroundColor": "#B0E0E6"

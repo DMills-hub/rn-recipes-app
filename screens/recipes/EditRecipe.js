@@ -18,8 +18,10 @@ import Card from "../../components/Card/Card";
 import Colors from "../../constants/Colors";
 import Holder from "../../components/Holder/Holder";
 import ENVS from "../../env";
+import Spinner from '../../components/Spinner/Spinner';
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from 'expo-image-picker';
+import Filter from 'bad-words';
 
 const guidGenerator = () => {
   var S4 = function () {
@@ -45,16 +47,17 @@ const EditRecipe = ({ navigation, route }) => {
   const recipeId = route.params.recipeId;
   const [title, setTitle] = useState(route.params.title);
   const [image, setImage] = useState(route.params.image);
+  const [sendImage, setSendImage] = useState("");
   const [cookTime, setCooktime] = useState(route.params.cooktime);
   const [prepTime, setPreptime] = useState(route.params.preptime);
   const [serves, setServes] = useState(route.params.serving);
-  const [ingredients, setIngredient] = useState(route.params.ingredients);
+  const [ingredients, setIngredients] = useState(route.params.ingredients);
   const [instructions, setInstructions] = useState(route.params.instructions);
-  const [addNewIngredients, setAddNewIngredients] = useState([]);
-  const [addNewInstructions, setAddNewInstructions] = useState([]);
   const [category, setCategory] = useState(route.params.category);
+  const [ isLoading, setIsLoading ] = useState(false);
   const ingScroll = useRef();
   const insScroll = useRef();
+  const filter = new Filter();
 
   const checkEmpty = (checkString) => {
     if (checkString === "") return true;
@@ -89,92 +92,34 @@ const EditRecipe = ({ navigation, route }) => {
     }
   };
 
-  const onDeleteInstructionHandler = async (id) => {
-    const oldInstructions = instructions.filter((ing) => ing.id !== id);
-    const newInstructions = addNewInstructions.filter((ing) => ing.id !== id);
-    setInstructions(oldInstructions);
-    setAddNewInstructions(newInstructions);
-    try {
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/deleteInstruction`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({ id: id }),
-      });
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't delete your ingredient",
-          "Sorry we had trouble deleteing that ingredient for you.",
-          [{ text: "Okay" }]
-        );
-    }
+  const onChangeCategoryHandler = (category) => {
+    setCategory(category);
+  }
+
+   const onDeleteInstructionHandler = (id) => {
+     const oldInstructions = instructions.filter((ing) => ing.id !== id);
+     setInstructions(oldInstructions);
   };
 
-  const onDeleteIngredientHandler = async (id) => {
+  const onDeleteIngredientHandler = (id) => {
     const oldIngredients = ingredients.filter((ing) => ing.id !== id);
-    const newIngredients = addNewIngredients.filter((ing) => ing.id !== id);
-    setIngredient(oldIngredients);
-    setAddNewIngredients(newIngredients);
-    try {
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/deleteIngredient`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({ id: id }),
-      });
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't delete your ingredient",
-          "Sorry we had trouble deleteing that ingredient for you.",
-          [{ text: "Okay" }]
-        );
-    }
+    setIngredients(oldIngredients);
   };
 
   const onAddNewIngredientHandler = () => {
-    if (addNewIngredients.length !== 0) {
-      if (
-        checkEmpty(addNewIngredients[addNewIngredients.length - 1].ingredient)
-      )
-        return Alert.alert(
-          "Sorry we couldn't add a new ingredient.",
-          "Make sure your most recent ingredient has some text in it.",
-          [{ text: "Okay" }]
-        );
-    }
-    const addIngredient = addNewIngredients.concat({
+    const addIngredient = ingredients.concat({
       id: guidGenerator(),
       ingredient: "",
     });
-    setAddNewIngredients(addIngredient);
+    setIngredients(addIngredient);
   };
 
   const onAddNewInstructionHandler = () => {
-    if (addNewInstructions.length !== 0) {
-      if (
-        checkEmpty(
-          addNewInstructions[addNewInstructions.length - 1].instruction
-        )
-      )
-        return Alert.alert(
-          "Sorry we couldn't add a new method.",
-          "Make sure your most recent method has some text in it.",
-          [{ text: "Okay" }]
-        );
-    }
-    const addInstruction = addNewInstructions.concat({
+    const addInstruction = instructions.concat({
       id: guidGenerator(),
       instruction: "",
     });
-    setAddNewInstructions(addInstruction);
+    setInstructions(addInstruction);
   };
 
   const onChangeInstructionHandler = (id, text) => {
@@ -185,295 +130,12 @@ const EditRecipe = ({ navigation, route }) => {
     setInstructions(newInstructions);
   };
 
-  const onEndInstructionEdit = async (id) => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      const findInstruction = instructions.find((ins) => ins.id === id);
-      if (checkEmpty(findInstruction.instruction))
-        Alert.alert(
-          "Sorry we couldn't save your method",
-          "Please make sure that your method contains some text.",
-          [{ text: "Okay" }]
-        );
-      await fetch(`${ENVS.url}/recipes/updateInstruction`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({
-          id: id,
-          instruction: findInstruction.instruction,
-        }),
-      });
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't edit your instruction",
-          "We had an issue trying to update your instruction.",
-          [{ text: "Okay" }]
-        );
-    }
-  };
-
-  const onChangeNewIngredientHandler = (id, text) => {
-    const newAddIngredients = [...addNewIngredients];
-    const index = newAddIngredients.findIndex((ing) => ing.id === id);
-    const updateNewIngredient = {
-      ...newAddIngredients[index],
-      ingredient: text,
-    };
-    newAddIngredients[index] = updateNewIngredient;
-    setAddNewIngredients(newAddIngredients);
-  };
-  const onChangeNewInstructionHandler = (id, text) => {
-    const newAddInstructions = [...addNewInstructions];
-    const index = newAddInstructions.findIndex((ins) => ins.id === id);
-    const updateNewInstruction = {
-      ...newAddInstructions[index],
-      instruction: text,
-    };
-    newAddInstructions[index] = updateNewInstruction;
-    setAddNewInstructions(newAddInstructions);
-  };
-
-  const onEndNewInstructionEdit = async (id) => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      const findNewInstruction = addNewInstructions.find(
-        (ins) => ins.id === id
-      );
-      if (checkEmpty(findNewInstruction.instruction))
-        Alert.alert(
-          "We couldn't save your ingredient.",
-          "Sorry we couldn't save your ingredient, make sure that it's not empty",
-          [{ text: "Okay" }]
-        );
-      const getId = await fetch(`${ENVS.url}/recipes/addInstruction`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({
-          recipeId: recipeId,
-          instruction: findNewInstruction.instruction,
-          id: id,
-        }),
-      });
-      const addId = await getId.json();
-      const findIndex = addNewInstructions.findIndex((ins) => ins.id === id);
-      const newInstructions = [...addNewInstructions];
-      const newId = { ...addNewInstructions[findIndex], id: addId.id };
-      newInstructions[findIndex] = newId;
-      setAddNewInstructions(newInstructions);
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't add your instruction.",
-          "Sorry we couldn't add your instruction.",
-          [{ text: "Okay" }]
-        );
-    }
-  };
-
-  const onEndNewIngredientEdit = async (id) => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      const findNewIngredient = addNewIngredients.find((ing) => ing.id === id);
-      if (checkEmpty(findNewIngredient.ingredient))
-        Alert.alert(
-          "We couldn't save your ingredient.",
-          "Sorry we couldn't save your ingredient, make sure that it's not empty",
-          [{ text: "Okay" }]
-        );
-      const getId = await fetch(`${ENVS.url}/recipes/addIngredient`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({
-          recipeId: recipeId,
-          ingredient: findNewIngredient.ingredient,
-          id: id,
-        }),
-      });
-      const addId = await getId.json();
-      const findIndex = addNewIngredients.findIndex((ing) => ing.id === id);
-      const newIngredients = [...addNewIngredients];
-      const newId = { ...addNewIngredients[findIndex], id: addId.id };
-      newIngredients[findIndex] = newId;
-      setAddNewIngredients(newIngredients);
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't add your ingredient.",
-          "Sorry we couldn't add your ingredient.",
-          [{ text: "Okay" }]
-        );
-    }
-  };
-
   const onChangeIngredientHandler = (id, text) => {
     const newIngredients = [...ingredients];
     const index = ingredients.findIndex((ing) => ing.id === id);
     const updateIngredient = { ...ingredients[index], ingredient: text };
     newIngredients[index] = updateIngredient;
-    setIngredient(newIngredients);
-  };
-
-  const onEndIngredientEdit = async (id) => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      const findIngredient = ingredients.find((ing) => ing.id === id);
-      if (checkEmpty(findIngredient.ingredient))
-        return Alert.alert(
-          "Sorry we can't update your ingredient",
-          "Please make sure your last ingredient contains some text.",
-          [{ text: "Okay" }]
-        );
-      await fetch(`${ENVS.url}/recipes/updateIngredient`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({ id: id, ingredient: findIngredient.ingredient }),
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const onEndTitleHandler = async () => {
-    try {
-      if (checkEmpty(title))
-        return Alert.alert(
-          "Sorry we couldn't update your title",
-          "Please make sure that your title has some text in it.",
-          [{ text: "Okay" }]
-        );
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/updateTitle`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({ recipeId: recipeId, title: title }),
-      });
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't update your title",
-          "Sorry we couldn't update your title",
-          [{ text: "Okay" }]
-        );
-    }
-  };
-
-  const onEndEditingPrepTimeHandler = async () => {
-    if (checkEmpty(prepTime))
-      return Alert.alert(
-        "Sorry no empty values.",
-        "Please make sure your preptime has something in it.",
-        [{ text: "Okay" }]
-      );
-    try {
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/updatePreptime`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({ recipeId: recipeId, preptime: prepTime }),
-      });
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't update your prpe time.",
-          "Sorry we had an issue updating your prep time.",
-          [{ text: "Okay" }]
-        );
-    }
-  };
-
-  const onEndEditingCookTimeHandler = async () => {
-    if (checkEmpty(cookTime))
-      return Alert.alert(
-        "Sorry no empty values.",
-        "Please make sure your cooktime has something in it.",
-        [{ text: "Okay" }]
-      );
-    try {
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/updateCooktime`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({ recipeId: recipeId, cooktime: cookTime }),
-      });
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't update your cook time.",
-          "Sorry we had an issue updating your cook time.",
-          [{ text: "Okay" }]
-        );
-    }
-  };
-
-  const onEndEditingServesHandler = async () => {
-    if (checkEmpty(serves))
-      return Alert.alert(
-        "Sorry no empty values.",
-        "Please make sure your serves has something in it.",
-        [{ text: "Okay" }]
-      );
-    try {
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/updateServing`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({ recipeId: recipeId, serves: serves }),
-      });
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldnt update your servings.",
-          "Sorry we had an issue and couldn't update your servings.",
-          [{ text: "Okay" }]
-        );
-    }
-  };
-
-  const onChangeCategoryHandler = async (newCategory) => {
-    setCategory(newCategory);
-    try {
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/updateCategory`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-        method: "POST",
-        body: JSON.stringify({ recipeId: recipeId, category: newCategory }),
-      });
-    } catch (err) {
-      if (err)
-        Alert.alert(
-          "Sorry we couldn't update your category.",
-          "Sorry we had an issue and couldn't update your category.",
-          [{ text: "Okay" }]
-        );
-    }
+    setIngredients(newIngredients);
   };
 
   const onTakePictureHandler = async () => {
@@ -488,15 +150,7 @@ const EditRecipe = ({ navigation, route }) => {
       });
       if (image.cancelled) return;
       setImage(image.uri);
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/updateImage`, {
-        headers: {
-          'Content-Type': 'application/json',
-          "Authorization": token
-        },
-        method: 'POST',
-        body: JSON.stringify({ recipeId: recipeId, base64: image.base64 })
-      })
+      setSendImage(image.base64);
     } catch (err) {
       if (err) Alert.alert("Sorry we had an issue adding your image.", "Sorry we had an issue adding you image.", [{text: 'Okay'}])
     }
@@ -514,15 +168,7 @@ const EditRecipe = ({ navigation, route }) => {
       });
       if (image.cancelled) return;
       setImage(image.uri);
-      const token = await AsyncStorage.getItem("token");
-      await fetch(`${ENVS.url}/recipes/updateImage`, {
-        headers: {
-          'Content-Type': 'application/json',
-          "Authorization": token
-        },
-        method: 'POST',
-        body: JSON.stringify({ recipeId: recipeId, base64: image.base64 })
-      })
+      setSendImage(image.base64)
     } catch (err) {
       if (err) Alert.alert("Sorry we had an issue adding your image.", "Sorry we had an issue adding you image.", [{text: 'Okay'}])
     }
@@ -532,15 +178,60 @@ const EditRecipe = ({ navigation, route }) => {
       Alert.alert("New Picture or from your Gallery.", "Would you like to access your gallery or take a new picture.", [{text: 'Gallery', onPress: async () => await onChooseFromGalleryHandler()}, {text: 'New Picture', onPress: async () => await onTakePictureHandler()}])
   };
 
+  const onClearHandler = () => {
+    setTitle(route.params.title);
+    setImage(route.params.image);
+    setCategory(route.params.category);
+    setPreptime(route.params.preptime);
+    setCooktime(route.params.cooktime);
+    setServes(route.params.serving);
+    setInstructions(route.params.instructions);
+    setIngredients(route.params.ingredients);
+  }
+
+  const onSaveEditRecipe = async () => {
+    for (let i = 0; i < ingredients.length; i++) {
+      if (filter.isProfane(ingredients[i].ingredient)) return Alert.alert("No bad language!", "Make sure there's no bad language in your ingredients.", [{text: 'Okay'}])
+      if (checkEmpty(ingredients[i].ingredient)) return Alert.alert("Ingredients must all be filled.", "Make sure there's no empty values in your ingredients.", [{text: 'Okay'}])
+    }
+    for (let i = 0; i < instructions.length; i++) {
+      if (filter.isProfane(instructions[i].instruction)) return Alert.alert("No bad language!", "Make sure there's no bad language in your instructions.", [{text: 'Okay'}])
+      if (checkEmpty(instructions[i].instruction)) return Alert.alert("Instructions must all be filled.", "Make sure there's no empty values in your instructions.", [{text: 'Okay'}])
+    }
+    if (checkEmpty(title) || checkEmpty(category) || checkEmpty(serves) || checkEmpty(prepTime) || checkEmpty(cookTime)) return Alert.alert("Make sure no values are empty.", "Please make sure there are no empty values.", [{text: 'Okay'}])
+    if (filter.isProfane(title) || filter.isProfane(category) || filter.isProfane(serves) || filter.isProfane(prepTime) || filter.isProfane(cookTime)) return Alert.alert("No bad language!", "Please make sure there is no bad language used.", [{text: 'Okay'}])
+    setIsLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      await fetch(`${ENVS.url}/recipes/updateRecipe`, {
+        headers: {
+          "Authorization": token,
+          "Content-Type": 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          title: title,
+          image: sendImage,
+          newIngredients: ingredients,
+          newInstructions: instructions,
+          cookTime: cookTime,
+          prepTime: prepTime,
+          serves: serves,
+          category: category,
+          id: recipeId
+        })
+      })
+      navigation.navigate("My Recipes")
+    } catch (err) {
+      if (err) Alert.alert("Sorry we had an issue updating your recipe.", "Sorry we had an issue updating your recipe.", [{text: 'Okay'}])
+    }
+    setIsLoading(false);
+  }
+
   return (
-    <ScrollView contentContainerStyle={{ flex: 1 }}>
+    <ScrollView contentContainerStyle={{ flex: 1, paddingBottom: 80 }}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.screen}>
-          <Text
-            style={{ fontSize: 20, fontWeight: "bold", textAlign: "center" }}
-          >
-            Anything you edit here will automatically update for you!
-          </Text>
           <View style={styles.title}>
             <View style={styles.titleHolder}>
               <CustomTextInput
@@ -549,7 +240,6 @@ const EditRecipe = ({ navigation, route }) => {
                 value={title}
                 multiline
                 onChangeText={(text) => setTitle(text)}
-                onEndEditing={onEndTitleHandler}
               />
             </View>
             <View style={{alignItems: 'center'}}>
@@ -608,20 +298,6 @@ const EditRecipe = ({ navigation, route }) => {
                         this,
                         ing.id
                       )}
-                      onEndEditing={onEndIngredientEdit.bind(this, ing.id)}
-                      delete={onDeleteIngredientHandler.bind(this, ing.id)}
-                    />
-                  ))}
-                  {addNewIngredients.map((ing) => (
-                    <Holder
-                      key={ing.id}
-                      customPlaceholder="Ingredient..."
-                      value={ing.ingredient}
-                      onChangeText={onChangeNewIngredientHandler.bind(
-                        this,
-                        ing.id
-                      )}
-                      onEndEditing={onEndNewIngredientEdit.bind(this, ing.id)}
                       delete={onDeleteIngredientHandler.bind(this, ing.id)}
                     />
                   ))}
@@ -650,7 +326,7 @@ const EditRecipe = ({ navigation, route }) => {
                     elevation: 0,
                   }}
                 >
-                  {instructions.map((ins, index) => (
+                  {instructions.map((ins) => (
                     <Holder
                       key={ins.id}
                       value={ins.instruction}
@@ -659,20 +335,6 @@ const EditRecipe = ({ navigation, route }) => {
                         this,
                         ins.id
                       )}
-                      onEndEditing={onEndInstructionEdit.bind(this, ins.id)}
-                      delete={onDeleteInstructionHandler.bind(this, ins.id)}
-                    />
-                  ))}
-                  {addNewInstructions.map((ins) => (
-                    <Holder
-                      key={ins.id}
-                      customPlaceholder="Instruction..."
-                      value={ins.instruction}
-                      onChangeText={onChangeNewInstructionHandler.bind(
-                        this,
-                        ins.id
-                      )}
-                      onEndEditing={onEndNewInstructionEdit.bind(this, ins.id)}
                       delete={onDeleteInstructionHandler.bind(this, ins.id)}
                     />
                   ))}
@@ -695,7 +357,6 @@ const EditRecipe = ({ navigation, route }) => {
                 placeholder="10mins..."
                 style={styles.smallText}
                 onChangeText={(text) => setCooktime(text)}
-                onEndEditing={onEndEditingCookTimeHandler}
               />
             </View>
             <View
@@ -712,7 +373,6 @@ const EditRecipe = ({ navigation, route }) => {
                 placeholder="10mins..."
                 style={styles.smallText}
                 onChangeText={(text) => setPreptime(text)}
-                onEndEditing={onEndEditingPrepTimeHandler}
               />
             </View>
             <View
@@ -729,7 +389,6 @@ const EditRecipe = ({ navigation, route }) => {
                 placeholder="6 people..."
                 style={styles.smallText}
                 onChangeText={(text) => setServes(text)}
-                onEndEditing={onEndEditingServesHandler}
               />
             </View>
           </View>
@@ -747,6 +406,28 @@ const EditRecipe = ({ navigation, route }) => {
               <Picker.Item label="Other" value="other" />
             </Picker>
           </View>
+          {!isLoading ? (
+          <View style={styles.submitBtns}>
+            <View style={styles.submitBtnHolder}>
+              <CustomButton
+                onPress={async () => await onSaveEditRecipe()}
+                text="Save"
+                touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
+                textStyle={styles.btnText}
+              />
+            </View>
+            <View style={styles.submitBtnHolder}>
+              <CustomButton
+                onPress={onClearHandler}
+                text="Clear"
+                touchStyle={{ ...styles.touch, ...{ marginBottom: 10 } }}
+                textStyle={styles.btnText}
+              />
+            </View>
+          </View>
+        ) : (
+          <Spinner />
+        )}
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>

@@ -268,7 +268,7 @@ const AddRecipe = (props) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={{flex: 1}}>
+    <ScrollView contentContainerStyle={{flex: 1, paddingBottom: 80}}>
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.screen}>
         <View style={styles.title}>
@@ -555,7 +555,6 @@ const styles = StyleSheet.create({
   submitBtns: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 10,
     width: "95%"
   },
   submitBtnHolder: {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -13,11 +13,38 @@ import Colors from "../../constants/Colors";
 import Spinner from "../Spinner/Spinner";
 import Card from "../Card/Card";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import { scale } from "react-native-size-matters";
 
 const Authenticate = (props) => {
+  const [forgotPasswordPopUp, setForgotPasswordPopUp] = useState(false);
+
   return (
-    <KeyboardAvoidingView keyboardVerticalOffset={scale(110)} behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.authScreen}>
+    <KeyboardAvoidingView
+      keyboardVerticalOffset={scale(110)}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.authScreen}
+    >
+      {forgotPasswordPopUp ? (
+        <View style={{position: 'absolute', top: 0, left: 0, height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 10, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{width: '80%', backgroundColor: 'white', padding: 30, borderRadius: 10 }}>
+          <View style={{alignItems: 'flex-end'}}><Button title="X" color="red" onPress={() => setForgotPasswordPopUp(false)} /></View>
+          <Text style={{textAlign: 'center'}}>
+            Please type in your email address to reset your password.
+          </Text>
+          <View style={{flexDirection: 'row', marginTop: 30}}>
+          <Ionicons
+                size={scale(14)}
+                name={Platform.OS === "android" ? "md-mail" : "ios-mail"}
+              />
+            <CustomTextInput
+              style={styles.textInput}
+              onChangeText={props.onEmailChange}
+              value={props.onForgotPasswordEmail}
+            />
+          </View>
+        </View>
+        </View>
+      ) : null}
       <Card style={styles.authContainer}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.formController}>
@@ -99,6 +126,10 @@ const Authenticate = (props) => {
                     onPress={props.onSubmit}
                     color={Colors.success}
                   />
+                  <Button
+                    title="Forgot Password"
+                    onPress={() => setForgotPasswordPopUp(true)}
+                  />
                 </View>
               </View>
             </View>
@@ -116,7 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 100
+    zIndex: 100,
   },
   authContainer: {
     height: scale(350),
@@ -138,7 +169,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     borderBottomColor: "black",
     borderBottomWidth: 1,
-    fontSize: scale(12)
+    fontSize: scale(12),
   },
   formControls: {
     flexDirection: "row",
