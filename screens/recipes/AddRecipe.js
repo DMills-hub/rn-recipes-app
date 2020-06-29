@@ -268,7 +268,7 @@ const AddRecipe = (props) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={{flex: 1, paddingBottom: 80}}>
+    <ScrollView>
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.screen}>
         <View style={styles.title}>
@@ -326,12 +326,7 @@ const AddRecipe = (props) => {
               onPress={onAddIngredientHandler}
             />
 
-            <ScrollView
-              ref={ingScroll}
-              onContentSizeChange={() =>
-                ingScroll.current.scrollToEnd({ animated: true })
-              }
-            >
+            
               <Card
                 style={{
                   shadowColor: "white",
@@ -354,7 +349,6 @@ const AddRecipe = (props) => {
                   />
                 ))}
               </Card>
-            </ScrollView>
           </View>
           <View style={styles.ingredientAddContainer}>
             <CustomButton
@@ -363,12 +357,7 @@ const AddRecipe = (props) => {
               textStyle={styles.btnText}
               onPress={onAddInstructionHandler}
             />
-            <ScrollView
-              ref={insScroll}
-              onContentSizeChange={() =>
-                insScroll.current.scrollToEnd({ animated: true })
-              }
-            >
+            
               <Card
                 style={{
                   shadowColor: "white",
@@ -388,7 +377,6 @@ const AddRecipe = (props) => {
                   />
                 ))}
               </Card>
-            </ScrollView>
           </View>
         </View>
         <View style={styles.time}>
@@ -527,7 +515,6 @@ const styles = StyleSheet.create({
   },
   controlsContainer: {
     flexDirection: "row",
-    height: "35%",
     marginVertical: 10,
   },
   btn: {
@@ -555,7 +542,8 @@ const styles = StyleSheet.create({
   submitBtns: {
     flexDirection: "row",
     justifyContent: "center",
-    width: "95%"
+    width: "95%",
+    marginBottom: 50
   },
   submitBtnHolder: {
     marginLeft: 10,

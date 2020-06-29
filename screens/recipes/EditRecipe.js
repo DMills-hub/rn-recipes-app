@@ -55,6 +55,7 @@ const EditRecipe = ({ navigation, route }) => {
   const [instructions, setInstructions] = useState(route.params.instructions);
   const [category, setCategory] = useState(route.params.category);
   const [ isLoading, setIsLoading ] = useState(false);
+  const [ showBtns, setShowBtns ] = useState(true);
   const ingScroll = useRef();
   const insScroll = useRef();
   const filter = new Filter();
@@ -63,6 +64,14 @@ const EditRecipe = ({ navigation, route }) => {
     if (checkString === "") return true;
     return false;
   };
+
+  Keyboard.addListener("keyboardDidShow", () => {
+    if (Platform.OS === "android") return setShowBtns(false);
+  });
+
+  Keyboard.addListener("keyboardDidHide", () => {
+    if (Platform.OS === "android") return setShowBtns(true);
+  });
 
   const getPermissions = async () => {
     try {
@@ -229,7 +238,7 @@ const EditRecipe = ({ navigation, route }) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={{ flex: 1, paddingBottom: 80 }}>
+    <ScrollView>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.screen}>
           <View style={styles.title}>
@@ -273,13 +282,6 @@ const EditRecipe = ({ navigation, route }) => {
                 textStyle={styles.btnText}
                 onPress={onAddNewIngredientHandler}
               />
-
-              <ScrollView
-                ref={ingScroll}
-                onContentSizeChange={() =>
-                  ingScroll.current.scrollToEnd({ animated: true })
-                }
-              >
                 <Card
                   style={{
                     shadowColor: "white",
@@ -302,7 +304,6 @@ const EditRecipe = ({ navigation, route }) => {
                     />
                   ))}
                 </Card>
-              </ScrollView>
             </View>
             <View style={styles.ingredientAddContainer}>
               <CustomButton
@@ -311,12 +312,7 @@ const EditRecipe = ({ navigation, route }) => {
                 textStyle={styles.btnText}
                 onPress={onAddNewInstructionHandler}
               />
-              <ScrollView
-                ref={insScroll}
-                onContentSizeChange={() =>
-                  insScroll.current.scrollToEnd({ animated: true })
-                }
-              >
+              
                 <Card
                   style={{
                     shadowColor: "white",
@@ -339,7 +335,6 @@ const EditRecipe = ({ navigation, route }) => {
                     />
                   ))}
                 </Card>
-              </ScrollView>
             </View>
           </View>
           <View style={styles.time}>
@@ -406,7 +401,7 @@ const EditRecipe = ({ navigation, route }) => {
               <Picker.Item label="Other" value="other" />
             </Picker>
           </View>
-          {!isLoading ? (
+          {!isLoading && showBtns ? (
           <View style={styles.submitBtns}>
             <View style={styles.submitBtnHolder}>
               <CustomButton
@@ -475,7 +470,6 @@ const styles = StyleSheet.create({
   },
   controlsContainer: {
     flexDirection: "row",
-    height: "35%",
     marginVertical: 10,
   },
   btn: {
@@ -498,15 +492,12 @@ const styles = StyleSheet.create({
   ingredientAddContainer: {
     width: "45%",
     padding: 10,
-    height: "100%",
   },
   submitBtns: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 10,
     width: "95%",
-    position: "absolute",
-    bottom: 0,
+    marginBottom: 50
   },
   submitBtnHolder: {
     marginLeft: 10,
