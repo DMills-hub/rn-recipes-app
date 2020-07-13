@@ -244,7 +244,7 @@ const deleteIngredient = (state: RecipeState, id: number | string) => {
 const updateIngredient = (state: RecipeState, ingData: { index: number, text: string }) => {
   const updateIngredient = {
     ...state.ingredients[ingData.index],
-    ing: ingData.text,
+    ingredient: ingData.text,
   };
   const newIngredients = [...state.ingredients];
   newIngredients[ingData.index] = updateIngredient;
