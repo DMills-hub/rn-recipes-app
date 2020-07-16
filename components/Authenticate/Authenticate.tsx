@@ -9,26 +9,25 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Colors from "../../constants/Colors";
 import Spinner from "../Spinner/Spinner";
 import Card from "../Card/Card";
 import CustomTextInput from "../CustomTextInput/CustomTextInput";
-import { scale } from "react-native-size-matters";
+import { scale, verticalScale } from "react-native-size-matters";
 
 type AuthenticateProps = {
-  onEmailChange: (text: string) => void,
-  onUsernameChange: (text: string) => void,
-  onPasswordChange: (text: string) => void,
-  onConfirmPasswordChange: (text: string) =>  void,
-  onSubmit: () => void,
-  onForgotPasswordEmail: string,
-  username: string,
-  loginMode: boolean,
-  email: string,
-  password: string,
-  confirmPassword: string,
-  loading: boolean
-}
+  onEmailChange: (text: string) => void;
+  onUsernameChange: (text: string) => void;
+  onPasswordChange: (text: string) => void;
+  onConfirmPasswordChange: (text: string) => void;
+  onSubmit: () => void;
+  onForgotPasswordEmail: string;
+  username: string;
+  loginMode: boolean;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  loading: boolean;
+};
 
 const Authenticate: React.FC<AuthenticateProps> = (props): JSX.Element => {
   const [forgotPasswordPopUp, setForgotPasswordPopUp] = useState(false);
@@ -40,24 +39,49 @@ const Authenticate: React.FC<AuthenticateProps> = (props): JSX.Element => {
       style={styles.authScreen}
     >
       {forgotPasswordPopUp ? (
-        <View style={{position: 'absolute', top: 0, left: 0, height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 10, justifyContent: 'center', alignItems: 'center'}}>
-        <View style={{width: '80%', backgroundColor: 'white', padding: 30, borderRadius: 10 }}>
-          <View style={{alignItems: 'flex-end'}}><Button title="X" color="red" onPress={() => setForgotPasswordPopUp(false)} /></View>
-          <Text style={{textAlign: 'center'}}>
-            Please type in your email address to reset your password.
-          </Text>
-          <View style={{flexDirection: 'row', marginTop: 30}}>
-          <Ionicons
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            height: "100%",
+            width: "100%",
+            backgroundColor: "rgba(0,0,0,0.6)",
+            zIndex: 10,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              width: "80%",
+              backgroundColor: "white",
+              padding: 30,
+              borderRadius: 10,
+            }}
+          >
+            <View style={{ alignItems: "flex-end" }}>
+              <Button
+                title="X"
+                color="red"
+                onPress={() => setForgotPasswordPopUp(false)}
+              />
+            </View>
+            <Text style={{ textAlign: "center" }}>
+              Please type in your email address to reset your password.
+            </Text>
+            <View style={{ flexDirection: "row", marginTop: 30 }}>
+              <Ionicons
                 size={scale(14)}
                 name={Platform.OS === "android" ? "md-mail" : "ios-mail"}
               />
-            <CustomTextInput
-              style={styles.textInput}
-              onChangeText={props.onEmailChange}
-              value={props.onForgotPasswordEmail}
-            />
+              <CustomTextInput
+                style={styles.textInput}
+                onChangeText={props.onEmailChange}
+                value={props.onForgotPasswordEmail}
+              />
+            </View>
           </View>
-        </View>
         </View>
       ) : null}
       <Card style={styles.authContainer}>
@@ -136,14 +160,18 @@ const Authenticate: React.FC<AuthenticateProps> = (props): JSX.Element => {
             <View style={styles.btnCon}>
               <View style={styles.buttonContainer}>
                 <View style={styles.button}>
-                  <Button
-                    title={props.loginMode ? "Login" : "Register"}
-                    onPress={props.onSubmit}
-                  />
-                  <Button
-                    title="Forgot Password"
-                    onPress={() => setForgotPasswordPopUp(true)}
-                  />
+                  <View style={styles.buttonMargin}>
+                    <Button
+                      title={props.loginMode ? "Login" : "Register"}
+                      onPress={props.onSubmit}
+                    />
+                  </View>
+                  <View style={styles.buttonMargin}>
+                    <Button
+                      title="Forgot Password"
+                      onPress={() => setForgotPasswordPopUp(true)}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -164,7 +192,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   authContainer: {
-    height: scale(350),
+    height: verticalScale(500),
     width: "80%",
     alignItems: "center",
     justifyContent: "center",
@@ -212,6 +240,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  buttonMargin: {
+    marginTop: 5,
+    marginBottom: 5
+  }
 });
 
 export default Authenticate;
