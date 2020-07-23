@@ -20,13 +20,15 @@ type AuthenticateProps = {
   onPasswordChange: (text: string) => void;
   onConfirmPasswordChange: (text: string) => void;
   onSubmit: () => void;
-  onForgotPasswordEmail: string;
+  onChangePasswordFromEmail: (text: string) => void;
+  onSubmitChangePassword: () => void;
   username: string;
   loginMode: boolean;
   email: string;
   password: string;
   confirmPassword: string;
   loading: boolean;
+  changePasswordFromEmail: string;
 };
 
 const Authenticate: React.FC<AuthenticateProps> = (props): JSX.Element => {
@@ -50,6 +52,7 @@ const Authenticate: React.FC<AuthenticateProps> = (props): JSX.Element => {
             zIndex: 10,
             justifyContent: "center",
             alignItems: "center",
+            elevation: 10
           }}
         >
           <View
@@ -77,9 +80,17 @@ const Authenticate: React.FC<AuthenticateProps> = (props): JSX.Element => {
               />
               <CustomTextInput
                 style={styles.textInput}
-                onChangeText={props.onEmailChange}
-                value={props.onForgotPasswordEmail}
+                onChangeText={props.onChangePasswordFromEmail}
+                value={props.changePasswordFromEmail}
               />
+            </View>
+            <View style={{
+              marginTop: 10
+            }}>
+              <Button title="Submit" onPress={() => {
+                setForgotPasswordPopUp(false);
+                props.onSubmitChangePassword();
+              }} />
             </View>
           </View>
         </View>

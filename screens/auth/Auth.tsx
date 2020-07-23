@@ -3,7 +3,7 @@ import Authenticate from "../../components/Authenticate/Authenticate";
 import ENVS from "../../env";
 import { useDispatch, useSelector } from "react-redux";
 import { login, loading, err } from "../../store/actions/auth";
-import { Alert, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Alert, TouchableOpacity, Text, StyleSheet, AsyncStorage } from "react-native";
 import onClearAuthError from "../../helpers/onClearAuthError";
 import { RootState } from '../../App';
 import { AuthStackRouteParamList } from '../../navigation/AuthStackNavigator';
@@ -21,6 +21,7 @@ const Auth: React.FC<AuthProps> = ({navigation}): JSX.Element => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState<null | string>();
   const [mode, setMode] = useState(true);
   const load = useSelector((state: RootState) => state.auth.loading);
   const myError = useSelector((state: RootState) => state.auth.error);
@@ -61,6 +62,10 @@ const Auth: React.FC<AuthProps> = ({navigation}): JSX.Element => {
   const onEmailChangeHandler = (text: string) => {
     setEmail(text);
   };
+
+  const onForgotPasswordEmailChangeHandler = (text: string) => {
+    setForgotPasswordEmail(text);
+  }
 
   const onRegisterHandler = async () => {
     if (
@@ -121,6 +126,27 @@ const Auth: React.FC<AuthProps> = ({navigation}): JSX.Element => {
     }
   };
 
+  const onSubmitChangePasswordHandler = async () => {
+    if (forgotPasswordEmail === "") return;
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const result = await fetch(`${ENVS.url}/auth/resetPassword`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          email: forgotPasswordEmail,
+          token: token
+        }),
+      });
+      const resultData = await result.json();
+      if (resultData.success) return setForgotPasswordMessage("You should receive an email to reset your password.")
+    } catch (err) {
+      if (err) dispatch(err("Sorry we coudln't send that email."));
+    }
+  }
+
   if (myError) {
     Alert.alert("Error", myError, [
       { text: "Okay", onPress: () => onClearAuthError(dispatch) },
@@ -140,7 +166,9 @@ const Auth: React.FC<AuthProps> = ({navigation}): JSX.Element => {
       email={email}
       loginMode={mode}
       loading={load}
-      onForgotPasswordEmail={forgotPasswordEmail}
+      onChangePasswordFromEmail={onForgotPasswordEmailChangeHandler}
+      changePasswordFromEmail={forgotPasswordEmail}
+      onSubmitChangePassword={onSubmitChangePasswordHandler}
     />
   );
 };
